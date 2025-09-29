@@ -8,4 +8,14 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
+<header>
+	<a href="/mentions">Mentions légales</a>
+	<a href="/catalogue">Catalogue</a>
+</header>
+
+
+<footer>
+	
+</footer>
+
 {@render children?.()}
