@@ -35,11 +35,7 @@
 </div>
 
 <style>
-	h1 {
-		text-align: center;
-		font-family: var(--font-global);
-		color: var(--couleur-marron);
-	}
+
 
 	.home-content {
 		display: flex;
