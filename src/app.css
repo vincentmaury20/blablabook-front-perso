@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
 
-@import url("");
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
 
 :root {
     --couleur-bleu-vert: #63A6A6;
@@ -9,6 +9,18 @@
     --couleur-beige-rose: #D9B29C;
     --couleur-beige-clair: #F2E0D5;
 
-    --font-bbb: "";
+    --font-bbb: "Pacifico";
     --font-global: "Montserrat"; 
+}
+
+body {
+  font-family: var(--font-global);
+}
+
+h1 {
+  background-color: var(--couleur-beige-clair);
+  font-size: 32px;
+  color: var(--couleur-marron);
+  font-weight: lighter;
+  text-align: center;
 }
