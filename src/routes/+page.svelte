@@ -1,2 +1,2 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<h1>Notre sélection</h1>
+<p>BlaBlaBook est une plateforme en ligne de gestion de bibliothèques personnelles. Elle est représentée par un groupe de passionnés de lecture qui, au fil des années, ont accumulé des étagères entières de livres. Ces lecteurs aiment partager leurs découvertes, conseiller leurs amis et organiser des échanges de romans, mais ils se heurtent toujours au même problème : comment savoir qui possède quel livre, éviter les doublons, ou encore se rappeler de toutes leurs lectures passées ?</p>
