@@ -111,7 +111,7 @@
 	}
 
 	/* Media queries */
-	@media (min-width: 600px) {
+	@media (min-width: 768px) {
 		.carousel {
 			grid-auto-columns: 200px;
 			gap: 1.5rem;
@@ -122,7 +122,7 @@
 		}
 	}
 
-	@media (min-width: 900px) {
+	@media (min-width: 1024px) {
 		.carousel {
 			grid-auto-columns: 220px;
 			gap: 1.5rem;
