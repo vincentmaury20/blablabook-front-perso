@@ -14,7 +14,6 @@
 		background-color: var(--couleur-beige-rose);
 		color: var(--couleur-marron);
 		font-family: var(--font-global);
-		font-weight: bold;
 		padding: 0.5rem;
 	}
 

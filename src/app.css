@@ -18,8 +18,8 @@ body {
 }
 
 h1 {
-  background-color: var(--couleur-beige-clair);
-  font-size: 32px;
+/*   background-color: var(--couleur-beige-clair);
+ */  font-size: 32px;
   color: var(--couleur-marron);
   font-weight: lighter;
   text-align: center;
