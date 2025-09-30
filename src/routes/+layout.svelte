@@ -1,21 +1,21 @@
 <script>
-	import favicon from '$lib/assets/favicon.svg';
+	import favicon from '$lib/assets/favicon.png';
+	import Header from '$lib/components/Header.svelte';
+	import Footer from '$lib/components/Footer.svelte';
+  import '../reset.css';
+	import '../app.css';
+
 
 	let { children } = $props();
 </script>
 
+<Header></Header>
+
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
-
-<header>
-	<a href="/mentions">Mentions légales</a>
-	<a href="/catalogue">Catalogue</a>
-</header>
-
-
-<footer>
-	
-</footer>
-
 {@render children?.()}
+
+<Footer></Footer>
+
+
