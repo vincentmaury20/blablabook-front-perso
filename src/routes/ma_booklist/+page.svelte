@@ -106,28 +106,16 @@
     .add-booklist {
         background-color: blue;
         box-shadow: none;
-        width: 10%;
-        aspect-ratio: 1;
+        width: 4rem;
+        height: 4rem;
     }
-
-    /* .add-booklist img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-    } */
 
     .delete-booklist {
         background-color: red;
         box-shadow: none;
-        width: 10%;
-        aspect-ratio: 1;
+        width: 4rem;
+        height: 4rem;
     }
-
-    /* .delete-booklist img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-    } */
 
     article:nth-child(even) {
         background-color: var(--couleur-beige-clair);
