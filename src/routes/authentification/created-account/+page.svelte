@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 	let email = 'test@exemple.com';
 
 	async function resendEmail() {
