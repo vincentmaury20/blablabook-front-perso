@@ -3,7 +3,7 @@
         <h1>Mon compte</h1>
         <div class="info">
             <img class="avatar" src="/images/Avatar_crop.jpg" alt="my avatar">
-            <div>
+            <div class="id">
                 <p class="name">Ophélie Passe-miroir</p>
                 <p class="age pink">20 ans</p>
             </div>
@@ -47,7 +47,7 @@
             </article>
         </div>
 
-        <button class="bouton">Voir plus</button>
+        <button class="button">Voir plus</button>
 </section>
 </main>
 
@@ -57,7 +57,7 @@
         display: flex;
         flex-direction: column;
         background-color: var(--couleur-beige-clair);
-        gap: 2rem;
+        gap: 1rem;
         justify-content: space-between;
     }
 
@@ -68,7 +68,7 @@
         align-items: center;
         gap: 0.5rem;
         color: var(--couleur-marron);
-        padding: 1.5rem 0;
+        padding: 2rem 0;
     }
 
     .info {
@@ -76,6 +76,7 @@
         align-items: center;
         width: 85%;
         gap: 1.2rem;
+        margin: 0.8rem 0;
     }
 
     .name {
@@ -104,7 +105,6 @@
     .avatar {
         width: 35%;
         aspect-ratio: 1;
-        /* margin: 1.5rem; */
         border-radius: 15rem;     
         border: 2px solid var(--couleur-marron); 
     }
@@ -145,7 +145,7 @@
         display: none;
     }
 
-    .bouton {
+    .button {
         align-self: flex-end;
         margin: 2rem auto;
     }
@@ -154,39 +154,71 @@
     /* Media queries */
     /* Tablette 768px – 1024px */
     @media (min-width: 768px) {
+
         main {
             flex-direction: row;
+            gap: 0.5rem;
         }
 
         .my_informations {
-            width: 20%;
-            padding: 2rem;
-            align-items: center;
+            width: 40%;
+            padding: 2rem 1rem;
+        }
+        
+        .info {
+            flex-direction: column;
+            width: 95%;
+            gap: 0.2rem;
+            margin: 0;   
         }
 
-        .avatar {
-            height: 12rem;
-            width: 12rem;
+        .id {
+            width: 90%;
+            padding-left: 10%;
         }
 
         .name {
             font-size: 20px;
+            margin-bottom: 0.2rem;
         }
 
         .pink {
             font-size: 18px;
         }
 
+        .avatar {
+            width: 60%;
+            margin: 1.5rem;
+        }    
+        
+        .button {
+            margin-right: 5rem;
+            margin-bottom: 3rem;
+        }        
+    }
+
+    /* Desktop > 1024px */
+    @media (min-width: 1025px) {
+
+        .my_informations {
+            width: 18%;
+            padding: 2rem 1.5rem;
+        }
+
         .booklist {
-            width: 80%;        
+            width: 80%; 
         }
 
         .books {
             display: flex;
-            width: 100%;     
+            flex-direction: row;
+            width: 100%;
+            aspect-ratio: auto;
             gap: 3rem;
             padding: 0 5rem;   
-            margin: 1rem;                      
+            margin: 1rem;
+            background-color: unset;
+            justify-content: center;
         }
 
         .book {
@@ -194,7 +226,12 @@
             height: 20rem;
         }
 
+        .book img {
+            height: 80%;
+        }
+
         .caption {
+            display: block;
             background-color: var(--couleur-beige-clair);        
             padding: 0.5rem;
             color: var(--couleur-marron);
@@ -206,16 +243,5 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }  
-
-        .bouton {
-            margin-right: 5rem;
-            margin-bottom: 3rem;
-        }
     }
-
-    /* Desktop > 1024px */
-    @media (min-width: 1025px) {
-
-    }
-
 </style>
