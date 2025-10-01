@@ -19,7 +19,7 @@
 <div class="ask-password">
 	<form onsubmit={handleReset}>
 		<label>
-			E-mail
+			E-MAIL :
 			<input type="email" bind:value={loginEmail} required />
 		</label>
 		<button type="submit">Réinitialiser mon mot de passe</button>
@@ -33,6 +33,8 @@
 		margin: 2rem auto;
 		padding: 1rem;
 		text-align: center;
+		background-color: var(--couleur-beige-clair);
+		border-radius: 30px;
 	}
 
 	form {
@@ -49,8 +51,8 @@
 
 	input {
 		padding: 0.6rem;
-		border-radius: 8px;
-		border: 1px solid #ccc;
+		border-radius: 20px;
+		border: 1px solid var(--couleur-marron);
 	}
 
 	@media (min-width: 768px) and (max-width: 1024px) {
