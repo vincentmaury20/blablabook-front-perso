@@ -28,11 +28,11 @@
             <p>{book.author}</p>
         </div>
         <div class="buttons">
-            <button class="add-booklist" class:active={isActive} onclick={toggle} aria-label={isActive ? "Retirer de la booklist" : "Ajouter à la booklist"}>
+            <button class="add-booklist" class:active={isActive} onclick={toggle} aria-label={isActive ? "A lire" : "Lu"}>
                 {#if isActive}
-                    <span class="material-symbols--bookmark-remove"></span>  
+                    <span class="material-symbols--bookmark-added-grey"></span>  
                 {:else} 
-                    <span class="material-symbols--bookmark-add"></span>
+                    <span class="material-symbols--bookmark-added-blue"></span>
                 {/if}     
             </button>
             <button class="delete-booklist" aria-label="Supprimer de ma booklist">
@@ -45,22 +45,22 @@
 </section>
 
 <style>
-    .material-symbols--bookmark-add {
+    .material-symbols--bookmark-added-grey {
         display: inline-block;
         width: 2.5rem;
         height: 2.5rem;
         background-repeat: no-repeat;
         background-size: 100% 100%;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23959595' d='M5 21V5q0-.825.588-1.412T7 3h7q-.5.75-.75 1.438T13 6q0 1.8 1.138 3.175T17 10.9q.575.075 1 .075t1-.075V21l-7-3zM17 9V7h-2V5h2V3h2v2h2v2h-2v2z'/%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23848484' d='M17.825 9L15 6.175l1.4-1.425l1.425 1.425l3.525-3.55l1.425 1.425zM5 21V5q0-.825.588-1.412T7 3h7q-.5.75-.75 1.438T13 6q0 1.8 1.138 3.175T17 10.9q.575.075 1 .075t1-.075V21l-7-3z'/%3E%3C/svg%3E");
     }
 
-    .material-symbols--bookmark-remove {
+    .material-symbols--bookmark-added-blue {
         display: inline-block;
         width: 2.5rem;
         height: 2.5rem;
         background-repeat: no-repeat;
         background-size: 100% 100%;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2363A6A6' d='M21 7h-6V5h6zM5 21V5q0-.825.588-1.412T7 3h7q-.5.75-.75 1.438T13 6q0 1.8 1.138 3.175T17 10.9q.575.075 1 .075t1-.075V21l-7-3z'/%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2363A6A6' d='M17.825 9L15 6.175l1.4-1.425l1.425 1.425l3.525-3.55l1.425 1.425zM5 21V5q0-.825.588-1.412T7 3h7q-.5.75-.75 1.438T13 6q0 1.8 1.138 3.175T17 10.9q.575.075 1 .075t1-.075V21l-7-3z'/%3E%3C/svg%3E");
     }
 
     .material-symbols--delete-rounded {
