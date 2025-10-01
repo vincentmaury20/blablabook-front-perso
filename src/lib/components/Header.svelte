@@ -71,7 +71,7 @@
 
   /* Media queries */
 
-  @media (min-width: 600px) {
+  @media (min-width: 768px) {
     .header-top {
       flex-direction: row;
       justify-content: space-between;
@@ -91,7 +91,7 @@
     }
   }
 
-  @media (min-width: 900px) {
+  @media (min-width: 1025px) {
     header {
       padding: 1rem 2rem;
     }

@@ -1,9 +1,13 @@
 <main>
     <section class="my_informations">
         <h1>Mon compte</h1>
-        <img class="avatar" src="/images/Avatar_crop.jpg" alt="my avatar">
-        <p class="name">Ophélie Passe-miroir</p>
-        <p class="age pink">20 ans</p>
+        <div class="info">
+            <img class="avatar" src="/images/Avatar_crop.jpg" alt="my avatar">
+            <div>
+                <p class="name">Ophélie Passe-miroir</p>
+                <p class="age pink">20 ans</p>
+            </div>
+        </div>
     </section>
 
     <section class="booklist">
@@ -51,6 +55,7 @@
 <style>
     main {
         display: flex;
+        flex-direction: column;
         background-color: var(--couleur-beige-clair);
         gap: 2rem;
         justify-content: space-between;
@@ -58,24 +63,30 @@
 
     .my_informations {
         background-color: white;
-        width: 20%;
-        padding: 2rem;
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 0.5rem;
         color: var(--couleur-marron);
+        padding: 1.5rem 0;
+    }
+
+    .info {
+        display: flex;
+        align-items: center;
+        width: 85%;
+        gap: 1.2rem;
     }
 
     .name {
         font-weight: 700;
-        font-size: 20px;
+        font-size: 1rem;
     }
 
     .pink {
         color: var(--couleur-vieux-rose);
         font-weight: 700;
-        font-size: 18px;
+        font-size: 0.8rem;
     }
 
     .title {
@@ -91,74 +102,115 @@
     }
 
     .avatar {
-        height: 12rem;
-        width: 12rem;
-        margin: 1.5rem;
+        width: 35%;
+        aspect-ratio: 1;
+        /* margin: 1.5rem; */
         border-radius: 15rem;     
         border: 2px solid var(--couleur-marron); 
     }
 
     .booklist {
         background-color: white;
-        /* border: solid red; */
         display: flex;
         align-items: center;
         flex-direction: column;
-        width: 80%;
         gap: 0 5rem;
     }
 
     .books {
-        display: flex;
-        gap: 3rem;
-        padding: 0 5rem;
-        margin: 1rem;
-        /* border: solid orange; */
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        align-items: center;
+        justify-items: center;
+        width: 85%;
+        padding: 0.7rem;
+        aspect-ratio: 1;
+        background-color: var(--couleur-beige-clair);
     }
 
     .book {
-        width: 15rem;
-        height: 20rem;
-        /* border: solid purple; */
         overflow: hidden;
+        width: 85%;
+        aspect-ratio: 1;
     }
 
     .book img {
         width: 100%;
-        height: 80%;
+        height: 100%;
         object-fit: cover;
     }
 
     .caption {
-        background-color: var(--couleur-beige-clair);        
-        padding: 0.5rem;
-        color: var(--couleur-marron);
-    }
-
-    .book_title {
-        font-weight: 700;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        display: none;
     }
 
     .bouton {
         align-self: flex-end;
-        margin-right: 5rem;
-        margin-bottom: 3rem;
+        margin: 2rem auto;
     }
 
 
     /* Media queries */
-
-    /* Mobile < 768px */
-    @media (max-width: 767px) {
-
-    }
-
     /* Tablette 768px – 1024px */
     @media (min-width: 768px) {
+        main {
+            flex-direction: row;
+        }
 
+        .my_informations {
+            width: 20%;
+            padding: 2rem;
+            align-items: center;
+        }
+
+        .avatar {
+            height: 12rem;
+            width: 12rem;
+        }
+
+        .name {
+            font-size: 20px;
+        }
+
+        .pink {
+            font-size: 18px;
+        }
+
+        .booklist {
+            width: 80%;        
+        }
+
+        .books {
+            display: flex;
+            width: 100%;     
+            gap: 3rem;
+            padding: 0 5rem;   
+            margin: 1rem;                      
+        }
+
+        .book {
+            width: 15rem;
+            height: 20rem;
+        }
+
+        .caption {
+            background-color: var(--couleur-beige-clair);        
+            padding: 0.5rem;
+            color: var(--couleur-marron);
+        }
+
+        .book_title {
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }  
+
+        .bouton {
+            margin-right: 5rem;
+            margin-bottom: 3rem;
+        }
     }
 
     /* Desktop > 1024px */
