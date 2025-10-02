@@ -1,13 +1,16 @@
 <h1>Catalogue</h1>
 
-<!-- <script>
-  let books = [
-    { id: 1, title: "Livre 1", author: "Auteur 1", img: "/images/livre1.jpg" },
-    { id: 2, title: "Livre 2", author: "Auteur 2", img: "/images/livre2.jpg" },
-  ];
+ <script>
+
+//   let books = [
+//     { id: 1, title: "Livre 1", author: "Auteur 1", img: "/images/livre1.jpg" },
+//     { id: 2, title: "Livre 2", author: "Auteur 2", img: "/images/livre2.jpg" },
+//   ];
+
+  	let { data } = $props();
 </script>
 
-<section class="catalogue">
+<!-- <section class="catalogue">
   {#each books as book}
     <div class="book-item">
       <img src={book.img} alt={book.title} />
@@ -21,7 +24,25 @@
   {/each}
 </section> -->
 
-<section class="catalogue">
+	<section class="catalogue">
+		{#each books as book}
+			<div class="book-container">
+				<img src={book.img} alt={book.title} />
+				<div class="book-description">
+					<div class="book">
+						<p>Titre : {book.title}</p>
+						<p>Auteur : {book.author}</p>
+						<p>
+							Synopsis : {book.synopsis}
+						</p>
+					</div>
+					<button class="add-button">Ajouter à ma booklist</button>
+				</div>
+			</div>
+		{/each}
+	</section>
+
+<!-- <section class="catalogue">
 	<div class="book-container">
 		<img src="/images/livre2.jpg" alt="Livre 2" />
 		<div class="book-description">
@@ -66,7 +87,7 @@
 			<button class="add-button">Ajouter à ma booklist</button>
 		</div>
 	</div>
-</section>
+</section> -->
 
 <style>
 	h1 {
