@@ -28,15 +28,21 @@
             <p>{book.author}</p>
         </div>
         <div class="buttons">
-            <button class="add-booklist" class:active={isActive} onclick={toggle} aria-label={isActive ? "A lire" : "Lu"}>
+            <button class="to-read" class:active={isActive} onclick={toggle} aria-label={isActive ? "A lire" : "Lu"}>
                 {#if isActive}
-                    <span class="material-symbols--bookmark-added-grey"></span>  
+                    <span class="icon-wrapper">
+                        <span class="material-symbols--bookmark-added-grey"></span>
+                    </span>
                 {:else} 
-                    <span class="material-symbols--bookmark-added-blue"></span>
+                    <span class="icon-wrapper">
+                        <span class="material-symbols--bookmark-added-blue"></span>
+                    </span>
                 {/if}     
             </button>
             <button class="delete-booklist" aria-label="Supprimer de ma booklist">
-                <span class="material-symbols--delete-rounded"></span>
+                <span class="icon-wrapper">
+                    <span class="material-symbols--delete-rounded"></span>
+                </span>
             </button>
         </div>
     </article>
@@ -45,33 +51,6 @@
 </section>
 
 <style>
-    .material-symbols--bookmark-added-grey {
-        display: inline-block;
-        width: 2.5rem;
-        height: 2.5rem;
-        background-repeat: no-repeat;
-        background-size: 100% 100%;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23848484' d='M17.825 9L15 6.175l1.4-1.425l1.425 1.425l3.525-3.55l1.425 1.425zM5 21V5q0-.825.588-1.412T7 3h7q-.5.75-.75 1.438T13 6q0 1.8 1.138 3.175T17 10.9q.575.075 1 .075t1-.075V21l-7-3z'/%3E%3C/svg%3E");
-    }
-
-    .material-symbols--bookmark-added-blue {
-        display: inline-block;
-        width: 2.5rem;
-        height: 2.5rem;
-        background-repeat: no-repeat;
-        background-size: 100% 100%;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2363A6A6' d='M17.825 9L15 6.175l1.4-1.425l1.425 1.425l3.525-3.55l1.425 1.425zM5 21V5q0-.825.588-1.412T7 3h7q-.5.75-.75 1.438T13 6q0 1.8 1.138 3.175T17 10.9q.575.075 1 .075t1-.075V21l-7-3z'/%3E%3C/svg%3E");
-    }
-
-    .material-symbols--delete-rounded {
-        display: inline-block;
-        width: 2.5rem;
-        height: 2.5rem;
-        background-repeat: no-repeat;
-        background-size: 100% 100%;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23626262' d='M7 21q-.825 0-1.412-.587T5 19V6q-.425 0-.712-.288T4 5t.288-.712T5 4h4q0-.425.288-.712T10 3h4q.425 0 .713.288T15 4h4q.425 0 .713.288T20 5t-.288.713T19 6v13q0 .825-.587 1.413T17 21zm3-4q.425 0 .713-.288T11 16V9q0-.425-.288-.712T10 8t-.712.288T9 9v7q0 .425.288.713T10 17m4 0q.425 0 .713-.288T15 16V9q0-.425-.288-.712T14 8t-.712.288T13 9v7q0 .425.288.713T14 17'/%3E%3C/svg%3E");
-    }
-
     .booklist {
         display: flex;
         flex-direction: column;
@@ -89,6 +68,7 @@
         height: 10rem;
         align-items: center;
         padding: 0 0.8rem;
+        border: solid salmon;
     }
 
     .book img {
@@ -103,18 +83,57 @@
         border: solid green;
     }
 
-    .add-booklist {
+    .to-read {
+        display: flex;
+        justify-content: center;
+        align-items: center;        
         background-color: blue;
         box-shadow: none;
         width: 4rem;
         height: 4rem;
+        margin: 0.5rem;
     }
 
     .delete-booklist {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         background-color: red;
         box-shadow: none;
         width: 4rem;
         height: 4rem;
+        margin: 0.5rem;
+    }
+
+    .icon-wrapper {
+        display: flex;
+    }
+
+    .material-symbols--bookmark-added-grey {
+        display: inline-block;
+        width: 2rem;
+        height: 2rem;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23848484' d='M17.825 9L15 6.175l1.4-1.425l1.425 1.425l3.525-3.55l1.425 1.425zM5 21V5q0-.825.588-1.412T7 3h7q-.5.75-.75 1.438T13 6q0 1.8 1.138 3.175T17 10.9q.575.075 1 .075t1-.075V21l-7-3z'/%3E%3C/svg%3E");
+    }
+
+    .material-symbols--bookmark-added-blue {
+        display: inline-block;
+        width: 2rem;
+        height: 2rem;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2363A6A6' d='M17.825 9L15 6.175l1.4-1.425l1.425 1.425l3.525-3.55l1.425 1.425zM5 21V5q0-.825.588-1.412T7 3h7q-.5.75-.75 1.438T13 6q0 1.8 1.138 3.175T17 10.9q.575.075 1 .075t1-.075V21l-7-3z'/%3E%3C/svg%3E");
+    }
+
+    .material-symbols--delete-rounded {
+        display: inline-block;
+        width: 2rem;
+        height: 2rem;        
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23626262' d='M7 21q-.825 0-1.412-.587T5 19V6q-.425 0-.712-.288T4 5t.288-.712T5 4h4q0-.425.288-.712T10 3h4q.425 0 .713.288T15 4h4q.425 0 .713.288T20 5t-.288.713T19 6v13q0 .825-.587 1.413T17 21zm3-4q.425 0 .713-.288T11 16V9q0-.425-.288-.712T10 8t-.712.288T9 9v7q0 .425.288.713T10 17m4 0q.425 0 .713-.288T15 16V9q0-.425-.288-.712T14 8t-.712.288T13 9v7q0 .425.288.713T14 17'/%3E%3C/svg%3E");
     }
 
     article:nth-child(even) {
