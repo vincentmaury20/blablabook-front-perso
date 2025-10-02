@@ -16,10 +16,11 @@
 body {
   font-family: var(--font-global);
   color: var(--couleur-marron);
+  
 }
 
 h1 {
- font-size: 32px;
+  font-size: 32px;
   font-weight: lighter;
   text-align: center;
 }
