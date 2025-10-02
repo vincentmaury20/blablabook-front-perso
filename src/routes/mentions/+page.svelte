@@ -70,7 +70,6 @@
 		margin: 0 auto;
 		padding: 1.5rem;
 		line-height: 1.6;
-		color: var(--couleur-marron);
 		font-family: var(--font-global);
 		text-align: justify;
 	}
@@ -78,7 +77,6 @@
 	.mentions h2 {
 		margin-top: 1.5rem;
 		font-size: 1.2rem;
-		color: var(--couleur-marron);
 	}
 
 	.mentions p {
@@ -86,7 +84,6 @@
 	}
 
 	a {
-		color: var(--couleur-marron);
 		text-decoration: underline;
 	}
 </style>

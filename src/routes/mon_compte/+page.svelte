@@ -1,3 +1,12 @@
+<script>   
+   let books = [
+        { id: 2, title: "Golden Kamui Tome 1", author: "Satoru Noda", cover: "/images/Cover_2.jpg" },
+        { id: 3, title: "Ernestine", author: "Salomé Lahoche", cover: "/images/Cover_3.jpg" },  
+        { id: 4, title: "Paradise Kiss Tome 1", author: "Ai Yazawa", cover: "/images/Cover_4.jpg" },
+        { id: 5, title: "Rendez-vous avec le crime", author: "Julia Chapman", cover: "/images/Cover_5.jpg" }                  
+    ];
+</script>
+
 <main>
     <section class="my_informations">
         <h1>Mon compte</h1>
@@ -15,38 +24,17 @@
             <h1>Ma booklist</h1>
             <p class="books_number pink">28 livres</p>
         </header>
-
         <div class="books">
-            <article class="book">
-                <img src="/images/Cover_2.jpg" alt="Golden Kamui">
-                <div class="caption">
-                    <p class="book_title">Golden Kamui Tome 1</p>
-                    <p>Satoru Noda</p>
-                </div>
-            </article>
-            <article class="book">
-                <img src="/images/Cover_3.jpg" alt="Ernestine">
-                <div class="caption">
-                    <p class="book_title">Ernestine</p>
-                    <p>Salomé Lahoche</p>
-                </div>
-            </article>
-            <article class="book">
-                <img src="/images/Cover_5.jpg" alt="Rendez-vous avec le crime">
-                <div class="caption">
-                    <p class="book_title">Rendez-vous avec le crime</p>
-                    <p>Julia Chapman</p>
-                </div>
-            </article>
+            {#each books as book}
                 <article class="book">
-                <img src="/images/Cover_4.jpg" alt="Rendez-vous avec le crime">
-                <div class="caption">
-                    <p class="book_title">Paradise Kiss Tome 1</p>
-                    <p>Ai Yazawa</p>
-                </div>
-            </article>
+                    <img src={book.cover} alt={book.title}>
+                    <div class="caption">
+                        <p class="book_title">{book.title}</p>
+                        <p class="book_author">{book.author}</p>
+                    </div>
+                </article>
+            {/each}
         </div>
-
         <button class="button">Voir plus</button>
 </section>
 </main>
@@ -67,7 +55,6 @@
         flex-direction: column;
         align-items: center;
         gap: 0.5rem;
-        color: var(--couleur-marron);
         padding: 2rem 0;
     }
 
@@ -214,7 +201,7 @@
             flex-direction: row;
             width: 100%;
             aspect-ratio: auto;
-            gap: 3rem;
+            gap: 1rem;
             padding: 0 5rem;   
             margin: 1rem;
             background-color: unset;
@@ -224,6 +211,11 @@
         .book {
             width: 15rem;
             height: 20rem;
+            transition: transform 0.3s ease;
+        }
+
+        .book:hover {
+            transform: scale(1.05);
         }
 
         .book img {
@@ -234,8 +226,13 @@
             display: block;
             background-color: var(--couleur-beige-clair);        
             padding: 0.5rem;
-            color: var(--couleur-marron);
         }
+
+        .book_author {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        } 
 
         .book_title {
             font-weight: 700;
