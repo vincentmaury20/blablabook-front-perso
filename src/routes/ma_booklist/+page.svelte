@@ -22,10 +22,12 @@
 
     {#each books as book}
     <article class="book">
-        <img src={book.cover} alt={book.title}>
-        <div class="book_info">
-            <p>{book.title}</p>
-            <p>{book.author}</p>
+        <div class="book_data">
+            <img src={book.cover} alt={book.title}>
+            <div class="book_info">
+                <p>{book.title}</p>
+                <p>{book.author}</p>
+            </div>
         </div>
         <div class="buttons">
             <button class="to-read" class:active={isActive} onclick={toggle} aria-label={isActive ? "A lire" : "Lu"}>
@@ -65,10 +67,19 @@
     
     .book {
         display: flex;
+        /* height: 10rem; */
+        align-items: center;
+        /* border: solid salmon; */
+        justify-content: space-between;
+    }
+
+    .book_data {
+        display: flex;
         height: 10rem;
         align-items: center;
-        padding: 0 0.8rem;
-        border: solid salmon;
+        padding: 0 0.8rem;  
+        /* border: solid darkblue; */
+        width: 80%;  
     }
 
     .book img {
@@ -77,32 +88,36 @@
         object-fit: cover;
     }
 
+    .book_info {
+        margin-left: 0.8rem;
+    }
+
     .buttons {
         display: flex;
         flex-wrap: nowrap;
-        border: solid green;
+        /* border: solid green; */
     }
 
     .to-read {
         display: flex;
         justify-content: center;
         align-items: center;        
-        background-color: blue;
+        background-color: transparent;
         box-shadow: none;
         width: 4rem;
         height: 4rem;
-        margin: 0.5rem;
+        margin: 0;
     }
 
     .delete-booklist {
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: red;
+        background-color: transparent;
         box-shadow: none;
         width: 4rem;
         height: 4rem;
-        margin: 0.5rem;
+        margin: 0;
     }
 
     .icon-wrapper {
