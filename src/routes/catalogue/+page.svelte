@@ -1,13 +1,15 @@
 <h1>Catalogue</h1>
 
- <script>
+<script>
+  let { data } = $props();
+
+  import { goto } from '$app/navigation';
 
 //   let books = [
 //     { id: 1, title: "Livre 1", author: "Auteur 1", img: "/images/livre1.jpg" },
 //     { id: 2, title: "Livre 2", author: "Auteur 2", img: "/images/livre2.jpg" },
 //   ];
 
-  	let { data } = $props();
 </script>
 
 <!-- <section class="catalogue">
@@ -25,21 +27,20 @@
 </section> -->
 
 
-<!-- SECTION A UTILISER -->
 	<section class="catalogue">
 		{#each data.books as book}
 			<div class="book-container">
 				<img src={book.cover} alt={book.title} />
 				<div class="book-description">
 					<div class="book">
-						<p>Titre : {book.title}</p>
+						<p><!-- Titre : -->{book.title}</p>
 						{#if book.authors?.length}
 							{#each book.authors as author}
-								<p>Auteur : {author.firstname} {author.name}</p>
+								<p><!-- Auteur : -->{author.firstname} {author.name}</p>
 							{/each}
 						{/if}
 						<p>
-							Synopsis : {book.synopsis}
+							<!-- Synopsis :  -->{book.synopsis}
 						</p>
 					</div>
 					<button class="add-button">Ajouter à ma booklist</button>
@@ -47,6 +48,16 @@
 			</div>
 		{/each}
 	</section>
+
+	<div>
+		{#if data.page > 1}
+			<button onclick={() => goto(`?page=${data.page - 1}`)}>Précédente</button>
+		{/if}
+		<span>Page {data.page} / {data.totalPages}</span>
+		{#if data.page < data.totalPages}
+			<button onclick={() => goto(`?page=${data.page + 1}`)}>Suivante</button>
+		{/if}
+	</div>
 
 <!-- <section class="catalogue"> -->
 

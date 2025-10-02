@@ -1,11 +1,16 @@
-export async function load({ fetch }) {
-  const res = await fetch(`http://localhost:3000/catalog`);
-  const books = await res.json();
+export async function load({ fetch, url }) {
+  const page = url.searchParams.get('page') || '1';
+  const limit = '10';
+
+  const res = await fetch(`http://localhost:3000/catalog?page=${page}&limit=${limit}`);
+  const data = await res.json();
 
 //   console.log(books);
-  console.log(books[5]);
-  
-  
+  console.log(data);
 
-  return { books };
+  return { 
+    books: data.books,
+    page: data.page,
+    totalPages: data.totalPages
+   };
 }
