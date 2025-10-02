@@ -1,8 +1,11 @@
-export async function load({ params, id }) {
-  const res = await fetch(`http://localhost:3000/book/${params.id}`);
-  const book = await res.json();
+export async function load({ fetch }) {
+  const res = await fetch(`http://localhost:3000/catalog`);
+  const books = await res.json();
 
-  console.log(book);
+//   console.log(books);
+  console.log(books[5]);
+  
+  
 
-  return { book };
+  return { books };
 }

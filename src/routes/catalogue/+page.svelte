@@ -24,14 +24,20 @@
   {/each}
 </section> -->
 
+
+<!-- SECTION A UTILISER -->
 	<section class="catalogue">
-		{#each books as book}
+		{#each data.books as book}
 			<div class="book-container">
-				<img src={book.img} alt={book.title} />
+				<img src={book.cover} alt={book.title} />
 				<div class="book-description">
 					<div class="book">
 						<p>Titre : {book.title}</p>
-						<p>Auteur : {book.author}</p>
+						{#if book.authors?.length}
+							{#each book.authors as author}
+								<p>Auteur : {author.firstname} {author.name}</p>
+							{/each}
+						{/if}
 						<p>
 							Synopsis : {book.synopsis}
 						</p>
@@ -42,12 +48,13 @@
 		{/each}
 	</section>
 
-<!-- <section class="catalogue">
-	<div class="book-container">
+<!-- <section class="catalogue"> -->
+
+	<!-- <div class="book-container">
 		<img src="/images/livre2.jpg" alt="Livre 2" />
 		<div class="book-description">
 			<div class="book">
-				<p>Titre : lorem ipsum</p>
+				<p>Titre : {data.book.title}</p>
 				<p>Auteur : Jean Scribe</p>
 				<p>
 					Synopsis : Lorem ipsum dolor sit amet. Et error soluta ab laudantium impedit id tenetur
@@ -56,9 +63,9 @@
 			</div>
 			<button class="add-button">Ajouter à ma booklist</button>
 		</div>
-	</div>
+	</div> -->
 
-	<div class="book-container">
+<!-- 	<div class="book-container">
 		<img src="/images/livre3.jpg" alt="Livre 3" />
 		<div class="book-description">
 			<div class="book">
@@ -86,8 +93,8 @@
 			</div>
 			<button class="add-button">Ajouter à ma booklist</button>
 		</div>
-	</div>
-</section> -->
+	</div> -->
+<!-- </section>  -->
 
 <style>
 	h1 {
