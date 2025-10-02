@@ -14,26 +14,25 @@
 
 <h1 class="book-title">Nana</h1>
 
-<div class="book-details">
+<div class="genre-container">
+	<p class="genre">Shoujo</p>
+</div>
 
-    
-    <div class="author-container">
-        <p class="author">
-            Ai Yazawa est une mangaka japonaise née le 7 mars 1967 à Osaka. Elle est principalement connue
+<div class="book-details">
+	<div class="author-container">
+		<p class="author">
+			Ai Yazawa est une mangaka japonaise née le 7 mars 1967 à Osaka. Elle est principalement connue
 			pour ses œuvres "Nana" et "Paradise Kiss", qui ont été adaptées en séries animées et en films
 			live-action. Son style distinctif et ses récits captivants lui ont valu une grande popularité
 			au Japon et à l'international.
 		</p>
 	</div>
-    
-    <div class="container">
-        <img src="/images/livre3.jpg" alt="Couverture Nana" class="cover" />
-    </div>
-    
-	<div class="genre-container">
-		<p class="genre">Shoujo</p>
+
+	<div class="container">
+		<img src="/images/livre3.jpg" alt="Couverture Nana" class="cover" />
 	</div>
 </div>
+
 
 <div class="synopsis-container">
 	<p class="synopsis">
@@ -79,18 +78,16 @@
 
 	.genre-container {
 		display: block;
-		width: fit-content;
 		border: var(--couleur-marron);
 		margin-left: auto;
-		margin-right: 1rem;
 		border: var(--couleur-marron);
 		background-color: var(--couleur-beige-clair);
 		border-radius: 10px;
+		border: solid 2px var(--couleur-marron);
 	}
 
 	.genre {
-		margin: 1rem;
-		font-size: 16px;
+		margin: 0.6rem;
 	}
 
 	.cover {
@@ -182,11 +179,20 @@
 		-webkit-tap-highlight-color: transparent;
 	}
 
+	@media (min-width: 768px) {
+		.cover {
+			width: 250px;
+		}
+	}
+
+	.genre{
+			font-size: 15px;
+		}
+
 	@media (min-width: 1025px) {
 		.author-container {
 			display: flex;
-            flex-direction: column;
-			width: 20%;
+			flex-direction: column;
 			border: var(--couleur-marron);
 			margin-left: 1rem;
 			margin-top: 1rem;
@@ -203,18 +209,32 @@
 		}
 
 		.book-details {
-			display: flex;
-			justify-content: space-between;
+			display: grid;
+			grid-template-columns: 1fr auto 1fr;
 			align-items: center;
+			margin: 0 1rem;
+			gap: 1rem;
+			padding-bottom: 1rem;
 		}
 
 		.cover {
 			width: 250px;
 		}
 
+		.genre{
+			font-size: 15px;
+		}
+
+		.genre-container {
+	
+			position: relative;
+			bottom: 40px;
+		
+		}
+
 		.synopsis {
 			margin: 2rem;
-			font-size: 15px;
+			font-size: 18px;
 		}
 	}
 </style>
