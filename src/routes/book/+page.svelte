@@ -36,7 +36,8 @@
 
 <div class="synopsis-container">
 	<p class="synopsis">
-		Quand l'une rêve de triomphe pour son groupe de rock les BlackStones, l'autre ne recherche qu'un
+		  Synopsis :
+		<br>Quand l'une rêve de triomphe pour son groupe de rock les BlackStones, l'autre ne recherche qu'un
 		mari parfait pour fonder un foyer. Au gré des aventures de ces deux filles, l'une orpheline
 		versée dans le gothique et l'autre fashion victime incapable de travailler, se tisse une amitié
 		et une success story passionnante.
@@ -62,11 +63,15 @@
 </div>
 
 <style>
+
+
+
 	.container {
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
 		align-items: center;
+		width: 100%;
 	}
 
 	.author {
@@ -84,6 +89,7 @@
 		background-color: var(--couleur-beige-clair);
 		border-radius: 10px;
 		border: solid 2px var(--couleur-marron);
+		
 	}
 
 	.genre {
@@ -117,7 +123,7 @@
 
 	.add-booklist,
 	.read {
-		min-width: 150px;
+		min-width: 100px;
 		padding: 0.8rem;
 		background: transparent;
 		border: none;
