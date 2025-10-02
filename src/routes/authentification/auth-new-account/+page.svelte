@@ -1,4 +1,8 @@
 <script>
+	// Permet de naviguer sans recharger le site //
+	import { goto } from '$app/navigation';
+	//module de Sveltekit pour charger les variables d'environnement au démarrage
+	import api from '$lib/api.js';
 	// Onglet actif : true = connexion, false = création de compte
 	let isLogin = true;
 
@@ -15,9 +19,37 @@
 	let signupConfirmPassword = '';
 
 	// Test connexion
-	function handleLogin(event) {
+	let message = '';
+	let isLoading = false;
+	// URL du backend (.env) //
+	const API_URL = 'http://localhost:3000/api';
+	// Connexion -> vérifier URL de redirection
+	async function handleLogin(event) {
+		console.log(event);
 		event.preventDefault();
-		alert(`Connexion de ${loginEmail}`);
+		isLoading = true;
+		message = '';
+		try {
+			const response = await fetch(`${API_URL}/api/auth/login`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					email: loginEmail,
+					password: loginPassword
+				})
+			});
+			const data = await response.json();
+			if (!response.ok) {
+				message = data.message || 'Erreur de connexion.';
+				return;
+			}
+			localStorage.setItem('token', data.token);
+			message = 'Connexion réussie ✅';
+			goto('/account/dashboard');
+		} catch (error) {
+			message = 'Erreur serveur. Vérifier la connexion au backend.';
+			console.error(error);
+		}
 	}
 
 	// Test création de compte

@@ -1,4 +1,6 @@
 <script>
+	import { onMount } from 'svelte';
+
 	// états réactifs
 	let inBooklist = $state(false);
 	let isRead = $state(false);
@@ -10,37 +12,46 @@
 	function toggleRead() {
 		isRead = !isRead;
 	}
+
+	let { data } = $props();
 </script>
 
-<h1 class="book-title">Nana</h1>
+<h1 class="book-title">{data.book.title}</h1>
 
 <div class="genre-container">
-	<p class="genre">Shoujo</p>
+	<div class="genre">
+		{#if data.book.genres?.length}
+			{#each data.book.genres as genre}
+				<p>{genre.name}</p>
+			{/each}
+		{/if}
+	</div>
 </div>
 
 <div class="book-details">
 	<div class="author-container">
-		<p class="author">
-			Ai Yazawa est une mangaka japonaise née le 7 mars 1967 à Osaka. Elle est principalement connue
-			pour ses œuvres "Nana" et "Paradise Kiss", qui ont été adaptées en séries animées et en films
-			live-action. Son style distinctif et ses récits captivants lui ont valu une grande popularité
-			au Japon et à l'international.
-		</p>
+		<div class="author">
+			{#if data.book.authors?.length}
+				{#each data.book.authors as author}
+					<h3>
+						{author.name}
+						{author.firstname}
+					</h3>
+					<p>{author.bio}</p>
+				{/each}
+			{/if}
+		</div>
 	</div>
 
 	<div class="container">
-		<img src="/images/livre3.jpg" alt="Couverture Nana" class="cover" />
+		<img src={data.book.cover} alt={`Couverture ${data.book.title}`} class="cover" />
 	</div>
 </div>
 
-
 <div class="synopsis-container">
 	<p class="synopsis">
-		  Synopsis :
-		<br>Quand l'une rêve de triomphe pour son groupe de rock les BlackStones, l'autre ne recherche qu'un
-		mari parfait pour fonder un foyer. Au gré des aventures de ces deux filles, l'une orpheline
-		versée dans le gothique et l'autre fashion victime incapable de travailler, se tisse une amitié
-		et une success story passionnante.
+		Synopsis :
+		<br />{data.book.synopsis}
 	</p>
 </div>
 
@@ -63,9 +74,6 @@
 </div>
 
 <style>
-
-
-
 	.container {
 		display: flex;
 		flex-direction: column;
@@ -89,7 +97,6 @@
 		background-color: var(--couleur-beige-clair);
 		border-radius: 10px;
 		border: solid 2px var(--couleur-marron);
-		
 	}
 
 	.genre {
@@ -191,9 +198,9 @@
 		}
 	}
 
-	.genre{
-			font-size: 15px;
-		}
+	.genre {
+		font-size: 15px;
+	}
 
 	@media (min-width: 1025px) {
 		.author-container {
@@ -210,6 +217,7 @@
 
 		.author {
 			display: flex;
+			flex-direction: column;
 			margin: 1rem;
 			font-size: 16px;
 		}
@@ -227,15 +235,13 @@
 			width: 250px;
 		}
 
-		.genre{
+		.genre {
 			font-size: 15px;
 		}
 
 		.genre-container {
-	
 			position: relative;
 			bottom: 40px;
-		
 		}
 
 		.synopsis {
