@@ -104,7 +104,6 @@
 		max-width: 900px;
 		text-align: justify;
 		font-family: var(--font-global);
-		color: var(--couleur-marron);
 		line-height: 1.6;
 		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 		margin-bottom: 3rem;

@@ -25,8 +25,8 @@
         <div class="book_data">
             <img src={book.cover} alt={book.title}>
             <div class="book_info">
-                <p>{book.title}</p>
-                <p>{book.author}</p>
+                <p class="book_title">{book.title}</p>
+                <p class="book_author">{book.author}</p>
             </div>
         </div>
         <div class="buttons">
@@ -62,14 +62,20 @@
         display: flex;
         justify-content: space-between;
         align-items: baseline;
-        padding: 0.8rem;
+        padding: 1.8rem;
+    }
+
+    .page_title h1 {
+        font-size: 28px;
+    }
+
+    .page_title p {
+        text-shadow: 0 4px 4px rgba(122, 122, 122, 0.5);
     }
     
     .book {
         display: flex;
-        /* height: 10rem; */
         align-items: center;
-        /* border: solid salmon; */
         justify-content: space-between;
     }
 
@@ -78,7 +84,6 @@
         height: 10rem;
         align-items: center;
         padding: 0 0.8rem;  
-        /* border: solid darkblue; */
         width: 80%;  
     }
 
@@ -90,12 +95,32 @@
 
     .book_info {
         margin-left: 0.8rem;
+        min-width: 0;
+    }
+
+    .book_title {
+        display: -webkit-box;
+        line-clamp: 2;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .book_title {
+        font-weight: 700;
+
+    }
+
+    .book_author {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .buttons {
         display: flex;
         flex-wrap: nowrap;
-        /* border: solid green; */
     }
 
     .to-read {
@@ -107,6 +132,7 @@
         width: 4rem;
         height: 4rem;
         margin: 0;
+        padding: 0.8rem;
     }
 
     .delete-booklist {
@@ -118,6 +144,7 @@
         width: 4rem;
         height: 4rem;
         margin: 0;
+        padding: 0.8rem;
     }
 
     .icon-wrapper {
@@ -154,5 +181,16 @@
     article:nth-child(even) {
         background-color: var(--couleur-beige-clair);
     } 
+
+    /* Media queries */
+
+    /* Desktop > 1024px */
+    @media (min-width: 1025px) {
+
+        .delete-booklist {
+            margin-right: 1rem;
+        }
+
+    }
 
 </style>

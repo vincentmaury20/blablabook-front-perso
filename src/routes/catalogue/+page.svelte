@@ -72,7 +72,6 @@
 	h1 {
 		text-align: center;
 		font-family: var(--font-global);
-		color: var(--couleur-marron);
 		margin: 2rem 0 1rem 0;
 	}
 
@@ -133,7 +132,6 @@
 	.book {
 		padding: 1rem;
 		font-family: var(--font-global);
-		color: var(--couleur-marron);
 		line-height: 1.6;
 		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 		border-radius: 20px;

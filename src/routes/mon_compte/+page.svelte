@@ -67,7 +67,6 @@
         flex-direction: column;
         align-items: center;
         gap: 0.5rem;
-        color: var(--couleur-marron);
         padding: 2rem 0;
     }
 
@@ -234,7 +233,6 @@
             display: block;
             background-color: var(--couleur-beige-clair);        
             padding: 0.5rem;
-            color: var(--couleur-marron);
         }
 
         .book_title {
