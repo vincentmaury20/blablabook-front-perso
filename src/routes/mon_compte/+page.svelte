@@ -211,6 +211,11 @@
         .book {
             width: 15rem;
             height: 20rem;
+            transition: transform 0.3s ease;
+        }
+
+        .book:hover {
+            transform: scale(1.05);
         }
 
         .book img {

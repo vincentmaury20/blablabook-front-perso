@@ -53,15 +53,15 @@
 		gap: 1rem;
 		overflow-x: auto;
 		scroll-snap-type: x mandatory;
-    width: 100vw;
+    	width: 100vw;
 		padding: 1rem 0;
 		background-color: var(--couleur-bleu-vert);
-    justify-content: center; /
-    align-items: center; 
+    	justify-content: center; /
+    	align-items: center; 
 	}
 
 	.carousel img {
-    flex: 0 0 48%;
+    	flex: 0 0 48%;
 		width: 100%;
 		height: 250px;
 		object-fit: contain;
