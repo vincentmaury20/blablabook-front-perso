@@ -1,5 +1,5 @@
 <script>
-	let { data, form } = $props();
+	let { data, form, va } = $props();
 	// équivalent de :
 	// export let data;
 	// export let form;
@@ -41,7 +41,7 @@
 		</form>
 	{:else}
 		<!-- Formulaire Création de compte -->
-		<form method="POST" action="?/signup">
+		<form method="POST" action="?/register">
 			<label for="name">Nom :</label>
 			<input type="text" name="name" id="name" required />
 
