@@ -1,27 +1,27 @@
 <script>
-	let isRead = false;
+	// let isRead = false;
 
 	function toggle() {
-		isRead = !isRead;
+		// isRead = !isRead;
 	}
 
-	let books = [
-		{
-			id: 1,
-			title: 'Le Journal de Mr Darcy',
-			author: 'Amanda Grange',
-			cover: '/images/Cover_1.png'
-		},
-		{ id: 2, title: 'Golden Kamui Tome 1', author: 'Satoru Noda', cover: '/images/Cover_2.jpg' },
-		{ id: 3, title: 'Ernestine', author: 'Salomé Lahoche', cover: '/images/Cover_3.jpg' },
-		{ id: 4, title: 'Paradise Kiss Tome 1', author: 'Ai Yazawa', cover: '/images/Cover_4.jpg' },
-		{
-			id: 5,
-			title: 'Rendez-vous avec le crime',
-			author: 'Julia Chapman',
-			cover: '/images/Cover_5.jpg'
-		}
-	];
+	// let books = [
+	// 	{
+	// 		id: 1,
+	// 		title: 'Le Journal de Mr Darcy',
+	// 		author: 'Amanda Grange',
+	// 		cover: '/images/Cover_1.png'
+	// 	},
+	// 	{ id: 2, title: 'Golden Kamui Tome 1', author: 'Satoru Noda', cover: '/images/Cover_2.jpg' },
+	// 	{ id: 3, title: 'Ernestine', author: 'Salomé Lahoche', cover: '/images/Cover_3.jpg' },
+	// 	{ id: 4, title: 'Paradise Kiss Tome 1', author: 'Ai Yazawa', cover: '/images/Cover_4.jpg' },
+	// 	{
+	// 		id: 5,
+	// 		title: 'Rendez-vous avec le crime',
+	// 		author: 'Julia Chapman',
+	// 		cover: '/images/Cover_5.jpg'
+	// 	}
+	// ];
 	
 	let { data } = $props();
 
@@ -32,10 +32,45 @@
 <section class="booklist">
 	<header class="page_title">
 		<h1>Ma booklist</h1>
+		<!-- <p>{data.totalBooks} Livres</p> -->
 		<p>Retour</p>
 	</header>
+	{#each data.userbooks as userbook}
+		<article class="book">
+			<div class="book_data">
+				<img src={userbook.book.cover} alt={userbook.book.title} />
+				<div class="book_info">
+					<p class="book_title"><a href="/livre/{userbook.book.id}">{userbook.book.title}</a></p>
+					<p class="book_author">{userbook.book.author}</p>
+				</div>
+			</div>
+			<div class="buttons">
+				<button
+					class="to-read"
+					class:active={userbook.toRead}
+					onclick={toggle}
+					aria-label={userbook.toRead ? 'A lire' : 'Lu'}
+				>
+					{#if userbook.toRead}
+						<span class="icon-wrapper">
+							<span class="material-symbols--bookmark-added-grey"></span>
+						</span>
+					{:else}
+						<span class="icon-wrapper">
+							<span class="material-symbols--bookmark-added-blue"></span>
+						</span>
+					{/if}
+				</button>
+				<button class="delete-booklist" aria-label="Supprimer de ma booklist">
+					<span class="icon-wrapper">
+						<span class="material-symbols--delete-rounded"></span>
+					</span>
+				</button>
+			</div>
+		</article>
+	{/each}
 
-	{#each books as book}
+	<!-- {#each books as book}
 		<article class="book">
 			<div class="book_data">
 				<img src={book.cover} alt={book.title} />
@@ -68,7 +103,7 @@
 				</button>
 			</div>
 		</article>
-	{/each}
+	{/each} -->
 
 	<div class="pagination">
 		{#if data.page > 1}
