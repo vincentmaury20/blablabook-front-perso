@@ -30,43 +30,35 @@
 	<!-- Formulaire Connexion -->
 	{#if isLogin}
 		<form method="POST" action="?/login">
-			<label
-				>Email :
-				<input name="email" type="email" value={form?.email ?? ''} required />
-			</label>
-			<label
-				>Mot de passe :
-				<input name="password" type="password" required />
-			</label>
+			<label for="email">Email :</label>
+			<input type="email" name="email" id="email" value={form?.email ?? ''} required />
+
+			<label for="password">Mot de passe :</label>
+			<input type="password" name="password" id="password" required />
+
 			<button type="submit">Se connecter</button>
 		</form>
 	{:else}
 		<!-- Formulaire Création de compte -->
 		<form method="POST" action="?/signup">
-			<label
-				>Nom :
-				<input name="lastName" type="text" required />
-			</label>
-			<label
-				>Prénom :
-				<input name="firstName" type="text" required />
-			</label>
-			<label
-				>Âge :
-				<input name="age" type="number" min="0" required />
-			</label>
-			<label
-				>Email :
-				<input name="email" type="email" required />
-			</label>
-			<label
-				>Mot de passe :
-				<input name="password" type="password" required minlength="6" />
-			</label>
-			<label
-				>Confirmation du mot de passe :
-				<input name="confirm" type="password" required minlength="6" />
-			</label>
+			<label for="lastName">Nom :</label>
+			<input type="text" name="lastName" id="lastName" required />
+
+			<label for="firstName">Prénom :</label>
+			<input type="text" name="firstName" id="firstName" required />
+
+			<label for="age">Âge :</label>
+			<input type="number" name="age" id="age" min="0" required />
+
+			<label for="emailSignup">Email :</label>
+			<input type="email" name="email" id="emailSignup" required />
+
+			<label for="passwordSignup">Mot de passe :</label>
+			<input type="password" name="password" id="passwordSignup" required minlength="6" />
+
+			<label for="confirm">Confirmation du mot de passe :</label>
+			<input type="password" name="confirm" id="confirm" required minlength="6" />
+
 			<button type="submit">Créer mon compte</button>
 		</form>
 	{/if}
@@ -118,10 +110,10 @@
 		border: 1px solid #ccc;
 	}
 
-	.forgot-password {
+	/* .forgot-password {
 		color: var(--couleur-bleu-vert);
 		text-decoration: none;
-	}
+	} */
 
 	@media (max-width: 768px) {
 		.auth-container {
