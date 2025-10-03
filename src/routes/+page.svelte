@@ -47,25 +47,19 @@
     	align-items: center; 
 	}
 
-	.carousel img {
+	.img-container img {
     flex: 0 0 48%;
 		object-fit: cover;
     flex-shrink: 0;
 		scroll-snap-align: start;
     transition: transform 0.3s ease;
-    border: solid 3px black;
 	}
 
 	.carousel img:hover {
 		transform: scale(1.05);
 	}
 
- .img-container {
-  max-width: 300px;
-	max-height: 300px;
-      border: solid 3px red;
-
- }
+  
 
 	.catalog {
 		background-color: var(--couleur-vieux-rose);
@@ -101,6 +95,19 @@
 	}
 
 	/* Media queries */
+
+@media (max-width: 768px) {
+		.carousel {
+			grid-auto-columns: 200px;
+			gap: 1.5rem;
+		}
+
+		.carousel img {
+			height: 320px;
+		}
+
+	}
+
 	@media (min-width: 768px) {
 		.carousel {
 			grid-auto-columns: 200px;
@@ -110,6 +117,7 @@
 		.carousel img {
 			height: 320px;
 		}
+
 	}
 
 	@media (min-width: 1024px) {
