@@ -1,123 +1,71 @@
 <script>
-	// Permet de naviguer sans recharger le site //
-	import { goto } from '$app/navigation';
-	//module de Sveltekit pour charger les variables d'environnement au démarrage
-	import api from '$lib/api.js';
-	// Onglet actif : true = connexion, false = création de compte
-	let isLogin = true;
-
-	// Connexion
-	let loginEmail = '';
-	let loginPassword = '';
-
-	// Création de compte
-	let signupFirstName = '';
-	let signupLastName = '';
-	let signupAge = '';
-	let signupEmail = '';
-	let signupPassword = '';
-	let signupConfirmPassword = '';
-
-	// Test connexion
-	let message = '';
-	let isLoading = false;
-	// URL du backend (.env) //
-	const API_URL = 'http://localhost:3000/api';
-	// Connexion -> vérifier URL de redirection
-	async function handleLogin(event) {
-		console.log(event);
-		event.preventDefault();
-		isLoading = true;
-		message = '';
-		try {
-			const response = await fetch(`${API_URL}/api/auth/login`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					email: loginEmail,
-					password: loginPassword
-				})
-			});
-			const data = await response.json();
-			if (!response.ok) {
-				message = data.message || 'Erreur de connexion.';
-				return;
-			}
-			localStorage.setItem('token', data.token);
-			message = 'Connexion réussie ✅';
-			goto('/account/dashboard');
-		} catch (error) {
-			message = 'Erreur serveur. Vérifier la connexion au backend.';
-			console.error(error);
-		}
-	}
-
-	// Test création de compte
-	function handleSignup(event) {
-		event.preventDefault();
-		if (signupPassword !== signupConfirmPassword) {
-			alert('Les mots de passe ne correspondent pas !');
-			return;
-		}
-		const user = {
-			firstName: signupFirstName,
-			lastName: signupLastName,
-			age: signupAge,
-			email: signupEmail
-		};
-		localStorage.setItem('signup_user', JSON.stringify(user));
-		alert('Compte créé ! (simulation frontend)');
-		window.location.href = '/account/created-account';
-	}
+	let { data, form } = $props();
+	// équivalent de :
+	// export let data;
+	// export let form;
+	let isLogin = true; // onglet actif : connexion ou création de compte
 </script>
 
 <div class="auth-container">
 	<!-- Onglets -->
 	<div class="tabs">
-		<div class:active={isLogin} onclick={() => (isLogin = true)}>Connexion</div>
-		<div class:active={!isLogin} onclick={() => (isLogin = false)}>Création de compte</div>
+		<div class:active={isLogin} on:click={() => (isLogin = true)}>Connexion</div>
+		<div class:active={!isLogin} on:click={() => (isLogin = false)}>Création de compte</div>
 	</div>
 
-	<!-- Connexion -->
+	<!-- Messages -->
+	{#if form?.missing}
+		<p class="error">Le champ email est requis</p>
+	{/if}
+	{#if form?.incorrect}
+		<p class="error">Identifiants invalides</p>
+	{/if}
+	{#if form?.error}
+		<p class="message error">{form.error}</p>
+	{/if}
+	{#if form?.success}
+		<p class="message success">{form.success}</p>
+	{/if}
+
+	<!-- Formulaire Connexion -->
 	{#if isLogin}
-		<form onsubmit={handleLogin}>
+		<form method="POST" action="?/login">
 			<label
-				>Email
-				<input type="email" bind:value={loginEmail} required />
+				>Email :
+				<input name="email" type="email" value={form?.email ?? ''} required />
 			</label>
 			<label
-				>Mot de passe
-				<input type="password" bind:value={loginPassword} required />
+				>Mot de passe :
+				<input name="password" type="password" required />
 			</label>
-			<a href="/authentification/forgot-password" class="forgot-password">Mot de passe oublié ?</a>
 			<button type="submit">Se connecter</button>
 		</form>
 	{:else}
-		<!-- Création de compte -->
-		<form onsubmit={handleSignup}>
+		<!-- Formulaire Création de compte -->
+		<form method="POST" action="?/signup">
 			<label
-				>Nom
-				<input type="text" bind:value={signupLastName} required />
+				>Nom :
+				<input name="lastName" type="text" required />
 			</label>
 			<label
-				>Prénom
-				<input type="text" bind:value={signupFirstName} required />
+				>Prénom :
+				<input name="firstName" type="text" required />
 			</label>
 			<label
-				>Âge
-				<input type="number" bind:value={signupAge} min="0" required />
+				>Âge :
+				<input name="age" type="number" min="0" required />
 			</label>
 			<label
-				>Email
-				<input type="email" bind:value={signupEmail} required />
+				>Email :
+				<input name="email" type="email" required />
 			</label>
 			<label
-				>Mot de passe
-				<input type="password" bind:value={signupPassword} required minlength="6" />
+				>Mot de passe :
+				<input name="password" type="password" required minlength="6" />
 			</label>
 			<label
-				>Confirmation du mot de passe
-				<input type="password" bind:value={signupConfirmPassword} required minlength="6" />
+				>Confirmation du mot de passe :
+				<input name="confirm" type="password" required minlength="6" />
 			</label>
 			<button type="submit">Créer mon compte</button>
 		</form>
