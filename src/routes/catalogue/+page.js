@@ -5,8 +5,7 @@ export async function load({ fetch, url }) {
   const res = await fetch(`http://localhost:3000/catalog?page=${page}&limit=${limit}`);
   const data = await res.json();
 
-//   console.log(books);
-  console.log(data);
+  console.log(data[0]);
 
   return { 
     books: data.books,

@@ -11,10 +11,6 @@
 		<div class="book-container">
 			<a href="/livre/{book.id}">
 				<img src={book.cover} alt={book.title} />
-				<!-- <img
-					src="http://localhost:3000/uploads/books/images/conan.jpg"
-					alt="Couverture {book.title}"
-				/> -->
 			</a>
 			<div class="book-description">
 				<div class="book">
