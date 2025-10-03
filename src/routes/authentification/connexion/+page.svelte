@@ -9,8 +9,8 @@
 <div class="auth-container">
 	<!-- Onglets -->
 	<div class="tabs">
-		<div class:active={isLogin} on:click={() => (isLogin = true)}>Connexion</div>
-		<div class:active={!isLogin} on:click={() => (isLogin = false)}>Création de compte</div>
+		<div class:active={isLogin} onclick={() => (isLogin = true)}>Connexion</div>
+		<div class:active={!isLogin} onclick={() => (isLogin = false)}>Création de compte</div>
 	</div>
 
 	<!-- Messages -->
@@ -41,11 +41,11 @@
 	{:else}
 		<!-- Formulaire Création de compte -->
 		<form method="POST" action="?/signup">
-			<label for="lastName">Nom :</label>
-			<input type="text" name="lastName" id="lastName" required />
+			<label for="name">Nom :</label>
+			<input type="text" name="name" id="name" required />
 
-			<label for="firstName">Prénom :</label>
-			<input type="text" name="firstName" id="firstName" required />
+			<label for="firstname">Prénom :</label>
+			<input type="text" name="firstname" id="firstname" required />
 
 			<label for="age">Âge :</label>
 			<input type="number" name="age" id="age" min="0" required />
