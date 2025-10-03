@@ -22,6 +22,11 @@
 			cover: '/images/Cover_5.jpg'
 		}
 	];
+	
+	let { data } = $props();
+
+	import { goto } from '$app/navigation';
+
 </script>
 
 <section class="booklist">
@@ -64,6 +69,16 @@
 			</div>
 		</article>
 	{/each}
+
+	<div class="pagination">
+		{#if data.page > 1}
+			<button onclick={() => goto(`?page=${data.page - 1}`)}>Précédente</button>
+		{/if}
+		<span>Page {data.page} / {data.totalPages}</span>
+		{#if data.page < data.totalPages}
+			<button onclick={() => goto(`?page=${data.page + 1}`)}>Suivante</button>
+		{/if}
+</div>
 </section>
 
 <style>

@@ -30,7 +30,7 @@
 	{/each}
 </section>
 
-<div>
+<div class="pagination">
 	{#if data.page > 1}
 		<button onclick={() => goto(`?page=${data.page - 1}`)}>Précédente</button>
 	{/if}
@@ -150,6 +150,14 @@
 	.add-button:hover {
 		transform: scale(1.05);
 		box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+	}
+
+	.pagination {
+		text-align: center;
+	}
+
+	.pagination button {
+		margin: 1rem 1rem 2.8rem 1rem;
 	}
 
 	/* Media Queries */

@@ -12,4 +12,4 @@ export async function load({ fetch, url }) {
     page: data.page,
     totalPages: data.totalPages
    };
-}
+};
