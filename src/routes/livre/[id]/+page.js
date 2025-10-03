@@ -5,4 +5,4 @@ export async function load({ params, id }) {
   console.log(book);
 
   return { book };
-}
+}   

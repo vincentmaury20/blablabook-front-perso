@@ -6,11 +6,13 @@
 	<h1>Notre sélection</h1>
 	<div class="carousel">
 		{#each data.book as book}
-			<div class="img-container"><img src={book.cover} alt={book.title} /></div>
+			<a href="/livre/{book.id}">
+				<div class="img-container"><img src={book.cover} alt={book.title} /></div>
+			</a>
 		{/each}
 	</div>
 
-	<button class="catalog">Voir le catalogue</button>
+	<button class="catalog"><a href="/catalogue">Voir le catalogue</a></button>
 
 	<div class="about">
 		<p>
@@ -23,14 +25,12 @@
 </div>
 
 <style>
-
-
 	.home-content {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		gap: 1rem;
- }
+	}
 
 	.carousel {
 		width: 100%;
@@ -40,26 +40,24 @@
 		gap: 1rem;
 		overflow-x: auto;
 		scroll-snap-type: x mandatory;
-    	width: 100vw;
+		width: 100vw;
 		padding: 1rem 0;
 		background-color: var(--couleur-bleu-vert);
-    	justify-content: center; /
-    	align-items: center; 
+		justify-content: center;
+		align-items: center;
 	}
 
 	.img-container img {
-    flex: 0 0 48%;
+		flex: 0 0 48%;
 		object-fit: cover;
-    flex-shrink: 0;
+		flex-shrink: 0;
 		scroll-snap-align: start;
-    transition: transform 0.3s ease;
+		transition: transform 0.3s ease;
 	}
 
 	.carousel img:hover {
 		transform: scale(1.05);
 	}
-
-  
 
 	.catalog {
 		background-color: var(--couleur-vieux-rose);
@@ -96,7 +94,7 @@
 
 	/* Media queries */
 
-@media (max-width: 768px) {
+	@media (max-width: 768px) {
 		.carousel {
 			grid-auto-columns: 200px;
 			gap: 1.5rem;
@@ -105,7 +103,6 @@
 		.carousel img {
 			height: 320px;
 		}
-
 	}
 
 	@media (min-width: 768px) {
@@ -117,7 +114,6 @@
 		.carousel img {
 			height: 320px;
 		}
-
 	}
 
 	@media (min-width: 1024px) {
