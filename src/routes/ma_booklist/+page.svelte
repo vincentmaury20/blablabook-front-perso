@@ -1,8 +1,8 @@
 <script>
-    let isActive = false;
+    let isRead = false;
 
     function toggle() {
-        isActive = !isActive;
+        isRead = !isRead;
     };
 
     let books = [
@@ -30,8 +30,8 @@
             </div>
         </div>
         <div class="buttons">
-            <button class="to-read" class:active={isActive} onclick={toggle} aria-label={isActive ? "A lire" : "Lu"}>
-                {#if isActive}
+            <button class="to-read" class:active={isRead} onclick={toggle} aria-label={isRead ? "A lire" : "Lu"}>
+                {#if isRead}
                     <span class="icon-wrapper">
                         <span class="material-symbols--bookmark-added-grey"></span>
                     </span>

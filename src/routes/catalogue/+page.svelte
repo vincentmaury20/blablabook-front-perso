@@ -1,13 +1,18 @@
 <h1>Catalogue</h1>
 
-<!-- <script>
-  let books = [
-    { id: 1, title: "Livre 1", author: "Auteur 1", img: "/images/livre1.jpg" },
-    { id: 2, title: "Livre 2", author: "Auteur 2", img: "/images/livre2.jpg" },
-  ];
+<script>
+  let { data } = $props();
+
+  import { goto } from '$app/navigation';
+
+//   let books = [
+//     { id: 1, title: "Livre 1", author: "Auteur 1", img: "/images/livre1.jpg" },
+//     { id: 2, title: "Livre 2", author: "Auteur 2", img: "/images/livre2.jpg" },
+//   ];
+
 </script>
 
-<section class="catalogue">
+<!-- <section class="catalogue">
   {#each books as book}
     <div class="book-item">
       <img src={book.img} alt={book.title} />
@@ -21,12 +26,46 @@
   {/each}
 </section> -->
 
-<section class="catalogue">
-	<div class="book-container">
+
+	<section class="catalogue">
+		{#each data.books as book}
+			<div class="book-container">
+				<img src={book.cover} alt={book.title} />
+				<div class="book-description">
+					<div class="book">
+						<p><!-- Titre : -->{book.title}</p>
+						{#if book.authors?.length}
+							{#each book.authors as author}
+								<p><!-- Auteur : -->{author.firstname} {author.name}</p>
+							{/each}
+						{/if}
+						<p>
+							<!-- Synopsis :  -->{book.synopsis}
+						</p>
+					</div>
+					<button class="add-button">Ajouter à ma booklist</button>
+				</div>
+			</div>
+		{/each}
+	</section>
+
+	<div>
+		{#if data.page > 1}
+			<button onclick={() => goto(`?page=${data.page - 1}`)}>Précédente</button>
+		{/if}
+		<span>Page {data.page} / {data.totalPages}</span>
+		{#if data.page < data.totalPages}
+			<button onclick={() => goto(`?page=${data.page + 1}`)}>Suivante</button>
+		{/if}
+	</div>
+
+<!-- <section class="catalogue"> -->
+
+	<!-- <div class="book-container">
 		<img src="/images/livre2.jpg" alt="Livre 2" />
 		<div class="book-description">
 			<div class="book">
-				<p>Titre : lorem ipsum</p>
+				<p>Titre : {data.book.title}</p>
 				<p>Auteur : Jean Scribe</p>
 				<p>
 					Synopsis : Lorem ipsum dolor sit amet. Et error soluta ab laudantium impedit id tenetur
@@ -35,9 +74,9 @@
 			</div>
 			<button class="add-button">Ajouter à ma booklist</button>
 		</div>
-	</div>
+	</div> -->
 
-	<div class="book-container">
+<!-- 	<div class="book-container">
 		<img src="/images/livre3.jpg" alt="Livre 3" />
 		<div class="book-description">
 			<div class="book">
@@ -65,8 +104,8 @@
 			</div>
 			<button class="add-button">Ajouter à ma booklist</button>
 		</div>
-	</div>
-</section>
+	</div> -->
+<!-- </section>  -->
 
 <style>
 	h1 {
