@@ -1,11 +1,13 @@
 <footer>
 	<div class="footer-content">
 		<div class="footer-text">
-			<p>Mentions légales</p>
-			<p>© 2025 - Blablabook. Tous droits réservés</p>
+			<a href="/mentions">
+				<p>Mentions légales</p>
+				<p>© 2025 - Blablabook. Tous droits réservés</p>
+			</a>
 		</div>
 
-		<img src="/LogoBBB.png" alt="Logo BlaBlaBook" class="logo-icon" />
+		<a href="/"><img src="/LogoBBB.png" alt="Logo BlaBlaBook" class="logo-icon" /></a>
 	</div>
 </footer>
 

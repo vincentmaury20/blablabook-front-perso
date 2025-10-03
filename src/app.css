@@ -36,3 +36,12 @@ button {
   font-weight: 700;
   cursor: pointer;
 }
+
+a {
+/*   display: inline-block;
+ */  border: none;
+  text-decoration: none;
+  color: inherit;
+  padding: 0;
+  margin: 0;
+}  

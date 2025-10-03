@@ -1,10 +1,10 @@
 <header class="header">
 	<div class="header-top">
 		<div class="logo-title">
-			<img src="/LogoBBB.png" alt="Logo BlaBlaBook" class="logo-icon" />
-			<p class="title">BlaBlaBook</p>
+			<a href="/"><img src="/LogoBBB.png" alt="Logo BlaBlaBook" class="logo-icon" /></a>
+			<p class="title"><a href="/">BlaBlaBook</a></p>
 		</div>
-		<button class="connection-btn">Connexion</button>
+		<button class="connection-btn"><a href="/connexion">Connexion</a></button>
 	</div>
 	<div class="search-container">
 		<input type="search" placeholder="Recherche..." class="search-input" />
@@ -40,6 +40,7 @@
 		margin: 0;
 		text-align: center;
 	}
+
 	.connection-btn {
 		font-family: var(--font-global);
 		padding: 0.5rem 1rem;

@@ -14,24 +14,25 @@
 	</div>
 
 	<!-- Messages -->
-	{#if form?.missing}
+	<!-- {#if form?.missing}
 		<p class="error">Le champ email est requis</p>
 	{/if}
 	{#if form?.incorrect}
 		<p class="error">Identifiants invalides</p>
-	{/if}
-	{#if form?.error}
+	{/if} -->
+	<!-- {#if form?.error}
 		<p class="message error">{form.error}</p>
-	{/if}
-	{#if form?.success}
+	{/if} -->
+	<!-- {#if form?.success}
 		<p class="message success">{form.success}</p>
-	{/if}
+	{/if} -->
 
 	<!-- Formulaire Connexion -->
 	{#if isLogin}
 		<form method="POST" action="?/login">
 			<label for="email">Email :</label>
-			<input type="email" name="email" id="email" value={form?.email ?? ''} required />
+			<!-- <input type="email" name="email" id="email" value={form?.email ?? ''} required /> -->
+			<input type="email" name="email" id="email" required />
 
 			<label for="password">Mot de passe :</label>
 			<input type="password" name="password" id="password" required />

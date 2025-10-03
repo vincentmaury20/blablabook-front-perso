@@ -1,113 +1,65 @@
-<h1>Catalogue</h1>
-
 <script>
-  let { data } = $props();
+	let { data } = $props();
 
-  import { goto } from '$app/navigation';
-
-//   let books = [
-//     { id: 1, title: "Livre 1", author: "Auteur 1", img: "/images/livre1.jpg" },
-//     { id: 2, title: "Livre 2", author: "Auteur 2", img: "/images/livre2.jpg" },
-//   ];
-
+	import { goto } from '$app/navigation';
 </script>
 
-<!-- <section class="catalogue">
-  {#each books as book}
-    <div class="book-item">
-      <img src={book.img} alt={book.title} />
-      <div class="text-btn-wrapper">
-        <div class="book">
-          <p>Titre : {book.title} Auteur : {book.author}</p>
-        </div>
-        <button class="add-btn">Ajouter à ma booklist</button>
-      </div>
-    </div>
-  {/each}
-</section> -->
+<h1>Catalogue</h1>
 
-
-	<section class="catalogue">
-		{#each data.books as book}
-			<div class="book-container">
+<section class="catalogue">
+	{#each data.books as book}
+		<div class="book-container">
+			<a href="/livre/{book.id}">
 				<img src={book.cover} alt={book.title} />
-				<div class="book-description">
-					<div class="book">
-						<p><!-- Titre : -->{book.title}</p>
-						{#if book.authors?.length}
-							{#each book.authors as author}
-								<p><!-- Auteur : -->{author.firstname} {author.name}</p>
-							{/each}
-						{/if}
-						<p>
-							<!-- Synopsis :  -->{book.synopsis}
-						</p>
-					</div>
-					<button class="add-button">Ajouter à ma booklist</button>
+				<!-- <img
+					src="http://localhost:3000/uploads/books/images/conan.jpg"
+					alt="Couverture {book.title}"
+				/> -->
+			</a>
+			<div class="book-description">
+				<div class="book">
+					<p class="book-title"><a href="/livre/{book.id}">{book.title}</a></p>
+					{#if book.authors?.length}
+						{#each book.authors as author}
+							<p class="book-author">{author.firstname} {author.name}</p>
+						{/each}
+					{/if}
+					<p>
+						{book.synopsis}
+					</p>
 				</div>
+				<button class="add-button">Ajouter à ma booklist</button>
 			</div>
-		{/each}
-	</section>
-
-	<div>
-		{#if data.page > 1}
-			<button onclick={() => goto(`?page=${data.page - 1}`)}>Précédente</button>
-		{/if}
-		<span>Page {data.page} / {data.totalPages}</span>
-		{#if data.page < data.totalPages}
-			<button onclick={() => goto(`?page=${data.page + 1}`)}>Suivante</button>
-		{/if}
-	</div>
-
-<!-- <section class="catalogue"> -->
-
-	<!-- <div class="book-container">
-		<img src="/images/livre2.jpg" alt="Livre 2" />
-		<div class="book-description">
-			<div class="book">
-				<p>Titre : {data.book.title}</p>
-				<p>Auteur : Jean Scribe</p>
-				<p>
-					Synopsis : Lorem ipsum dolor sit amet. Et error soluta ab laudantium impedit id tenetur
-					corrupti ab nihil nulla.
-				</p>
-			</div>
-			<button class="add-button">Ajouter à ma booklist</button>
 		</div>
-	</div> -->
+	{/each}
+</section>
 
-<!-- 	<div class="book-container">
-		<img src="/images/livre3.jpg" alt="Livre 3" />
-		<div class="book-description">
-			<div class="book">
-				<p>Titre : lorem ipsum</p>
-				<p>Auteur : Jean Scribe</p>
-				<p>
-					Synopsis : Lorem ipsum dolor sit amet. Et error soluta ab laudantium impedit id tenetur
-					corrupti ab nihil nulla.
-				</p>
-			</div>
-			<button class="add-button">Ajouter à ma booklist</button>
-		</div>
-	</div>
-
-	<div class="book-container">
-		<img src="/images/livre4.jpg" alt="Livre 4" />
-		<div class="book-description">
-			<div class="book">
-				<p>Titre : lorem ipsum</p>
-				<p>Auteur : Jean Scribe</p>
-				<p>
-					Synopsis : Lorem ipsum dolor sit amet. Et error soluta ab laudantium impedit id tenetur
-					corrupti ab nihil nulla.
-				</p>
-			</div>
-			<button class="add-button">Ajouter à ma booklist</button>
-		</div>
-	</div> -->
-<!-- </section>  -->
+<div>
+	{#if data.page > 1}
+		<button onclick={() => goto(`?page=${data.page - 1}`)}>Précédente</button>
+	{/if}
+	<span>Page {data.page} / {data.totalPages}</span>
+	{#if data.page < data.totalPages}
+		<button onclick={() => goto(`?page=${data.page + 1}`)}>Suivante</button>
+	{/if}
+</div>
 
 <style>
+	.book-container a {
+		display: block;
+		width: 35%;
+		min-width: 120px;
+	}
+
+	.book-container a img {
+		display: block;
+		width: 100%;
+		height: auto;
+		object-fit: cover;
+		border-radius: 10px;
+		margin: 0.25rem;
+	}
+
 	h1 {
 		text-align: center;
 		font-family: var(--font-global);
@@ -142,6 +94,14 @@
 		object-fit: cover;
 		border-radius: 10px;
 		margin: 0.25rem;
+	}
+
+	.book-title {
+		font-weight: 700;
+	}
+
+	.book-author {
+		font-style: italic;
 	}
 
 	/* Alternance des couleurs */
