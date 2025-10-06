@@ -1,7 +1,7 @@
 import { redirect, fail } from '@sveltejs/kit';
 
 /** @satisfies {import('./$types').Actions} */
-export const actions = {
+/* export const actions = {
   login: async ({ request }) => {
     console.log(request)
     const formData = await request.formData();
@@ -30,8 +30,6 @@ export const actions = {
       return fail(500, { error: 'Erreur serveur, veuillez réessayer' });
     }
   },
-
-
   register: async ({ request }) => {
     const data = await request.formData();
 
@@ -71,4 +69,4 @@ export const actions = {
       return fail(500, { error: 'Erreur serveur, veuillez réessayer' });
     }
   }
-};
+}; */

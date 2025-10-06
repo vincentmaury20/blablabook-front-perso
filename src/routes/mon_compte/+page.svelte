@@ -1,4 +1,95 @@
-<script>   
+<script>
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+
+	let currentUser = null;
+	let currentBooks = [];
+	let errorMessage = '';
+
+	onMount(async () => {
+		const token = localStorage.getItem('token');
+		if (!token) {
+			goto('/login');
+			return;
+		}
+
+		try {
+			// Récupération des infos utilisateur
+			const userResponse = await fetch('http://localhost:3000/user/me', {
+				headers: { Authorization: `Bearer ${token}` }
+			});
+
+			if (!userResponse.ok) {
+				throw new Error('Erreur lors de la récupération des infos utilisateur');
+			}
+
+			const userData = await userResponse.json();
+			currentUser = userData.user;
+
+			// Récupération des livres favoris
+			const booksResponse = await fetch('http://localhost:3000/user/favorites', {
+				headers: { Authorization: `Bearer ${token}` }
+			});
+
+			if (!booksResponse.ok) {
+				throw new Error('Erreur lors de la récupération des livres favoris');
+			}
+
+			currentBooks = await booksResponse.json();
+		} catch (error) {
+			console.error(error);
+			errorMessage = error.message || 'Une erreur est survenue.';
+		}
+	});
+</script>
+
+<main>
+	<section class="my_informations">
+		<h1>Mon compte</h1>
+
+		{#if currentUser}
+			<div class="info">
+				<img class="avatar" src={currentUser.avatar || '/images/Avatar_crop.jpg'} alt="avatar" />
+				<div class="id">
+					<p class="name">{currentUser.name} {currentUser.firstname}</p>
+					<p class="age pink">{currentUser.age} ans</p>
+				</div>
+			</div>
+		{:else}
+			<p>{errorMessage || 'Impossible de récupérer les informations utilisateur.'}</p>
+		{/if}
+	</section>
+
+	<section class="booklist">
+		<header class="title">
+			<h1>Ma booklist</h1>
+			<p class="books_number pink">
+				{currentBooks.length}
+				{currentBooks.length === 1 ? ' livre' : ' livres'}
+			</p>
+		</header>
+
+		{#if currentBooks.length > 0}
+			<div class="books">
+				{#each currentBooks as book}
+					<article class="book">
+						<img src={book.cover} alt={book.title} />
+						<div class="caption">
+							<p class="book_title">{book.title}</p>
+							<p class="book_author">{book.author}</p>
+						</div>
+					</article>
+				{/each}
+			</div>
+		{:else}
+			<p>{errorMessage || 'Aucun livre favori trouvé.'}</p>
+		{/if}
+
+		<button class="button">Voir plus</button>
+	</section>
+</main>
+
+<!-- <script>   
    let books = [
         { id: 2, title: "Golden Kamui Tome 1", author: "Satoru Noda", cover: "/images/Cover_2.jpg" },
         { id: 3, title: "Ernestine", author: "Salomé Lahoche", cover: "/images/Cover_3.jpg" },  
@@ -38,207 +129,204 @@
         <button class="button">Voir plus</button>
 </section>
 </main>
-
+ -->
 
 <style>
-    main {
-        display: flex;
-        flex-direction: column;
-        background-color: var(--couleur-beige-clair);
-        gap: 1rem;
-        justify-content: space-between;
-    }
+	main {
+		display: flex;
+		flex-direction: column;
+		background-color: var(--couleur-beige-clair);
+		gap: 1rem;
+		justify-content: space-between;
+	}
 
-    .my_informations {
-        background-color: white;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 2rem 0;
-    }
+	.my_informations {
+		background-color: white;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 2rem 0;
+	}
 
-    .info {
-        display: flex;
-        align-items: center;
-        width: 85%;
-        gap: 1.2rem;
-        margin: 0.8rem 0;
-    }
+	.info {
+		display: flex;
+		align-items: center;
+		width: 85%;
+		gap: 1.2rem;
+		margin: 0.8rem 0;
+	}
 
-    .name {
-        font-weight: 700;
-        font-size: 1rem;
-    }
+	.name {
+		font-weight: 700;
+		font-size: 1rem;
+	}
 
-    .pink {
-        color: var(--couleur-vieux-rose);
-        font-weight: 700;
-        font-size: 0.8rem;
-    }
+	.pink {
+		color: var(--couleur-vieux-rose);
+		font-weight: 700;
+		font-size: 0.8rem;
+	}
 
-    .title {
-        width: 100%;
-        display: block;
-        padding: 2rem;
-        text-align: center;
-    }
+	.title {
+		width: 100%;
+		display: block;
+		padding: 2rem;
+		text-align: center;
+	}
 
-    h1 {
-        background-color: unset;
-        font-size: 28px;
-    }
+	h1 {
+		background-color: unset;
+		font-size: 28px;
+	}
 
-    .avatar {
-        width: 35%;
-        aspect-ratio: 1;
-        border-radius: 15rem;     
-        border: 2px solid var(--couleur-marron); 
-    }
+	.avatar {
+		width: 35%;
+		aspect-ratio: 1;
+		border-radius: 15rem;
+		border: 2px solid var(--couleur-marron);
+	}
 
-    .booklist {
-        background-color: white;
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        gap: 0 5rem;
-    }
+	.booklist {
+		background-color: white;
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		gap: 0 5rem;
+	}
 
-    .books {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(2, 1fr);
-        align-items: center;
-        justify-items: center;
-        width: 85%;
-        padding: 0.7rem;
-        aspect-ratio: 1;
-        background-color: var(--couleur-beige-clair);
-    }
+	.books {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		grid-template-rows: repeat(2, 1fr);
+		align-items: center;
+		justify-items: center;
+		width: 85%;
+		padding: 0.7rem;
+		aspect-ratio: 1;
+		background-color: var(--couleur-beige-clair);
+	}
 
-    .book {
-        overflow: hidden;
-        width: 85%;
-        aspect-ratio: 1;
-    }
+	.book {
+		overflow: hidden;
+		width: 85%;
+		aspect-ratio: 1;
+	}
 
-    .book img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+	.book img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
 
-    .caption {
-        display: none;
-    }
+	.caption {
+		display: none;
+	}
 
-    .button {
-        align-self: flex-end;
-        margin: 2rem auto;
-    }
+	.button {
+		align-self: flex-end;
+		margin: 2rem auto;
+	}
 
+	/* Media queries */
+	/* Tablette 768px – 1024px */
+	@media (min-width: 768px) {
+		main {
+			flex-direction: row;
+			gap: 0.5rem;
+		}
 
-    /* Media queries */
-    /* Tablette 768px – 1024px */
-    @media (min-width: 768px) {
+		.my_informations {
+			width: 40%;
+			padding: 2rem 1rem;
+		}
 
-        main {
-            flex-direction: row;
-            gap: 0.5rem;
-        }
+		.info {
+			flex-direction: column;
+			width: 95%;
+			gap: 0.2rem;
+			margin: 0;
+		}
 
-        .my_informations {
-            width: 40%;
-            padding: 2rem 1rem;
-        }
-        
-        .info {
-            flex-direction: column;
-            width: 95%;
-            gap: 0.2rem;
-            margin: 0;   
-        }
+		.id {
+			width: 90%;
+			padding-left: 10%;
+		}
 
-        .id {
-            width: 90%;
-            padding-left: 10%;
-        }
+		.name {
+			font-size: 20px;
+			margin-bottom: 0.2rem;
+		}
 
-        .name {
-            font-size: 20px;
-            margin-bottom: 0.2rem;
-        }
+		.pink {
+			font-size: 18px;
+		}
 
-        .pink {
-            font-size: 18px;
-        }
+		.avatar {
+			width: 60%;
+			margin: 1.5rem;
+		}
 
-        .avatar {
-            width: 60%;
-            margin: 1.5rem;
-        }    
-        
-        .button {
-            margin-right: 5rem;
-            margin-bottom: 3rem;
-        }        
-    }
+		.button {
+			margin-right: 5rem;
+			margin-bottom: 3rem;
+		}
+	}
 
-    /* Desktop > 1024px */
-    @media (min-width: 1025px) {
+	/* Desktop > 1024px */
+	@media (min-width: 1025px) {
+		.my_informations {
+			width: 18%;
+			padding: 2rem 1.5rem;
+		}
 
-        .my_informations {
-            width: 18%;
-            padding: 2rem 1.5rem;
-        }
+		.booklist {
+			width: 80%;
+		}
 
-        .booklist {
-            width: 80%; 
-        }
+		.books {
+			display: flex;
+			flex-direction: row;
+			width: 100%;
+			aspect-ratio: auto;
+			gap: 1rem;
+			padding: 0 5rem;
+			margin: 1rem;
+			background-color: unset;
+			justify-content: center;
+		}
 
-        .books {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            aspect-ratio: auto;
-            gap: 1rem;
-            padding: 0 5rem;   
-            margin: 1rem;
-            background-color: unset;
-            justify-content: center;
-        }
+		.book {
+			width: 15rem;
+			height: 20rem;
+			transition: transform 0.3s ease;
+		}
 
-        .book {
-            width: 15rem;
-            height: 20rem;
-            transition: transform 0.3s ease;
-        }
+		.book:hover {
+			transform: scale(1.05);
+		}
 
-        .book:hover {
-            transform: scale(1.05);
-        }
+		.book img {
+			height: 80%;
+		}
 
-        .book img {
-            height: 80%;
-        }
+		.caption {
+			display: block;
+			background-color: var(--couleur-beige-clair);
+			padding: 0.5rem;
+		}
 
-        .caption {
-            display: block;
-            background-color: var(--couleur-beige-clair);        
-            padding: 0.5rem;
-        }
+		.book_author {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
 
-        .book_author {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        } 
-
-        .book_title {
-            font-weight: 700;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }  
-    }
+		.book_title {
+			font-weight: 700;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
 </style>
