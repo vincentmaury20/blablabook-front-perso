@@ -34,8 +34,8 @@
 			{#if data.book.authors?.length}
 				{#each data.book.authors as author}
 					<h3>
-						{author.name}
 						{author.firstname}
+						{author.name}
 					</h3>
 					<p>{author.bio}</p>
 				{/each}
@@ -70,7 +70,7 @@
 </div>
 
 <div class="exit-container">
-	<button class="exit">Retour catalogue</button>
+	<a href="/catalogue"><button class="exit">Retour catalogue</button></a>
 </div>
 
 <style>

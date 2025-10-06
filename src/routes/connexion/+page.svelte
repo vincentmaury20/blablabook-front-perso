@@ -1,9 +1,9 @@
 <script>
-	let { data, form, va } = $props();
+	let { data, form } = $props();
 	// équivalent de :
 	// export let data;
 	// export let form;
-	let isLogin = true; // onglet actif : connexion ou création de compte
+	let isLogin = $state(true); // onglet actif : connexion ou création de compte
 </script>
 
 <div class="auth-container">
@@ -27,8 +27,8 @@
 		<p class="message success">{form.success}</p>
 	{/if} -->
 
-	<!-- Formulaire Connexion -->
 	{#if isLogin}
+	<!-- Formulaire Connexion -->
 		<form method="POST" action="?/login">
 			<label for="email">Email :</label>
 			<!-- <input type="email" name="email" id="email" value={form?.email ?? ''} required /> -->

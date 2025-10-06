@@ -12,7 +12,7 @@
 		{/each}
 	</div>
 
-	<button class="catalog"><a href="/catalogue">Voir le catalogue</a></button>
+	<a href="/catalogue"><button class="catalog">Voir le catalogue</button></a>
 
 	<div class="about">
 		<p>
