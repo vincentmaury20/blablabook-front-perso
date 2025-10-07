@@ -1,11 +1,42 @@
 <script>
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+
 	function toggle() {
 		// isRead = !isRead;
 	}
 
 	let { data } = $props();
 
-	import { goto } from '$app/navigation';
+	// let currentBooks = [];
+	// let errorMessage = '';
+	
+	onMount(async ( url ) => {
+		const page = url.searchParams.get('page') || '1';
+		const limit = '10';
+		const token = localStorage.getItem('token');
+		if (!token) {
+			goto('/login');
+			return;
+		}
+
+		try {
+			// Récupération des livres favoris
+			const booksResponse = await fetch(`http://localhost:3000/userbooks?page=${page}&limit=${limit}`, {
+				headers: { Authorization: `Bearer ${token}` }
+			});
+
+			if (!booksResponse.ok) {
+				throw new Error('Erreur lors de la récupération des livres de la booklist');
+			}
+
+			const booksData = await booksResponse.json();
+			currentBooks = booksData.userbooks || [];
+		} catch (error) {
+			console.error(error);
+			errorMessage = error.message || 'Une erreur est survenue.';
+		}
+	});
 </script>
 
 <section class="booklist">

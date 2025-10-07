@@ -1,12 +1,12 @@
-export async function load(url) {
-  const page = url.searchParams.get('page') || '1';
-  const limit = '10';
+// export async function load(url) {
+//   const page = url.searchParams.get('page') || '1';
+//   const limit = '10';
 
-  const res = await fetch(`http://localhost:3000/userbooks?page=${page}&limit=${limit}`);
+//   const res = await fetch(`http://localhost:3000/userbooks?page=${page}&limit=${limit}`);
 
-  const data = await res.json();
+//   const data = await res.json();
 
-  console.log(data);
+//   console.log(data);
 
   // return {
   //     booklist: data.userbooks,
@@ -14,5 +14,5 @@ export async function load(url) {
   //     totalPages: data.totalPages,
   //     totalBooks: data.totalBooks    
   // };
-  return data;
-};
+//   return data;
+// };
