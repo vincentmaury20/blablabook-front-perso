@@ -15,7 +15,7 @@
 
 		try {
 			// Récupération des infos utilisateur
-			const userResponse = await fetch('http://localhost:3000/user/me', {
+			const userResponse = await fetch('http://localhost:3000/auth/me', {
 				headers: { Authorization: `Bearer ${token}` }
 			});
 
@@ -23,11 +23,13 @@
 				throw new Error('Erreur lors de la récupération des infos utilisateur');
 			}
 
-			const userData = await userResponse.json();
-			currentUser = userData.user;
+			// const userData = await userResponse.json();
+			currentUser = await userResponse.json();
+			// currentUser = userData.user;
 
 			// Récupération des livres favoris
-			const booksResponse = await fetch('http://localhost:3000/user/favorites', {
+			// const booksResponse = await fetch('http://localhost:3000/favorites',
+			const booksResponse = await fetch(`http://localhost:3000/userbooks`, {
 				headers: { Authorization: `Bearer ${token}` }
 			});
 
@@ -35,7 +37,8 @@
 				throw new Error('Erreur lors de la récupération des livres favoris');
 			}
 
-			currentBooks = await booksResponse.json();
+			const booksData = await booksResponse.json();
+			currentBooks = booksData.userbooks || [];
 		} catch (error) {
 			console.error(error);
 			errorMessage = error.message || 'Une erreur est survenue.';
@@ -71,12 +74,12 @@
 
 		{#if currentBooks.length > 0}
 			<div class="books">
-				{#each currentBooks as book}
+				{#each currentBooks as userbook}
 					<article class="book">
-						<img src={book.cover} alt={book.title} />
+						<img src={userbook.book.cover} alt={userbook.book.title} />
 						<div class="caption">
-							<p class="book_title">{book.title}</p>
-							<p class="book_author">{book.author}</p>
+							<p class="book_title">{userbook.book.title}</p>
+							<p class="book_author">{userbook.book.author}</p>
 						</div>
 					</article>
 				{/each}
