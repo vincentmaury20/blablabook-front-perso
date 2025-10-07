@@ -1,9 +1,71 @@
 <script>
+	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 	let { data, form } = $props();
 	// équivalent de :
 	// export let data;
 	// export let form;
 	let isLogin = $state(true); // onglet actif : connexion ou création de compte
+	let errorMessage = '';
+
+	async function Login(event) {
+		event.preventDefault();
+		errorMessage = '';
+		const formData = new FormData(event.target);
+
+		const res = await fetch('http://localhost:3000/user/login', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				email: formData.get('email'),
+				password: formData.get('password')
+			})
+		});
+
+		const data = await res.json();
+
+		if (res.ok) {
+			localStorage.setItem('token', data.token);
+			goto('/mon_compte');
+		} else {
+			errorMessage = data.error || 'Erreur lors de la connexion';
+		}
+	}
+
+	async function Register(event) {
+		event.preventDefault();
+		errorMessage = '';
+		const formData = new FormData(event.target);
+
+		const password = formData.get('password');
+		const confirm = formData.get('confirm');
+
+		if (password !== confirm) {
+			errorMessage = 'Les mots de passe ne correspondent pas';
+			return;
+		}
+
+		const res = await fetch('http://localhost:3000/user/register', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				name: formData.get('name'),
+				firstname: formData.get('firstname'),
+				age: formData.get('age'),
+				email: formData.get('email'),
+				password
+			})
+		});
+
+		const data = await res.json();
+
+		if (res.ok) {
+			localStorage.setItem('token', data.token);
+			goto('/mon_compte');
+		} else {
+			errorMessage = data.error || 'Erreur lors de la création de compte';
+		}
+	}
 </script>
 
 <div class="auth-container">
@@ -28,8 +90,8 @@
 	{/if} -->
 
 	{#if isLogin}
-	<!-- Formulaire Connexion -->
-		<form method="POST" action="?/login">
+		<!-- Formulaire Connexion -->
+		<form onsubmit={Login}>
 			<label for="email">Email :</label>
 			<!-- <input type="email" name="email" id="email" value={form?.email ?? ''} required /> -->
 			<input type="email" name="email" id="email" required />
@@ -41,7 +103,7 @@
 		</form>
 	{:else}
 		<!-- Formulaire Création de compte -->
-		<form method="POST" action="?/register">
+		<form onsubmit={Register}>
 			<label for="name">Nom :</label>
 			<input type="text" name="name" id="name" required />
 

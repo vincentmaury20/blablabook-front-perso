@@ -22,17 +22,16 @@
 	// 		cover: '/images/Cover_5.jpg'
 	// 	}
 	// ];
-	
+
 	let { data } = $props();
 
 	import { goto } from '$app/navigation';
-
 </script>
 
 <section class="booklist">
 	<header class="page_title">
 		<h1>Ma booklist</h1>
-		<!-- <p>{data.totalBooks} Livres</p> -->
+		<p>{data.totalBooks} Livres</p>
 		<p>Retour</p>
 	</header>
 	{#each data.userbooks as userbook}
@@ -113,7 +112,7 @@
 		{#if data.page < data.totalPages}
 			<button onclick={() => goto(`?page=${data.page + 1}`)}>Suivante</button>
 		{/if}
-</div>
+	</div>
 </section>
 
 <style>
