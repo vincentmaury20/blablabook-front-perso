@@ -38,8 +38,7 @@ button {
 }
 
 a {
-/*   display: inline-block;
- */  border: none;
+  border: none;
   text-decoration: none;
   color: inherit;
   padding: 0;

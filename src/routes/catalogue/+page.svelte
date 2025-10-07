@@ -100,7 +100,6 @@
 		font-style: italic;
 	}
 
-	/* Alternance des couleurs */
 	.book-container:nth-child(odd) {
 		background-color: var(--couleur-beige-rose);
 	}

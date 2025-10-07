@@ -15,7 +15,7 @@
 
 		try {
 			// Récupération des infos utilisateur
-			const userResponse = await fetch('http://localhost:3000/user/me', {
+			const userResponse = await fetch('http://localhost:3000/auth/me', {
 				headers: { Authorization: `Bearer ${token}` }
 			});
 
@@ -23,11 +23,10 @@
 				throw new Error('Erreur lors de la récupération des infos utilisateur');
 			}
 
-			const userData = await userResponse.json();
-			currentUser = userData.user;
+			currentUser = await userResponse.json();
 
 			// Récupération des livres favoris
-			const booksResponse = await fetch('http://localhost:3000/user/favorites', {
+			const booksResponse = await fetch(`http://localhost:3000/userbooks`, {
 				headers: { Authorization: `Bearer ${token}` }
 			});
 
@@ -35,7 +34,8 @@
 				throw new Error('Erreur lors de la récupération des livres favoris');
 			}
 
-			currentBooks = await booksResponse.json();
+			const booksData = await booksResponse.json();
+			currentBooks = booksData.userbooks || [];
 		} catch (error) {
 			console.error(error);
 			errorMessage = error.message || 'Une erreur est survenue.';
@@ -71,12 +71,12 @@
 
 		{#if currentBooks.length > 0}
 			<div class="books">
-				{#each currentBooks as book}
+				{#each currentBooks as userbook}
 					<article class="book">
-						<img src={book.cover} alt={book.title} />
+						<img src={userbook.book.cover} alt={userbook.book.title} />
 						<div class="caption">
-							<p class="book_title">{book.title}</p>
-							<p class="book_author">{book.author}</p>
+							<p class="book_title">{userbook.book.title}</p>
+							<p class="book_author">{userbook.book.author}</p>
 						</div>
 					</article>
 				{/each}
@@ -88,48 +88,6 @@
 		<button class="button">Voir plus</button>
 	</section>
 </main>
-
-<!-- <script>   
-   let books = [
-        { id: 2, title: "Golden Kamui Tome 1", author: "Satoru Noda", cover: "/images/Cover_2.jpg" },
-        { id: 3, title: "Ernestine", author: "Salomé Lahoche", cover: "/images/Cover_3.jpg" },  
-        { id: 4, title: "Paradise Kiss Tome 1", author: "Ai Yazawa", cover: "/images/Cover_4.jpg" },
-        { id: 5, title: "Rendez-vous avec le crime", author: "Julia Chapman", cover: "/images/Cover_5.jpg" }                  
-    ];
-</script>
-
-<main>
-    <section class="my_informations">
-        <h1>Mon compte</h1>
-        <div class="info">
-            <img class="avatar" src="/images/Avatar_crop.jpg" alt="my avatar">
-            <div class="id">
-                <p class="name">Ophélie Passe-miroir</p>
-                <p class="age pink">20 ans</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="booklist">
-        <header class="title">
-            <h1>Ma booklist</h1>
-            <p class="books_number pink">28 livres</p>
-        </header>
-        <div class="books">
-            {#each books as book}
-                <article class="book">
-                    <img src={book.cover} alt={book.title}>
-                    <div class="caption">
-                        <p class="book_title">{book.title}</p>
-                        <p class="book_author">{book.author}</p>
-                    </div>
-                </article>
-            {/each}
-        </div>
-        <button class="button">Voir plus</button>
-</section>
-</main>
- -->
 
 <style>
 	main {
@@ -229,7 +187,6 @@
 	}
 
 	/* Media queries */
-	/* Tablette 768px – 1024px */
 	@media (min-width: 768px) {
 		main {
 			flex-direction: row;
@@ -273,7 +230,6 @@
 		}
 	}
 
-	/* Desktop > 1024px */
 	@media (min-width: 1025px) {
 		.my_informations {
 			width: 18%;

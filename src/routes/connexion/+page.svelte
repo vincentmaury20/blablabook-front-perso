@@ -1,11 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
-	let { data, form } = $props();
-	// équivalent de :
-	// export let data;
-	// export let form;
-	let isLogin = $state(true); // onglet actif : connexion ou création de compte
+
+	let isLogin = $state(true);
 	let errorMessage = '';
 
 	async function Login(event) {
@@ -69,31 +65,14 @@
 </script>
 
 <div class="auth-container">
-	<!-- Onglets -->
 	<div class="tabs">
 		<div class:active={isLogin} onclick={() => (isLogin = true)}>Connexion</div>
 		<div class:active={!isLogin} onclick={() => (isLogin = false)}>Création de compte</div>
 	</div>
 
-	<!-- Messages -->
-	<!-- {#if form?.missing}
-		<p class="error">Le champ email est requis</p>
-	{/if}
-	{#if form?.incorrect}
-		<p class="error">Identifiants invalides</p>
-	{/if} -->
-	<!-- {#if form?.error}
-		<p class="message error">{form.error}</p>
-	{/if} -->
-	<!-- {#if form?.success}
-		<p class="message success">{form.success}</p>
-	{/if} -->
-
 	{#if isLogin}
-		<!-- Formulaire Connexion -->
 		<form onsubmit={Login}>
 			<label for="email">Email :</label>
-			<!-- <input type="email" name="email" id="email" value={form?.email ?? ''} required /> -->
 			<input type="email" name="email" id="email" required />
 
 			<label for="password">Mot de passe :</label>
@@ -101,8 +80,8 @@
 
 			<button type="submit">Se connecter</button>
 		</form>
+		
 	{:else}
-		<!-- Formulaire Création de compte -->
 		<form onsubmit={Register}>
 			<label for="name">Nom :</label>
 			<input type="text" name="name" id="name" required />

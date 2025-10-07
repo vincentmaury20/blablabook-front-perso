@@ -1,27 +1,7 @@
 <script>
-	// let isRead = false;
-
 	function toggle() {
 		// isRead = !isRead;
 	}
-
-	// let books = [
-	// 	{
-	// 		id: 1,
-	// 		title: 'Le Journal de Mr Darcy',
-	// 		author: 'Amanda Grange',
-	// 		cover: '/images/Cover_1.png'
-	// 	},
-	// 	{ id: 2, title: 'Golden Kamui Tome 1', author: 'Satoru Noda', cover: '/images/Cover_2.jpg' },
-	// 	{ id: 3, title: 'Ernestine', author: 'Salomé Lahoche', cover: '/images/Cover_3.jpg' },
-	// 	{ id: 4, title: 'Paradise Kiss Tome 1', author: 'Ai Yazawa', cover: '/images/Cover_4.jpg' },
-	// 	{
-	// 		id: 5,
-	// 		title: 'Rendez-vous avec le crime',
-	// 		author: 'Julia Chapman',
-	// 		cover: '/images/Cover_5.jpg'
-	// 	}
-	// ];
 
 	let { data } = $props();
 
@@ -68,41 +48,6 @@
 			</div>
 		</article>
 	{/each}
-
-	<!-- {#each books as book}
-		<article class="book">
-			<div class="book_data">
-				<img src={book.cover} alt={book.title} />
-				<div class="book_info">
-					<p class="book_title"><a href="/livre/{book.id}">{book.title}</a></p>
-					<p class="book_author">{book.author}</p>
-				</div>
-			</div>
-			<div class="buttons">
-				<button
-					class="to-read"
-					class:active={isRead}
-					onclick={toggle}
-					aria-label={isRead ? 'A lire' : 'Lu'}
-				>
-					{#if isRead}
-						<span class="icon-wrapper">
-							<span class="material-symbols--bookmark-added-grey"></span>
-						</span>
-					{:else}
-						<span class="icon-wrapper">
-							<span class="material-symbols--bookmark-added-blue"></span>
-						</span>
-					{/if}
-				</button>
-				<button class="delete-booklist" aria-label="Supprimer de ma booklist">
-					<span class="icon-wrapper">
-						<span class="material-symbols--delete-rounded"></span>
-					</span>
-				</button>
-			</div>
-		</article>
-	{/each} -->
 
 	<div class="pagination">
 		{#if data.page > 1}
@@ -246,7 +191,6 @@
 
 	/* Media queries */
 
-	/* Desktop > 1024px */
 	@media (min-width: 1025px) {
 		.delete-booklist {
 			margin-right: 1rem;
