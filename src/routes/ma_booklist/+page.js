@@ -1,4 +1,4 @@
-export async function load({ params, url }) {
+export async function load(url) {
   const page = url.searchParams.get('page') || '1';
   const limit = '10';
 

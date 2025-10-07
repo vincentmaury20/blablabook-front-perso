@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
 
-	// états réactifs
 	let inBooklist = $state(false);
 	let isRead = $state(false);
 
