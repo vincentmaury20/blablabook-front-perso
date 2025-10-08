@@ -8,41 +8,42 @@
 	let errorMessage = '';
 
 	onMount(async () => {
-		const token = localStorage.getItem('token');
-		if (!token) {
-			goto('/login');
-			return;
+	const token = localStorage.getItem('token');
+	if (!token) {
+		goto('/login');
+		return;
+	}
+
+	try {
+		// Récupération des infos utilisateur
+		const userResponse = await fetch('http://localhost:3000/auth/me', {
+			headers: { Authorization: `Bearer ${token}` }
+		});
+
+		if (!userResponse.ok) {
+			throw new Error('Erreur lors de la récupération des infos utilisateur');
 		}
 
-		try {
-			// Récupération des infos utilisateur
-			const userResponse = await fetch('http://localhost:3000/auth/me', {
-				headers: { Authorization: `Bearer ${token}` }
-			});
+		const data = await userResponse.json();
+		currentUser = data.user; // ✅ on extrait l'objet user
 
-			if (!userResponse.ok) {
-				throw new Error('Erreur lors de la récupération des infos utilisateur');
-			}
+		// Récupération des livres favoris
+		const booksResponse = await fetch(`http://localhost:3000/userbooks?limit=4`, {
+			headers: { Authorization: `Bearer ${token}` }
+		});
 
-			currentUser = await userResponse.json();
-
-			// Récupération des livres favoris
-			const booksResponse = await fetch(`http://localhost:3000/userbooks?limit=4`, {
-				headers: { Authorization: `Bearer ${token}` }
-			});
-
-			if (!booksResponse.ok) {
-				throw new Error('Erreur lors de la récupération des livres favoris');
-			}
-
-			const booksData = await booksResponse.json();
-			totalBooks = booksData.totalBooks /* || booklist.length */;
-			currentBooks = booksData.userbooks || [];
-		} catch (error) {
-			console.error(error);
-			errorMessage = error.message || 'Une erreur est survenue.';
+		if (!booksResponse.ok) {
+			throw new Error('Erreur lors de la récupération des livres favoris');
 		}
-	});
+
+		const booksData = await booksResponse.json();
+		totalBooks = booksData.totalBooks;
+		currentBooks = booksData.userbooks || [];
+	} catch (error) {
+		console.error(error);
+		errorMessage = error.message || 'Une erreur est survenue.';
+	}
+});
 </script>
 
 <main>

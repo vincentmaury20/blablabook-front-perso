@@ -22,8 +22,8 @@
 
 		if (res.ok) {
 			localStorage.setItem('token', data.token);
-  isLogin = true;
-  goto('/connexion');
+  			isLogin = true;
+  			goto('/mon_compte');
 		} else {
 			errorMessage = data.error || 'Erreur lors de la connexion';
 		}
@@ -50,7 +50,7 @@
 				firstname: formData.get('firstname'),
 				age: formData.get('age'),
 				email: formData.get('email'),
-				password
+				password 
 			})
 		});
 
@@ -87,6 +87,7 @@
 		<form onsubmit={Register}>
 			<label for="name">Nom :</label>
 			<input type="text" name="name" id="name" required />
+			
 
 			<label for="firstname">Prénom :</label>
 			<input type="text" name="firstname" id="firstname" required />
@@ -97,7 +98,7 @@
 			<label for="emailSignup">Email :</label>
 			<input type="email" name="email" id="emailSignup" required />
 
-			<label for="passwordSignup">Mot de passe :</label>
+			<label for="password">Mot de passe :</label>
 			<input type="password" name="password" id="passwordSignup" required minlength="6" />
 
 			<label for="confirm">Confirmation du mot de passe :</label>
