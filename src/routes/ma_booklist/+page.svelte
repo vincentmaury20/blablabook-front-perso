@@ -1,80 +1,21 @@
-<!-- <script>
-	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
-
-	function toggle() {
-		// isRead = !isRead;
-	}
-
-	let { data } = $props();
-
-	// let booklist = $state([]);
-	// let errorMessage = $state("");
-	// let totalBooks = 0;
-
-	let booklist = $state([]);       // ✅ remplace data.userbooks par booklist
-	let totalBooks = $state(0);      // ✅ remplace data.totalBooks par totalBooks
-	let page = $state(1);            // ✅ remplace data.page par page
-	let totalPages = $state(1);      // ✅ remplace data.totalPages par totalPages
-	let errorMessage = $state("");   // ✅ pour gérer les erreurs côté front
-	
-	onMount(async () => {
-		const token = localStorage.getItem('token');
-		if (!token) {
-			goto('/login');
-			return;
-		}
-		const limit = '10';
-		
-		const searchParams = new URLSearchParams(window.location.search);
-		let page = Number(searchParams.get('page')) || '1';
-
-		try {
-			// Récupération des livres favoris
-			const booksResponse = await fetch(`http://localhost:3000/userbooks?page=${page}&limit=${limit}`, {
-				headers: { Authorization: `Bearer ${token}` }
-			});
-
-			if (!booksResponse.ok) {
-				throw new Error('Erreur lors de la récupération des livres de la booklist');
-			}
-
-			const booksData = await booksResponse.json();
-  			booklist = booksData.userbooks;
-		  	page = booksData.page;
-			totalPages = booksData.totalPages;
-		  	totalBooks = booksData.totalBooks;    
-
-// 				currentBooks = booksData.userbooks  [];
-// totalBooks = booksData.totalBooks  currentBooks.length;
-		} catch (error) {
-			console.error(error);
-			errorMessage = error.message || 'Une erreur est survenue.';
-		};
-	});
-</script> -->
-
 <script>
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
 
-    // 🔹 Variables réactives locales à utiliser dans ton template
-    let booklist = [];       // ✅ remplace data.userbooks par booklist
-    let totalBooks = 0;      // ✅ remplace data.totalBooks par totalBooks
-    let page = 1;            // ✅ remplace data.page par page
-    let totalPages = 1;      // ✅ remplace data.totalPages par totalPages
-    let errorMessage = "";   // ✅ pour gérer les erreurs côté front
+    let booklist = [];     
+    let totalBooks = 0;    
+    let page = 1;            
+    let totalPages = 1;     
+    let errorMessage = "";   
 
-    const limit = 10; // 🔹 nombre de livres par page
+    const limit = 10; 
 
-    // 🔹 Récupération du token depuis localStorage
     const token = localStorage.getItem('token');
 
     function toggle() {
         // isRead = !isRead;
     }
 
-	// 🔹 Fonction pour charger les livres d'une page spécifique
     async function loadBooks(pageNumber = 1) {
         if (!token) {
             goto('/login');
@@ -90,7 +31,6 @@
 
             const data = await res.json();
 
-            // 🔹 MODIFIER / METTRE À JOUR LES VARIABLES LOCALES
             booklist = data.userbooks || [];
             totalBooks = data.totalBooks || booklist.length;
             page = data.page;
@@ -105,99 +45,30 @@
         }
     }
 
-    // 🔹 Chargement initial à l’ouverture de la page
     onMount(() => {
         const searchParams = new URLSearchParams(window.location.search);
         const currentPage = Number(searchParams.get('page')) || 1;
-        loadBooks(currentPage); // 🔹 charge les livres de la page initiale
+        loadBooks(currentPage); 
     });
 
-    // 🔹 Fonction appelée par les boutons "Précédente" / "Suivante"
     function goToPage(newPage) {
-        loadBooks(newPage); // 🔹 recharge les livres pour la nouvelle page
-        goto(`?page=${newPage}`, { replaceState: true }); // 🔹 met à jour l’URL sans recharger le composant
+        loadBooks(newPage);
+        goto(`?page=${newPage}`, { replaceState: true });
     }
 </script>
-
-
-
-
-<!-- <section class="booklist">
-	<header class="page_title">
-		<h1>Ma booklist</h1>
-		<p>{totalBooks} Livres</p>
-		<p><a href="/mon_compte">Retour</a></p>
-	</header>
-	{#if errorMessage}
-		<p class="error">{errorMessage}</p>
-	{:else if totalBooks === 0}
-		<p>Aucun livre trouvé.</p>
-	{:else}
-		{#each /* booksData.userbooks */ booklist as book}
-			<article class="book">
-				<div class="book_data">
-					<img src={book.book.cover} alt={book.book.title} />
-					<div class="book_info">
-						<p class="book_title"><a href="/livre/{book.book.id}">{book.book.title}</a></p>
-						<p class="book_author">{book.book.author}</p>
-					</div>
-				</div>
-				<div class="buttons">
-					<button
-						class="to-read"
-						class:active={book.book.toRead}
-						onclick={toggle}
-						aria-label={book.book.toRead ? 'A lire' : 'Lu'}
-					>
-						{#if book.book.toRead}
-							<span class="icon-wrapper">
-								<span class="material-symbols--bookmark-added-grey"></span>
-							</span>
-						{:else}
-							<span class="icon-wrapper">
-								<span class="material-symbols--bookmark-added-blue"></span>
-							</span>
-						{/if}
-					</button>
-					<button class="delete-booklist" aria-label="Supprimer de ma booklist">
-						<span class="icon-wrapper">
-							<span class="material-symbols--delete-rounded"></span>
-						</span>
-					</button>
-				</div>
-			</article>
-		{/each}
-	{/if}
-
-	<div class="pagination">
-		{#if page > 1}
-			<button onclick={() => goto(`?page=${page - 1}`)}>Précédente</button>
-		{/if}
-		<span>Page {page} / {totalPages}</span>
-		{#if page < totalPages}
-			<button onclick={() => goto(`?page=${page + 1}`)}>Suivante</button>
-		{/if}
-	</div>
-</section> -->
 
 <section class="booklist">
     <header class="page_title">
         <h1>Ma booklist</h1>
-
-        <!-- 🔹 MODIFIER ici : afficher le nombre de livres depuis totalBooks -->
         <p>{totalBooks} Livre{totalBooks > 1 ? 's' : ''}</p>
-
         <p><a href="/mon_compte">Retour</a></p>
     </header>
 
-    <!-- 🔹 Gestion des erreurs -->
     {#if errorMessage}
         <p class="error">{errorMessage}</p>
 
-    <!-- 🔹 Vérifier si la liste est vide -->
     {:else if totalBooks === 0}
         <p>Aucun livre trouvé.</p>
-		<!-- 🔹 AFFICHAGE DES LIVRES : utiliser booklist au lieu de data.userbooks -->
     {:else}
         {#each booklist as book}
             <article class="book">
@@ -233,24 +104,19 @@
                 </div>
             </article>
         {/each}
-		<!-- 🔹 PAGINATION : utiliser page et totalPages -->
         <div class="pagination">
             {#if page > 1}
-                <!-- 🔹 appeler goToPage(page - 1) -->
                 <button onclick={() => goToPage(page - 1)}>Précédente</button>
             {/if}
 
             <span>Page {page} / {totalPages}</span>
 
             {#if page < totalPages}
-                <!-- 🔹 appeler goToPage(page + 1) -->
                 <button onclick={() => goToPage(page + 1)}>Suivante</button>
             {/if}
         </div>
     {/if}
 </section>
-
-
 
 <style>
 	.booklist {
