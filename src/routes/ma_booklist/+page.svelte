@@ -10,8 +10,57 @@
 
     const limit = 10;
 
-    function toggle() {
-        // Fonction simple pour les tests
+    // Fonction utilitaire pour décoder le JWT
+    function decodeJWT(token) {
+        try {
+            const payload = token.split('.')[1];
+            const decoded = JSON.parse(atob(payload));
+            return decoded;
+        } catch (error) {
+            console.error('❌ Erreur décodage JWT:', error);
+            return null;
+        }
+    }
+
+    async function toggleReadStatus(book) {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            goto('/authentification/connexion');
+            return;
+        }
+
+        const decodedToken = decodeJWT(token);
+        if (!decodedToken) {
+            goto('/authentification/connexion');
+            return;
+        }
+
+        try {
+            console.log(`🔄 Changement statut livre ${book.book.title}: ${book.toRead ? 'Lu' : 'À lire'} -> ${book.toRead ? 'À lire' : 'Lu'}`);
+            
+            const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${book.book.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ toRead: !book.toRead })
+            });
+
+            if (response.ok) {
+                // Mettre à jour localement le statut du livre
+                const bookIndex = booklist.findIndex(b => b.book.id === book.book.id);
+                if (bookIndex !== -1) {
+                    booklist[bookIndex].toRead = !booklist[bookIndex].toRead;
+                    booklist = [...booklist]; // Forcer la réactivité
+                }
+                console.log(`✅ Statut sauvegardé: ${!book.toRead ? 'Lu' : 'À lire'}`);
+            } else {
+                console.error('❌ Erreur lors de la sauvegarde du statut');
+            }
+        } catch (error) {
+            console.error('❌ Erreur:', error);
+        }
     }
 
     async function loadBooks(pageNumber = 1) {
@@ -38,6 +87,37 @@
         } catch (err) {
             console.error(err);
             errorMessage = err.message || 'Une erreur est survenue';
+        }
+    }
+
+    async function removeBook(book) {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const decodedToken = decodeJWT(token);
+        if (!decodedToken) return;
+
+        try {
+            console.log(`🗑️ Suppression du livre: ${book.book.title}`);
+            
+            const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${book.book.id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                // Supprimer le livre de la liste locale
+                booklist = booklist.filter(b => b.book.id !== book.book.id);
+                totalBooks = Math.max(0, totalBooks - 1);
+                console.log('✅ Livre supprimé');
+            } else {
+                console.error('❌ Erreur lors de la suppression');
+            }
+        } catch (error) {
+            console.error('❌ Erreur:', error);
         }
     }
 
@@ -84,21 +164,24 @@
                 <div class="buttons">
                     <button
                         class="to-read"
-                        class:active={book.toRead}
-                        onclick={toggle}
-                        aria-label={book.toRead ? 'A lire' : 'Lu'}
+                        class:active={!book.toRead}
+                        onclick={() => toggleReadStatus(book)}
+                        aria-label={book.toRead ? 'Marquer comme lu' : 'Marquer comme à lire'}
+                        title={book.toRead ? 'Marquer comme lu' : 'Marquer comme à lire'}
                     >
                         {#if book.toRead}
                             <span class="icon-wrapper">
                                 <span class="material-symbols--bookmark-added-grey"></span>
                             </span>
+                            <span class="status-text">À lire</span>
                         {:else}
                             <span class="icon-wrapper">
                                 <span class="material-symbols--bookmark-added-blue"></span>
                             </span>
+                            <span class="status-text">Lu</span>
                         {/if}
                     </button>
-                    <button class="delete-booklist" aria-label="Supprimer de ma booklist">
+                    <button class="delete-booklist" aria-label="Supprimer de ma booklist" onclick={() => removeBook(book)}>
                         <span class="icon-wrapper">
                             <span class="material-symbols--delete-rounded"></span>
                         </span>
@@ -241,21 +324,10 @@
 		font-size: 0.7rem;
 		font-weight: 500;
 		text-align: center;
+		margin-top: 0.2rem;
 	}
 
-	.loading-spinner {
-		width: 20px;
-		height: 20px;
-		border: 2px solid var(--couleur-beige-clair);
-		border-top: 2px solid var(--couleur-marron);
-		border-radius: 50%;
-		animation: spin 1s linear infinite;
-	}
 
-	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
-	}
 
 	.delete-booklist {
 		display: flex;

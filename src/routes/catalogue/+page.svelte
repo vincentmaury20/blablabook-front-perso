@@ -40,7 +40,7 @@
 					const result = await response.json();
 					booklistStatus.set(book.id, {
 						inBooklist: result.inBooklist,
-						isRead: result.isRead || false
+						toRead: result.toRead !== undefined ? result.toRead : true // Par défaut: À lire
 					});
 				}
 			} catch (error) {
@@ -66,7 +66,7 @@
 			return;
 		}
 
-		const currentStatus = booklistStatus.get(book.id) || { inBooklist: false, isRead: false };
+		const currentStatus = booklistStatus.get(book.id) || { inBooklist: false, toRead: true };
 		loadingBooks.add(book.id);
 		loadingBooks = new Set(loadingBooks);
 
@@ -82,7 +82,7 @@
 				});
 
 				if (response.ok) {
-					booklistStatus.set(book.id, { inBooklist: false, isRead: false });
+					booklistStatus.set(book.id, { inBooklist: false, toRead: true });
 					console.log('✅ Livre retiré de la booklist');
 				}
 			} else {
@@ -97,7 +97,7 @@
 				});
 
 				if (response.ok) {
-					booklistStatus.set(book.id, { inBooklist: true, isRead: false });
+					booklistStatus.set(book.id, { inBooklist: true, toRead: true });
 					console.log('✅ Livre ajouté à la booklist');
 				}
 			}

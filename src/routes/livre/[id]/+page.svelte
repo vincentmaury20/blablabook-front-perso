@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 
 	let inBooklist = $state(false);
-	let isRead = $state(false);
+	let toRead = $state(true); // true = À lire, false = Lu (cohérent avec l'API)
 	let isLoading = $state(false);
 	let isReadLoading = $state(false);
 	let { data } = $props();
@@ -39,7 +39,9 @@
 			if (response.ok) {
 				const result = await response.json();
 				inBooklist = result.inBooklist;
-				isRead = result.isRead || false;
+				// Par défaut : toRead = true (À lire / non lu)
+				toRead = result.toRead !== undefined ? result.toRead : true;
+				console.log(`📖 Statut récupéré: ${inBooklist ? 'Dans booklist' : 'Pas dans booklist'}, ${toRead ? 'À lire' : 'Lu'}`);
 			}
 		} catch (error) {
 			console.error('Erreur lors de la vérification du statut:', error);
@@ -73,7 +75,7 @@
 
 				if (response.ok) {
 					inBooklist = false;
-					isRead = false;
+					toRead = true; // Reset à "À lire" quand retiré de la booklist
 					console.log('✅ Livre retiré de la booklist');
 				} else {
 					console.error('❌ Erreur lors de la suppression');
@@ -91,6 +93,7 @@
 
 				if (response.ok) {
 					inBooklist = true;
+					toRead = true; // Par défaut, nouveau livre = "À lire"
 					console.log('✅ Livre ajouté à la booklist');
 				} else {
 					console.error('❌ Erreur lors de l\'ajout');
@@ -130,12 +133,12 @@
 					'Authorization': `Bearer ${token}`,
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ toRead: !isRead })
+				body: JSON.stringify({ toRead: !toRead })
 			});
 
 			if (response.ok) {
-				isRead = !isRead;
-				console.log(`✅ Statut de lecture mis à jour: ${isRead ? 'Lu' : 'À lire'}`);
+				toRead = !toRead;
+				console.log(`✅ Statut de lecture mis à jour: ${toRead ? 'À lire' : 'Lu'}`);
 			} else {
 				console.error('❌ Erreur lors de la mise à jour du statut de lecture');
 			}
@@ -212,17 +215,17 @@
 	{#if inBooklist}
 		<button 
 			class="read" 
-			class:is-read={isRead}
+			class:is-read={!toRead}
 			onclick={toggleRead} 
 			disabled={isReadLoading}
-			aria-label={isRead ? "Marquer comme non lu" : "Marquer comme lu"}
+			aria-label={toRead ? "Marquer comme lu" : "Marquer comme non lu"}
 		>
 			{#if isReadLoading}
 				<div class="loading-spinner"></div>
 				Chargement...
 			{:else}
-				<img src={isRead ? '/icons/Remove.png' : '/icons/Add.png'} alt="" class="icon" />
-				{isRead ? 'Marquer comme non lu' : "Marquer comme lu"}
+				<img src={!toRead ? '/icons/Remove.png' : '/icons/Add.png'} alt="" class="icon" />
+				{toRead ? 'Marquer comme lu' : "Marquer comme non lu"}
 			{/if}
 		</button>
 	{/if}
