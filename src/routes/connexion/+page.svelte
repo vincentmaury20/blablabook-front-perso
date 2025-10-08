@@ -22,7 +22,8 @@
 
 		if (res.ok) {
 			localStorage.setItem('token', data.token);
-			goto('/mon_compte');
+  isLogin = true;
+  goto('/connexion');
 		} else {
 			errorMessage = data.error || 'Erreur lors de la connexion';
 		}
