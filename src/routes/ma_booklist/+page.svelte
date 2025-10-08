@@ -8,17 +8,65 @@
     let totalPages = 1;     
     let errorMessage = "";   
 
-    const limit = 10; 
+    const limit = 10;
 
-    const token = localStorage.getItem('token');
+    // Fonction utilitaire pour décoder le JWT
+    function decodeJWT(token) {
+        try {
+            const payload = token.split('.')[1];
+            const decoded = JSON.parse(atob(payload));
+            return decoded;
+        } catch (error) {
+            console.error('❌ Erreur décodage JWT:', error);
+            return null;
+        }
+    }
 
-    function toggle() {
-        // isRead = !isRead;
+    async function toggleReadStatus(book) {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            goto('/authentification/connexion');
+            return;
+        }
+
+        const decodedToken = decodeJWT(token);
+        if (!decodedToken) {
+            goto('/authentification/connexion');
+            return;
+        }
+
+        try {
+            console.log(`🔄 Changement statut livre ${book.book.title}: ${book.toRead ? 'Lu' : 'À lire'} -> ${book.toRead ? 'À lire' : 'Lu'}`);
+            
+            const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${book.book.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ toRead: !book.toRead })
+            });
+
+            if (response.ok) {
+                // Mettre à jour localement le statut du livre
+                const bookIndex = booklist.findIndex(b => b.book.id === book.book.id);
+                if (bookIndex !== -1) {
+                    booklist[bookIndex].toRead = !booklist[bookIndex].toRead;
+                    booklist = [...booklist]; // Forcer la réactivité
+                }
+                console.log(`✅ Statut sauvegardé: ${!book.toRead ? 'Lu' : 'À lire'}`);
+            } else {
+                console.error('❌ Erreur lors de la sauvegarde du statut');
+            }
+        } catch (error) {
+            console.error('❌ Erreur:', error);
+        }
     }
 
     async function loadBooks(pageNumber = 1) {
+        const token = localStorage.getItem('token');
         if (!token) {
-            goto('/login');
+            goto('/authentification/connexion');
             return;
         }
 
@@ -36,12 +84,40 @@
             page = data.page;
             totalPages = data.totalPages;
 
-            console.log('Livres :', booklist);
-            console.log('Total livres :', totalBooks);
-
         } catch (err) {
             console.error(err);
             errorMessage = err.message || 'Une erreur est survenue';
+        }
+    }
+
+    async function removeBook(book) {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const decodedToken = decodeJWT(token);
+        if (!decodedToken) return;
+
+        try {
+            console.log(`🗑️ Suppression du livre: ${book.book.title}`);
+            
+            const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${book.book.id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                // Supprimer le livre de la liste locale
+                booklist = booklist.filter(b => b.book.id !== book.book.id);
+                totalBooks = Math.max(0, totalBooks - 1);
+                console.log('✅ Livre supprimé');
+            } else {
+                console.error('❌ Erreur lors de la suppression');
+            }
+        } catch (error) {
+            console.error('❌ Erreur:', error);
         }
     }
 
@@ -76,7 +152,13 @@
                     <img src={book.book.cover} alt={book.book.title} />
                     <div class="book_info">
                         <p class="book_title"><a href="/livre/{book.book.id}">{book.book.title}</a></p>
-                        <p class="book_author">{book.book.author}</p>
+                        <p class="book_author">
+                            {#if book.book.authors?.length}
+                                {book.book.authors.map(author => `${author.firstname} ${author.name}`).join(', ')}
+                            {:else}
+                                Auteur inconnu
+                            {/if}
+                        </p>
                     </div>
                 </div>
                 <div class="buttons">
@@ -96,7 +178,7 @@
 						</span>
                         {/if}
                     </button>
-                    <button class="delete-booklist" aria-label="Supprimer de ma booklist">
+                    <button class="delete-booklist" aria-label="Supprimer de ma booklist" onclick={() => removeBook(book)}>
                         <span class="icon-wrapper">
                             <span class="material-symbols--delete-rounded"></span>
                         </span>
@@ -190,15 +272,53 @@
 
 	.to-read {
 		display: flex;
+		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 		background-color: transparent;
 		box-shadow: none;
-		width: 4rem;
-		height: 4rem;
+		width: 6rem;
+		height: 5rem;
 		margin: 0;
-		padding: 0.8rem;
+		padding: 0.5rem;
+		border: none;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		border-radius: 8px;
+		gap: 0.2rem;
 	}
+
+	/* Suppression de l'effet de survol */
+
+	.to-read.active {
+		background-color: transparent;
+		font-weight: 600;
+	}
+
+	/* Suppression de l'effet hover pour l'état actif */
+
+	.to-read:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+		transform: none;
+	}
+
+	.to-read:disabled:hover {
+		transform: none;
+		background-color: transparent;
+		box-shadow: none;
+	}
+
+	.button-text {
+		font-size: 0.8rem;
+		font-weight: 600;
+		text-align: center;
+		line-height: 1.2;
+		margin-top: 0.2rem;
+		color: var(--couleur-marron);
+	}
+
+
 
 	.delete-booklist {
 		display: flex;
@@ -210,6 +330,23 @@
 		height: 4rem;
 		margin: 0;
 		padding: 0.8rem;
+		border: none;
+		cursor: pointer;
+		border-radius: 8px;
+	}
+
+	/* Effets de survol supprimés pour cohérence */
+
+	.delete-booklist:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+		transform: none;
+	}
+
+	.delete-booklist:disabled:hover {
+		transform: none;
+		background-color: transparent;
+		box-shadow: none;
 	}
 
 	.icon-wrapper {
@@ -245,6 +382,17 @@
 
 	article:nth-child(even) {
 		background-color: var(--couleur-beige-clair);
+	}
+
+	/* Style pour les messages d'erreur */
+	.error {
+		color: #d32f2f;
+		background-color: #ffebee;
+		padding: 1rem;
+		border-radius: 8px;
+		border-left: 4px solid #d32f2f;
+		margin: 1rem;
+		font-weight: 500;
 	}
 
 	/* Media queries */
