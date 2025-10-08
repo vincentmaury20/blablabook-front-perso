@@ -82,18 +82,18 @@
                 <div class="buttons">
                     <button
                         class="to-read"
-                        class:active={book.toRead}
+                        class:active={book.book.toRead}
                         onclick={toggle}
-                        aria-label={book.toRead ? 'A lire' : 'Lu'}
+                        aria-label={book.book.toRead ? 'A lire' : 'Lu'}
                     >
-                        {#if book.toRead}
-                            <span class="icon-wrapper">
-                                <span class="material-symbols--bookmark-added-grey"></span>
-                            </span>
+                        {#if book.book.toRead}
+						<span class="icon-wrapper">
+							<span class="material-symbols--bookmark-added-blue"></span>
+						</span>
                         {:else}
-                            <span class="icon-wrapper">
-                                <span class="material-symbols--bookmark-added-blue"></span>
-                            </span>
+						<span class="icon-wrapper">
+							<span class="material-symbols--bookmark-added-grey"></span>
+						</span>
                         {/if}
                     </button>
                     <button class="delete-booklist" aria-label="Supprimer de ma booklist">

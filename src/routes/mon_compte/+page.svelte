@@ -275,11 +275,11 @@
 			padding: 0.5rem;
 		}
 
-		.book_author {
+		/* .book_author {
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-		}
+		} */
 
 		.book_title {
 			font-weight: 700;
