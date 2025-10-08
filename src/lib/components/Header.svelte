@@ -116,23 +116,28 @@
 				{:else if suggestions.length > 0}
 					<ul class="suggestions">
 						{#each suggestions as book}
-							<li class="suggestion-item" onclick={() => openBook(book.id)}>
-								{#if book.cover}
-									<img src={book.cover} alt={book.title} class="book-thumb" />
-								{/if}
-								<div class="book-info">
-									<strong>{book.title}</strong>
-									{#if book.authors?.length}
-										<span class="author-name">
-											{book.authors.map((a) => `${a.firstname} ${a.name}`).join(', ')}
-										</span>
+							<li>
+								<a href={`/livre/${book.id}`} class="suggestion-item">
+									{#if book.cover}
+										<img src={book.cover} alt={book.title} class="book-thumb" />
 									{/if}
-									{#if book.genres?.length}
-										<span class="genre-name">
-											{book.genres.map((g) => g.name).join(', ')}
-										</span>
-									{/if}
-								</div>
+
+									<div class="book-info">
+										<strong>{book.title}</strong>
+
+										{#if book.authors?.length}
+											<span class="author-name">
+												{book.authors.map((a) => `${a.firstname} ${a.name}`).join(', ')}
+											</span>
+										{/if}
+
+										{#if book.genres?.length}
+											<span class="genre-name">
+												{book.genres.map((g) => g.name).join(', ')}
+											</span>
+										{/if}
+									</div>
+								</a>
 							</li>
 						{/each}
 					</ul>
@@ -145,7 +150,6 @@
 </header>
 
 <style>
-	/* Vos styles existants */
 	header {
 		background-color: var(--couleur-beige-rose);
 		padding: 0.5rem;
