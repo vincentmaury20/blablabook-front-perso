@@ -4,6 +4,7 @@
 
 	let currentUser = null;
 	let currentBooks = [];
+	let totalBooks = 0;
 	let errorMessage = '';
 
 	onMount(async () => {
@@ -26,7 +27,7 @@
 			currentUser = await userResponse.json();
 
 			// Récupération des livres favoris
-			const booksResponse = await fetch(`http://localhost:3000/userbooks`, {
+			const booksResponse = await fetch(`http://localhost:3000/userbooks?limit=4`, {
 				headers: { Authorization: `Bearer ${token}` }
 			});
 
@@ -35,6 +36,7 @@
 			}
 
 			const booksData = await booksResponse.json();
+			totalBooks = booksData.totalBooks /* || booklist.length */;
 			currentBooks = booksData.userbooks || [];
 		} catch (error) {
 			console.error(error);
@@ -64,28 +66,29 @@
 		<header class="title">
 			<h1>Ma booklist</h1>
 			<p class="books_number pink">
-				{currentBooks.length}
-				{currentBooks.length === 1 ? ' livre' : ' livres'}
+				{totalBooks}
+				{totalBooks === 1 ? ' livre' : ' livres'}
 			</p>
 		</header>
 
 		{#if currentBooks.length > 0}
 			<div class="books">
 				{#each currentBooks as userbook}
-					<article class="book">
-						<img src={userbook.book.cover} alt={userbook.book.title} />
-						<div class="caption">
-							<p class="book_title">{userbook.book.title}</p>
-							<p class="book_author">{userbook.book.author}</p>
-						</div>
-					</article>
+					<a href="/livre/{userbook.book.id}">
+						<article class="book">
+							<img src={userbook.book.cover} alt={userbook.book.title} />
+							<div class="caption">
+								<p class="book_title">{userbook.book.title}</p>
+							</div>
+						</article>
+					</a>
 				{/each}
 			</div>
 		{:else}
 			<p>{errorMessage || 'Aucun livre favori trouvé.'}</p>
 		{/if}
 
-		<button class="button">Voir plus</button>
+		<a href="/ma_booklist"><button class="button">Voir plus</button></a>
 	</section>
 </main>
 
