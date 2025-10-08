@@ -207,7 +207,7 @@
 			Chargement...
 		{:else}
 			<img src={inBooklist ? '/icons/Remove2.png' : '/icons/Add.png'} alt="" class="icon" />
-			{inBooklist ? 'Retirer de ma Booklist' : 'Ajouter à ma Booklist'}
+			<span class="button-text">{inBooklist ? 'Retirer' : 'Ajouter'}</span>
 		{/if}
 	</button>
 
@@ -224,8 +224,12 @@
 				<div class="loading-spinner"></div>
 				Chargement...
 			{:else}
-				<img src={!toRead ? '/icons/Remove.png' : '/icons/Add.png'} alt="" class="icon" />
-				{toRead ? 'Marquer comme lu' : "Marquer comme non lu"}
+				{#if toRead}
+					<span class="material-symbols--bookmark-added-grey"></span>
+				{:else}
+					<span class="material-symbols--bookmark-added-blue"></span>
+				{/if}
+				<span class="button-text">{toRead ? 'À lire' : 'Lu'}</span>
 			{/if}
 		</button>
 	{/if}
@@ -292,29 +296,25 @@
 
 	.add-booklist,
 	.read {
-		min-width: 100px;
-		padding: 0.8rem;
+		min-width: 140px;
+		width: 140px;
+		height: 100px;
+		padding: 1rem;
 		background: transparent;
 		border: none;
 		cursor: pointer;
-		transition: all 0.2s ease;
 		border-radius: 8px;
-		-webkit-box-shadow: -8px -20px 0px -30px #000000;
-		box-shadow: -8px -20px 0px -30px #000000;
-		color: var(--couleur-marron);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 0.3rem;
-		font-size: 14px;
-		font-weight: 500;
+		justify-content: center;
+		gap: 0.4rem;
+		text-align: center;
 	}
 
-	.add-booklist .icon,
-	.read .icon {
-		width: 48px;
-		height: 48px;
-	}
+	/* Suppression des effets de survol pour les boutons ajouter */
+
+
 
 	.add-booklist:focus,
 	.read:focus {
@@ -327,37 +327,20 @@
 		-webkit-tap-highlight-color: transparent;
 	}
 
-	/* Styles pour les boutons actifs */
+	/* Styles pour les boutons actifs - identiques à la booklist */
 	.add-booklist.in-booklist {
-		background-color: var(--couleur-beige-clair);
-		border: 2px solid var(--couleur-marron);
-		color: var(--couleur-marron);
+		background-color: transparent;
 		font-weight: 600;
-		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 	}
 
 	.read.is-read {
-		background-color: var(--couleur-vieux-rose);
-		border: 2px solid var(--couleur-vieux-rose);
-		color: var(--couleur-beige-clair);
+		background-color: transparent;
 		font-weight: 600;
-		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 	}
 
-	/* Effet hover pour les boutons actifs */
-	.add-booklist.in-booklist:hover {
-		background-color: var(--couleur-marron);
-		color: var(--couleur-beige-clair);
-		transform: translateY(-2px);
-	}
+	/* Suppression des effets hover */
 
-	.read.is-read:hover {
-		background-color: var(--couleur-marron);
-		border-color: var(--couleur-marron);
-		transform: translateY(-2px);
-	}
-
-	/* Style pour les boutons désactivés */
+	/* Style pour les boutons désactivés - identiques à la booklist */
 	.add-booklist:disabled,
 	.read:disabled {
 		opacity: 0.6;
@@ -368,24 +351,47 @@
 	.add-booklist:disabled:hover,
 	.read:disabled:hover {
 		transform: none;
-		background: transparent;
+		background-color: transparent;
+	}
+
+
+
+	/* Style du texte des boutons principaux */
+	.button-text {
+		font-size: 0.8rem;
+		font-weight: 600;
+		text-align: center;
+		line-height: 1.2;
 		color: var(--couleur-marron);
 	}
 
-	/* Spinner de chargement */
-	.loading-spinner {
-		width: 20px;
-		height: 20px;
-		border: 2px solid var(--couleur-beige-clair);
-		border-top: 2px solid var(--couleur-marron);
-		border-radius: 50%;
-		animation: spin 1s linear infinite;
+	/* Icônes de bookmark - identiques à celles de la booklist */
+	.material-symbols--bookmark-added-grey {
+		display: inline-block;
+		width: 2rem;
+		height: 2rem;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23848484' d='M17.825 9L15 6.175l1.4-1.425l1.425 1.425l3.525-3.55l1.425 1.425zM5 21V5q0-.825.588-1.412T7 3h7q-.5.75-.75 1.438T13 6q0 1.8 1.138 3.175T17 10.9q.575.075 1 .075t1-.075V21l-7-3z'/%3E%3C/svg%3E");
 	}
 
-	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
+	.material-symbols--bookmark-added-blue {
+		display: inline-block;
+		width: 2rem;
+		height: 2rem;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2363A6A6' d='M17.825 9L15 6.175l1.4-1.425l1.425 1.425l3.525-3.55l1.425 1.425zM5 21V5q0-.825.588-1.412T7 3h7q-.5.75-.75 1.438T13 6q0 1.8 1.138 3.175T17 10.9q.575.075 1 .075t1-.075V21l-7-3z'/%3E%3C/svg%3E");
 	}
+
+	/* Icônes PNG - même taille que les bookmarks */
+	.icon {
+		width: 2rem;
+		height: 2rem;
+		object-fit: contain;
+	}
+
+
 
 	.exit-container {
 		display: flex;

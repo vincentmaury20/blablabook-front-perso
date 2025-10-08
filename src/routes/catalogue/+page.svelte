@@ -271,10 +271,7 @@
 		width: auto;
 	}
 
-	.add-button:hover {
-		transform: scale(1.05);
-		box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-	}
+	/* Effets de survol supprimés pour cohérence */
 
 	/* Styles pour le bouton quand le livre est dans la booklist */
 	.add-button.in-booklist {
@@ -284,10 +281,7 @@
 		font-weight: bold;
 	}
 
-	.add-button.in-booklist:hover {
-		background-color: var(--couleur-marron);
-		color: var(--couleur-beige-clair);
-	}
+	/* Effets de survol supprimés pour cohérence */
 
 	/* Style pour les boutons désactivés */
 	.add-button:disabled {

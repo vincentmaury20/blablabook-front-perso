@@ -173,12 +173,12 @@
                             <span class="icon-wrapper">
                                 <span class="material-symbols--bookmark-added-grey"></span>
                             </span>
-                            <span class="status-text">À lire</span>
+                            <span class="button-text">À lire</span>
                         {:else}
                             <span class="icon-wrapper">
                                 <span class="material-symbols--bookmark-added-blue"></span>
                             </span>
-                            <span class="status-text">Lu</span>
+                            <span class="button-text">Lu</span>
                         {/if}
                     </button>
                     <button class="delete-booklist" aria-label="Supprimer de ma booklist" onclick={() => removeBook(book)}>
@@ -291,22 +291,14 @@
 		gap: 0.2rem;
 	}
 
-	.to-read:hover {
-		background-color: var(--couleur-beige-clair);
-		transform: translateY(-2px);
-		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-	}
+	/* Suppression de l'effet de survol */
 
 	.to-read.active {
-		background-color: var(--couleur-vieux-rose);
-		color: var(--couleur-beige-clair);
+		background-color: transparent;
 		font-weight: 600;
-		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 	}
 
-	.to-read.active:hover {
-		background-color: var(--couleur-marron);
-	}
+	/* Suppression de l'effet hover pour l'état actif */
 
 	.to-read:disabled {
 		opacity: 0.6;
@@ -320,11 +312,13 @@
 		box-shadow: none;
 	}
 
-	.status-text {
-		font-size: 0.7rem;
-		font-weight: 500;
+	.button-text {
+		font-size: 0.8rem;
+		font-weight: 600;
 		text-align: center;
+		line-height: 1.2;
 		margin-top: 0.2rem;
+		color: var(--couleur-marron);
 	}
 
 
@@ -341,15 +335,10 @@
 		padding: 0.8rem;
 		border: none;
 		cursor: pointer;
-		transition: all 0.3s ease;
 		border-radius: 8px;
 	}
 
-	.delete-booklist:hover {
-		background-color: #ffebee;
-		transform: translateY(-2px);
-		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-	}
+	/* Effets de survol supprimés pour cohérence */
 
 	.delete-booklist:disabled {
 		opacity: 0.6;
