@@ -1,63 +1,121 @@
 <script>
-	function toggle() {
-		// isRead = !isRead;
-	}
+    import { onMount } from 'svelte';
+    import { goto } from '$app/navigation';
 
-	let { data } = $props();
+    let booklist = [];     
+    let totalBooks = 0;    
+    let page = 1;            
+    let totalPages = 1;     
+    let errorMessage = "";   
 
-	import { goto } from '$app/navigation';
+    const limit = 10; 
+
+    const token = localStorage.getItem('token');
+
+    function toggle() {
+        // isRead = !isRead;
+    }
+
+    async function loadBooks(pageNumber = 1) {
+        if (!token) {
+            goto('/login');
+            return;
+        }
+
+        try {
+            const res = await fetch(`http://localhost:3000/userbooks?page=${pageNumber}&limit=${limit}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (!res.ok) throw new Error('Erreur lors de la récupération des livres');
+
+            const data = await res.json();
+
+            booklist = data.userbooks || [];
+            totalBooks = data.totalBooks || booklist.length;
+            page = data.page;
+            totalPages = data.totalPages;
+
+            console.log('Livres :', booklist);
+            console.log('Total livres :', totalBooks);
+
+        } catch (err) {
+            console.error(err);
+            errorMessage = err.message || 'Une erreur est survenue';
+        }
+    }
+
+    onMount(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const currentPage = Number(searchParams.get('page')) || 1;
+        loadBooks(currentPage); 
+    });
+
+    function goToPage(newPage) {
+        loadBooks(newPage);
+        goto(`?page=${newPage}`, { replaceState: true });
+    }
 </script>
 
 <section class="booklist">
-	<header class="page_title">
-		<h1>Ma booklist</h1>
-		<p>{data.totalBooks} Livres</p>
-		<p>Retour</p>
-	</header>
-	{#each data.userbooks as userbook}
-		<article class="book">
-			<div class="book_data">
-				<img src={userbook.book.cover} alt={userbook.book.title} />
-				<div class="book_info">
-					<p class="book_title"><a href="/livre/{userbook.book.id}">{userbook.book.title}</a></p>
-					<p class="book_author">{userbook.book.author}</p>
-				</div>
-			</div>
-			<div class="buttons">
-				<button
-					class="to-read"
-					class:active={userbook.toRead}
-					onclick={toggle}
-					aria-label={userbook.toRead ? 'A lire' : 'Lu'}
-				>
-					{#if userbook.toRead}
-						<span class="icon-wrapper">
-							<span class="material-symbols--bookmark-added-grey"></span>
-						</span>
-					{:else}
-						<span class="icon-wrapper">
-							<span class="material-symbols--bookmark-added-blue"></span>
-						</span>
-					{/if}
-				</button>
-				<button class="delete-booklist" aria-label="Supprimer de ma booklist">
-					<span class="icon-wrapper">
-						<span class="material-symbols--delete-rounded"></span>
-					</span>
-				</button>
-			</div>
-		</article>
-	{/each}
+    <header class="page_title">
+        <h1>Ma booklist</h1>
+        <p>{totalBooks} Livre{totalBooks > 1 ? 's' : ''}</p>
+        <p><a href="/mon_compte">Retour</a></p>
+    </header>
 
-	<div class="pagination">
-		{#if data.page > 1}
-			<button onclick={() => goto(`?page=${data.page - 1}`)}>Précédente</button>
-		{/if}
-		<span>Page {data.page} / {data.totalPages}</span>
-		{#if data.page < data.totalPages}
-			<button onclick={() => goto(`?page=${data.page + 1}`)}>Suivante</button>
-		{/if}
-	</div>
+    {#if errorMessage}
+        <p class="error">{errorMessage}</p>
+
+    {:else if totalBooks === 0}
+        <p>Aucun livre trouvé.</p>
+    {:else}
+        {#each booklist as book}
+            <article class="book">
+                <div class="book_data">
+                    <img src={book.book.cover} alt={book.book.title} />
+                    <div class="book_info">
+                        <p class="book_title"><a href="/livre/{book.book.id}">{book.book.title}</a></p>
+                        <p class="book_author">{book.book.author}</p>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button
+                        class="to-read"
+                        class:active={book.toRead}
+                        onclick={toggle}
+                        aria-label={book.toRead ? 'A lire' : 'Lu'}
+                    >
+                        {#if book.toRead}
+                            <span class="icon-wrapper">
+                                <span class="material-symbols--bookmark-added-grey"></span>
+                            </span>
+                        {:else}
+                            <span class="icon-wrapper">
+                                <span class="material-symbols--bookmark-added-blue"></span>
+                            </span>
+                        {/if}
+                    </button>
+                    <button class="delete-booklist" aria-label="Supprimer de ma booklist">
+                        <span class="icon-wrapper">
+                            <span class="material-symbols--delete-rounded"></span>
+                        </span>
+                    </button>
+                </div>
+            </article>
+        {/each}
+        <div class="pagination">
+            {#if page > 1}
+                <button onclick={() => goToPage(page - 1)}>Précédente</button>
+            {/if}
+
+            <span>Page {page} / {totalPages}</span>
+
+            {#if page < totalPages}
+                <button onclick={() => goToPage(page + 1)}>Suivante</button>
+            {/if}
+        </div>
+    {/if}
 </section>
 
 <style>
