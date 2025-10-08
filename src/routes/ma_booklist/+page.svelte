@@ -8,17 +8,16 @@
     let totalPages = 1;     
     let errorMessage = "";   
 
-    const limit = 10; 
-
-    const token = localStorage.getItem('token');
+    const limit = 10;
 
     function toggle() {
-        // isRead = !isRead;
+        // Fonction simple pour les tests
     }
 
     async function loadBooks(pageNumber = 1) {
+        const token = localStorage.getItem('token');
         if (!token) {
-            goto('/login');
+            goto('/authentification/connexion');
             return;
         }
 
@@ -35,9 +34,6 @@
             totalBooks = data.totalBooks || booklist.length;
             page = data.page;
             totalPages = data.totalPages;
-
-            console.log('Livres :', booklist);
-            console.log('Total livres :', totalBooks);
 
         } catch (err) {
             console.error(err);
@@ -76,7 +72,13 @@
                     <img src={book.book.cover} alt={book.book.title} />
                     <div class="book_info">
                         <p class="book_title"><a href="/livre/{book.book.id}">{book.book.title}</a></p>
-                        <p class="book_author">{book.book.author}</p>
+                        <p class="book_author">
+                            {#if book.book.authors?.length}
+                                {book.book.authors.map(author => `${author.firstname} ${author.name}`).join(', ')}
+                            {:else}
+                                Auteur inconnu
+                            {/if}
+                        </p>
                     </div>
                 </div>
                 <div class="buttons">
@@ -190,14 +192,69 @@
 
 	.to-read {
 		display: flex;
+		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 		background-color: transparent;
 		box-shadow: none;
-		width: 4rem;
-		height: 4rem;
+		width: 6rem;
+		height: 5rem;
 		margin: 0;
-		padding: 0.8rem;
+		padding: 0.5rem;
+		border: none;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		border-radius: 8px;
+		gap: 0.2rem;
+	}
+
+	.to-read:hover {
+		background-color: var(--couleur-beige-clair);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+	}
+
+	.to-read.active {
+		background-color: var(--couleur-vieux-rose);
+		color: var(--couleur-beige-clair);
+		font-weight: 600;
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+	}
+
+	.to-read.active:hover {
+		background-color: var(--couleur-marron);
+	}
+
+	.to-read:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+		transform: none;
+	}
+
+	.to-read:disabled:hover {
+		transform: none;
+		background-color: transparent;
+		box-shadow: none;
+	}
+
+	.status-text {
+		font-size: 0.7rem;
+		font-weight: 500;
+		text-align: center;
+	}
+
+	.loading-spinner {
+		width: 20px;
+		height: 20px;
+		border: 2px solid var(--couleur-beige-clair);
+		border-top: 2px solid var(--couleur-marron);
+		border-radius: 50%;
+		animation: spin 1s linear infinite;
+	}
+
+	@keyframes spin {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
 	}
 
 	.delete-booklist {
@@ -210,6 +267,28 @@
 		height: 4rem;
 		margin: 0;
 		padding: 0.8rem;
+		border: none;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		border-radius: 8px;
+	}
+
+	.delete-booklist:hover {
+		background-color: #ffebee;
+		transform: translateY(-2px);
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+	}
+
+	.delete-booklist:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+		transform: none;
+	}
+
+	.delete-booklist:disabled:hover {
+		transform: none;
+		background-color: transparent;
+		box-shadow: none;
 	}
 
 	.icon-wrapper {
@@ -245,6 +324,17 @@
 
 	article:nth-child(even) {
 		background-color: var(--couleur-beige-clair);
+	}
+
+	/* Style pour les messages d'erreur */
+	.error {
+		color: #d32f2f;
+		background-color: #ffebee;
+		padding: 1rem;
+		border-radius: 8px;
+		border-left: 4px solid #d32f2f;
+		margin: 1rem;
+		font-weight: 500;
 	}
 
 	/* Media queries */

@@ -1,18 +1,154 @@
 <script>
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 
 	let inBooklist = $state(false);
 	let isRead = $state(false);
-
-	function toggleBooklist() {
-		inBooklist = !inBooklist;
-	}
-
-	function toggleRead() {
-		isRead = !isRead;
-	}
-
+	let isLoading = $state(false);
+	let isReadLoading = $state(false);
 	let { data } = $props();
+
+	// Fonction utilitaire pour décoder le JWT
+	function decodeJWT(token) {
+		try {
+			const payload = token.split('.')[1];
+			const decoded = JSON.parse(atob(payload));
+			return decoded;
+		} catch (error) {
+			console.error('❌ Erreur décodage JWT:', error);
+			return null;
+		}
+	}
+
+	// Vérifier si le livre est dans la booklist au chargement
+	async function checkBookStatus() {
+		const token = localStorage.getItem('token');
+		if (!token) return;
+
+		const decodedToken = decodeJWT(token);
+		if (!decodedToken) return;
+
+		try {
+			const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}/status`, {
+				headers: {
+					'Authorization': `Bearer ${token}`,
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (response.ok) {
+				const result = await response.json();
+				inBooklist = result.inBooklist;
+				isRead = result.isRead || false;
+			}
+		} catch (error) {
+			console.error('Erreur lors de la vérification du statut:', error);
+		}
+	}
+
+	async function toggleBooklist() {
+		const token = localStorage.getItem('token');
+		if (!token) {
+			goto('/authentification/connexion');
+			return;
+		}
+
+		const decodedToken = decodeJWT(token);
+		if (!decodedToken) {
+			goto('/authentification/connexion');
+			return;
+		}
+
+		isLoading = true;
+		try {
+			if (inBooklist) {
+				// Supprimer de la booklist
+				const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`, {
+					method: 'DELETE',
+					headers: {
+						'Authorization': `Bearer ${token}`,
+						'Content-Type': 'application/json'
+					}
+				});
+
+				if (response.ok) {
+					inBooklist = false;
+					isRead = false;
+					console.log('✅ Livre retiré de la booklist');
+				} else {
+					console.error('❌ Erreur lors de la suppression');
+				}
+			} else {
+				// Ajouter à la booklist
+				const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`, {
+					method: 'POST',
+					headers: {
+						'Authorization': `Bearer ${token}`,
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ toRead: true })
+				});
+
+				if (response.ok) {
+					inBooklist = true;
+					console.log('✅ Livre ajouté à la booklist');
+				} else {
+					console.error('❌ Erreur lors de l\'ajout');
+				}
+			}
+		} catch (error) {
+			console.error('Erreur:', error);
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	async function toggleRead() {
+		const token = localStorage.getItem('token');
+		if (!token) {
+			goto('/authentification/connexion');
+			return;
+		}
+
+		// Vérifier que le livre est dans la booklist avant de modifier le statut de lecture
+		if (!inBooklist) {
+			console.warn('⚠️ Le livre doit être dans la booklist pour modifier le statut de lecture');
+			return;
+		}
+
+		const decodedToken = decodeJWT(token);
+		if (!decodedToken) {
+			goto('/authentification/connexion');
+			return;
+		}
+
+		isReadLoading = true;
+		try {
+			const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`, {
+				method: 'PUT',
+				headers: {
+					'Authorization': `Bearer ${token}`,
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ toRead: !isRead })
+			});
+
+			if (response.ok) {
+				isRead = !isRead;
+				console.log(`✅ Statut de lecture mis à jour: ${isRead ? 'Lu' : 'À lire'}`);
+			} else {
+				console.error('❌ Erreur lors de la mise à jour du statut de lecture');
+			}
+		} catch (error) {
+			console.error('Erreur lors de la mise à jour du statut:', error);
+		} finally {
+			isReadLoading = false;
+		}
+	}
+
+	onMount(() => {
+		checkBookStatus();
+	});
 </script>
 
 <h1 class="book-title">{data.book.title}</h1>
@@ -55,17 +191,41 @@
 </div>
 
 <div class="buttons-container">
-	<!-- Bouton ajouter à la booklist -->
-	<button class="add-booklist" onclick={toggleBooklist} aria-label="Ajouter à la Booklist">
-		<img src={inBooklist ? '/icons/Remove2.png' : '/icons/Add.png'} alt="" class="icon" />
-		{inBooklist ? 'Retirer de ma Booklist' : 'Ajouter à ma Booklist'}
+	<!-- Bouton ajouter/retirer de la booklist -->
+	<button 
+		class="add-booklist" 
+		class:in-booklist={inBooklist}
+		onclick={toggleBooklist} 
+		disabled={isLoading}
+		aria-label={inBooklist ? "Retirer de la Booklist" : "Ajouter à la Booklist"}
+	>
+		{#if isLoading}
+			<div class="loading-spinner"></div>
+			Chargement...
+		{:else}
+			<img src={inBooklist ? '/icons/Remove2.png' : '/icons/Add.png'} alt="" class="icon" />
+			{inBooklist ? 'Retirer de ma Booklist' : 'Ajouter à ma Booklist'}
+		{/if}
 	</button>
 
-	<!-- Bouton "J'ai lu" -->
-	<button class="read" onclick={toggleRead} aria-label="J'ai lu">
-		<img src={isRead ? '/icons/Remove.png' : '/icons/Add.png'} alt="" class="icon" />
-		{isRead ? 'Déjà lu' : "J'ai lu"}
-	</button>
+	<!-- Bouton "J'ai lu" - seulement si dans la booklist -->
+	{#if inBooklist}
+		<button 
+			class="read" 
+			class:is-read={isRead}
+			onclick={toggleRead} 
+			disabled={isReadLoading}
+			aria-label={isRead ? "Marquer comme non lu" : "Marquer comme lu"}
+		>
+			{#if isReadLoading}
+				<div class="loading-spinner"></div>
+				Chargement...
+			{:else}
+				<img src={isRead ? '/icons/Remove.png' : '/icons/Add.png'} alt="" class="icon" />
+				{isRead ? 'Marquer comme non lu' : "Marquer comme lu"}
+			{/if}
+		</button>
+	{/if}
 </div>
 
 <div class="exit-container">
@@ -162,6 +322,66 @@
 	.add-booklist,
 	.read {
 		-webkit-tap-highlight-color: transparent;
+	}
+
+	/* Styles pour les boutons actifs */
+	.add-booklist.in-booklist {
+		background-color: var(--couleur-beige-clair);
+		border: 2px solid var(--couleur-marron);
+		color: var(--couleur-marron);
+		font-weight: 600;
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+	}
+
+	.read.is-read {
+		background-color: var(--couleur-vieux-rose);
+		border: 2px solid var(--couleur-vieux-rose);
+		color: var(--couleur-beige-clair);
+		font-weight: 600;
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+	}
+
+	/* Effet hover pour les boutons actifs */
+	.add-booklist.in-booklist:hover {
+		background-color: var(--couleur-marron);
+		color: var(--couleur-beige-clair);
+		transform: translateY(-2px);
+	}
+
+	.read.is-read:hover {
+		background-color: var(--couleur-marron);
+		border-color: var(--couleur-marron);
+		transform: translateY(-2px);
+	}
+
+	/* Style pour les boutons désactivés */
+	.add-booklist:disabled,
+	.read:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+		transform: none;
+	}
+
+	.add-booklist:disabled:hover,
+	.read:disabled:hover {
+		transform: none;
+		background: transparent;
+		color: var(--couleur-marron);
+	}
+
+	/* Spinner de chargement */
+	.loading-spinner {
+		width: 20px;
+		height: 20px;
+		border: 2px solid var(--couleur-beige-clair);
+		border-top: 2px solid var(--couleur-marron);
+		border-radius: 50%;
+		animation: spin 1s linear infinite;
+	}
+
+	@keyframes spin {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
 	}
 
 	.exit-container {
