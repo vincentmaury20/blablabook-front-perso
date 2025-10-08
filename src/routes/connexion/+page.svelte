@@ -29,41 +29,40 @@
 		}
 	}
 
-	async function Register(event) {
-		event.preventDefault();
-		errorMessage = '';
-		const formData = new FormData(event.target);
+async function Register(event) {
+	event.preventDefault();
+	errorMessage = '';
 
-		const password = formData.get('password');
-		const confirm = formData.get('confirm');
+	const formData = new FormData(event.target);
 
-		if (password !== confirm) {
-			errorMessage = 'Les mots de passe ne correspondent pas';
-			return;
-		}
+	const password = formData.get('password');
+	const confirm = formData.get('confirm');
 
+	if (password !== confirm) {
+		errorMessage = 'Les mots de passe ne correspondent pas';
+		return;
+	}
+
+	try {
 		const res = await fetch('http://localhost:3000/user/register', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				name: formData.get('name'),
-				firstname: formData.get('firstname'),
-				age: formData.get('age'),
-				email: formData.get('email'),
-				password 
-			})
+			body: formData // ✅ multipart/form-data géré automatiquement
 		});
 
 		const data = await res.json();
 
 		if (res.ok) {
-			localStorage.setItem('token', data.token);
+			localStorage.setItem('token', data.token); // si tu ajoutes le JWT plus tard
 			isLogin = true;
-			goto('/connexion');
+			goto('/mon_compte');
 		} else {
-			errorMessage = data.error || 'Erreur lors de la création de compte';
+			errorMessage = data.error || 'Erreur lors de la création du compte';
 		}
+	} catch (err) {
+		console.error(err);
+		errorMessage = 'Erreur réseau ou serveur';
 	}
+}
 </script>
 
 <div class="auth-container">
@@ -84,7 +83,7 @@
 		</form>
 		
 	{:else}
-		<form onsubmit={Register}>
+		<form onsubmit={Register} enctype="multipart/form-data">
 			<label for="name">Nom :</label>
 			<input type="text" name="name" id="name" required />
 			
@@ -104,6 +103,9 @@
 			<label for="confirm">Confirmation du mot de passe :</label>
 			<input type="password" name="confirm" id="confirm" required minlength="6" />
 
+			<label for="avatar">Avatar :</label> 
+			<input type="file" name="avatar" id="avatar" accept="image/*"> 
+			<!-- j'ai ajouté ce champs-ci pour ajouter l'avatar ou du moins "tenter" -->
 			<button type="submit">Créer mon compte</button>
 		</form>
 	{/if}
