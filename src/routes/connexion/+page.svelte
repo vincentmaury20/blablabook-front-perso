@@ -96,12 +96,14 @@
       <label for="password">Mot de passe :</label>
       <input type="password" name="password" id="password" required />
 
-      <button type="submit">Se connecter</button>
-    </form>
-  {:else}
-    <form onsubmit={Register}>
-      <label for="name">Nom :</label>
-      <input type="text" name="name" id="name" required />
+			<button type="submit">Se connecter</button>
+		</form>
+		
+	{:else}
+		<form onsubmit={Register} enctype="multipart/form-data">
+			<label for="name">Nom :</label>
+			<input type="text" name="name" id="name" required />
+			
 
       <label for="firstname">Prénom :</label>
       <input type="text" name="firstname" id="firstname" required />
@@ -118,9 +120,12 @@
       <label for="confirm">Confirmation du mot de passe :</label>
       <input type="password" name="confirm" id="confirm" required minlength="6" />
 
-      <button type="submit">Créer mon compte</button>
-    </form>
-  {/if}
+			<label for="avatar">Avatar :</label> 
+			<input type="file" name="avatar" id="avatar" accept="image/*"> 
+			<!-- j'ai ajouté ce champs-ci pour ajouter l'avatar ou du moins "tenter" -->
+			<button type="submit">Créer mon compte</button>
+		</form>
+	{/if}
 </div>
 
 <style>
