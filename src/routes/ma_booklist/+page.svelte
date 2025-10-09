@@ -54,7 +54,7 @@
                     booklist = [...booklist]; // Forcer la réactivité
                     
                     // Mettre à jour le store global
-                    updateBookStatus(book.book.id, {
+                    updateBookStatus(String(book.book.id), {
                         inBooklist: true,
                         toRead: booklist[bookIndex].toRead
                     });
