@@ -60,7 +60,6 @@
 				/>
 
 				<div class="id">
-					<p>{currentUser.avatar}</p>
 					<p class="name">{currentUser.name} {currentUser.firstname}</p>
 					<p class="age pink">{currentUser.age} ans</p>
 				</div>
