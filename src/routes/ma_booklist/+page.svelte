@@ -1,143 +1,152 @@
 <script>
-	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
+    import { onMount } from 'svelte';
+    import { goto } from '$app/navigation';
+    import { updateBookStatus } from '$lib/stores/booklistStore.js';
 
-	let booklist = [];
-	let totalBooks = 0;
-	let page = 1;
-	let totalPages = 1;
-	let errorMessage = '';
+    let booklist = [];     
+    let totalBooks = 0;    
+    let page = 1;            
+    let totalPages = 1;     
+    let errorMessage = "";   
 
-	const limit = 10;
+    const limit = 10;
 
-	// Fonction utilitaire pour décoder le JWT
-	function decodeJWT(token) {
-		try {
-			const payload = token.split('.')[1];
-			const decoded = JSON.parse(atob(payload));
-			return decoded;
-		} catch (error) {
-			console.error('❌ Erreur décodage JWT:', error);
-			return null;
-		}
-	}
+    // Fonction utilitaire pour décoder le JWT
+    function decodeJWT(token) {
+        try {
+            const payload = token.split('.')[1];
+            const decoded = JSON.parse(atob(payload));
+            return decoded;
+        } catch (error) {
+            console.error('❌ Erreur décodage JWT:', error);
+            return null;
+        }
+    }
 
-	async function toggleReadStatus(book) {
-		const token = localStorage.getItem('token');
-		if (!token) {
-			goto('/authentification/connexion');
-			return;
-		}
+    async function toggleReadStatus(book) {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            goto('/authentification/connexion');
+            return;
+        }
 
-		const decodedToken = decodeJWT(token);
-		if (!decodedToken) {
-			goto('/authentification/connexion');
-			return;
-		}
+        const decodedToken = decodeJWT(token);
+        if (!decodedToken) {
+            goto('/authentification/connexion');
+            return;
+        }
 
-		try {
-			console.log(
-				`🔄 Changement statut livre ${book.book.title}: ${book.toRead ? 'Lu' : 'À lire'} -> ${book.toRead ? 'À lire' : 'Lu'}`
-			);
+        try {
+            const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${book.book.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ toRead: !book.toRead })
+            });
 
-			const response = await fetch(
-				`http://localhost:3000/user/${decodedToken.id}/book/${book.book.id}`,
-				{
-					method: 'PUT',
-					headers: {
-						Authorization: `Bearer ${token}`,
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ toRead: !book.toRead })
-				}
-			);
+            if (response.ok) {
+                // Mettre à jour localement le statut du livre
+                const bookIndex = booklist.findIndex(b => b.book.id === book.book.id);
+                if (bookIndex !== -1) {
+                    booklist[bookIndex].toRead = !booklist[bookIndex].toRead;
+                    booklist = [...booklist]; // Forcer la réactivité
+                    
+                    // Mettre à jour le store global
+                    updateBookStatus(book.book.id, {
+                        inBooklist: true,
+                        toRead: booklist[bookIndex].toRead
+                    });
+                }
+            } else {
+                console.error('❌ Erreur lors de la sauvegarde du statut');
+            }
+        } catch (error) {
+            console.error('❌ Erreur:', error);
+        }
+    }
 
-			if (response.ok) {
-				// Mettre à jour localement le statut du livre
-				const bookIndex = booklist.findIndex((b) => b.book.id === book.book.id);
-				if (bookIndex !== -1) {
-					booklist[bookIndex].toRead = !booklist[bookIndex].toRead;
-					booklist = [...booklist]; // Forcer la réactivité
-				}
-				console.log(`✅ Statut sauvegardé: ${!book.toRead ? 'Lu' : 'À lire'}`);
-			} else {
-				console.error('❌ Erreur lors de la sauvegarde du statut');
-			}
-		} catch (error) {
-			console.error('❌ Erreur:', error);
-		}
-	}
+    async function loadBooks(pageNumber = 1) {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            goto('/authentification/connexion');
+            return;
+        }
 
-	async function loadBooks(pageNumber = 1) {
-		const token = localStorage.getItem('token');
-		if (!token) {
-			goto('/authentification/connexion');
-			return;
-		}
+        try {
+            const res = await fetch(`http://localhost:3000/userbooks?page=${pageNumber}&limit=${limit}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
 
-		try {
-			const res = await fetch(`http://localhost:3000/userbooks?page=${pageNumber}&limit=${limit}`, {
-				headers: { Authorization: `Bearer ${token}` }
-			});
+            if (!res.ok) throw new Error('Erreur lors de la récupération des livres');
 
-			if (!res.ok) throw new Error('Erreur lors de la récupération des livres');
+            const data = await res.json();
 
-			const data = await res.json();
+            booklist = data.userbooks || [];
+            totalBooks = data.totalBooks || booklist.length;
+            page = data.page;
+            totalPages = data.totalPages;
 
-			booklist = data.userbooks || [];
-			totalBooks = data.totalBooks || booklist.length;
-			page = data.page;
-			totalPages = data.totalPages;
-		} catch (err) {
-			console.error(err);
-			errorMessage = err.message || 'Une erreur est survenue';
-		}
-	}
+            // Alimenter le store global avec les données de la booklist
+            booklist.forEach(bookItem => {
+                updateBookStatus(bookItem.book.id, {
+                    inBooklist: true,
+                    toRead: bookItem.toRead
+                });
+            });
 
-	async function removeBook(book) {
-		const token = localStorage.getItem('token');
-		if (!token) return;
+        } catch (err) {
+            console.error(err);
+            errorMessage = err.message || 'Une erreur est survenue';
+        }
+    }
 
-		const decodedToken = decodeJWT(token);
-		if (!decodedToken) return;
+    async function removeBook(book) {
+        const token = localStorage.getItem('token');
+        if (!token) return;
 
-		try {
-			console.log(`🗑️ Suppression du livre: ${book.book.title}`);
+        const decodedToken = decodeJWT(token);
+        if (!decodedToken) return;
 
-			const response = await fetch(
-				`http://localhost:3000/user/${decodedToken.id}/book/${book.book.id}`,
-				{
-					method: 'DELETE',
-					headers: {
-						Authorization: `Bearer ${token}`,
-						'Content-Type': 'application/json'
-					}
-				}
-			);
+        try {
+            console.log(`🗑️ Suppression du livre: ${book.book.title}`);
+            
+            const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${book.book.id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
 
-			if (response.ok) {
-				// Supprimer le livre de la liste locale
-				booklist = booklist.filter((b) => b.book.id !== book.book.id);
-				totalBooks = Math.max(0, totalBooks - 1);
-				console.log('✅ Livre supprimé');
-			} else {
-				console.error('❌ Erreur lors de la suppression');
-			}
-		} catch (error) {
-			console.error('❌ Erreur:', error);
-		}
-	}
+            if (response.ok) {
+                // Supprimer le livre de la liste locale
+                booklist = booklist.filter(b => b.book.id !== book.book.id);
+                totalBooks = Math.max(0, totalBooks - 1);
+                
+                // Mettre à jour le store global
+                updateBookStatus(String(book.book.id), { inBooklist: false, toRead: true });
+                
+                console.log('✅ Livre supprimé');
+            } else {
+                console.error('❌ Erreur lors de la suppression');
+            }
+        } catch (error) {
+            console.error('❌ Erreur:', error);
+        }
+    }
 
-	onMount(() => {
-		const searchParams = new URLSearchParams(window.location.search);
-		const currentPage = Number(searchParams.get('page')) || 1;
-		loadBooks(currentPage);
-	});
+    onMount(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const currentPage = Number(searchParams.get('page')) || 1;
+        loadBooks(currentPage); 
+    });
 
-	function goToPage(newPage) {
-		loadBooks(newPage);
-		goto(`?page=${newPage}`, { replaceState: true });
-	}
+    function goToPage(newPage) {
+        loadBooks(newPage);
+        goto(`?page=${newPage}`, { replaceState: true });
+    }
 </script>
 
 <section class="booklist">

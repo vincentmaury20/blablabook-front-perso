@@ -49,7 +49,15 @@ export async function loadUserFromToken() {
 export function logout() {
   user.set(null);
   localStorage.removeItem('token');
-  console.log('✅ Déconnexion - Store réinitialisé');
+  
+  // Vider aussi le store des booklists
+  if (browser) {
+    import('./booklistStore.js').then(({ clearBooklistStatus }) => {
+      clearBooklistStatus();
+    });
+  }
+  
+  console.log('✅ Déconnexion - Stores réinitialisés');
   
   // ✅ Solution : Utiliser window.location au lieu de goto()
   if (browser && window.location.pathname !== '/') {
