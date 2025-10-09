@@ -84,16 +84,25 @@
 			<a href="/"><img src="/LogoBBB.png" alt="Logo BlaBlaBook" class="logo-icon" /></a>
 			<p class="title"><a href="/">BlaBlaBook</a></p>
 		</div>
-		
+
 		<!-- ✅ Condition pour afficher les bons boutons selon l'état de connexion -->
 		<div class="auth-buttons">
 			{#if $user}
-				<!-- Utilisateur connecté -->
-				<a href="/mon_compte"><button class="account-btn">Mon compte</button></a>
-				<button class="logout-btn" onclick={() => logout()}>Déconnexion</button>
+				<div class="btn-container btn-container-end">
+					<a href="/mon_compte">
+						<button class="connection-btn account-btn">Mon compte</button>
+					</a>
+				</div>
+				<div class="btn-container btn-container-start">
+					<button class="connection-btn logout-btn" onclick={() => logout()}>Déconnexion</button>
+				</div>
 			{:else}
 				<!-- Utilisateur non connecté -->
-				<button class="connection-btn"><a href="/connexion">Connexion</a></button>
+				<div class="btn-container">
+					<a href="/connexion">
+						<button class="connection-btn">Connexion</button>
+					</a>
+				</div>
 			{/if}
 		</div>
 	</div>
@@ -160,7 +169,6 @@
 	</div>
 </header>
 
-
 <style>
 	header {
 		background-color: var(--couleur-beige-rose);
@@ -195,6 +203,23 @@
 		text-align: center;
 	}
 
+	.auth-buttons {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		align-items: center;
+		width: 100%;
+	}
+
+	.btn-container {
+		width: auto;
+	}
+
+	.btn-container a {
+		display: block;
+		text-decoration: none;
+	}
+
 	.connection-btn {
 		font-family: var(--font-global);
 		padding: 0.5rem 1rem;
@@ -203,13 +228,28 @@
 		border-radius: 30px;
 		color: var(--couleur-beige-clair);
 		font-weight: bold;
+		font-size: 1rem;
 		cursor: pointer;
+		transition: all 0.2s;
+		white-space: nowrap;
+	}
+
+	.connection-btn:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 	}
 
 	.search-container {
 		position: relative;
 		width: 100%;
 		margin-top: 1rem;
+	}
+
+	.search-controls {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		align-items: stretch;
 	}
 
 	.search-input {
@@ -227,7 +267,17 @@
 		box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
 	}
 
-	/* Styles pour les suggestions */
+	.filter-select {
+		width: 100%;
+		padding: 0.5rem 1rem;
+		border-radius: 25px;
+		border: 1px solid #ccc;
+		background: #fff;
+		font-size: 1rem;
+		cursor: pointer;
+		box-shadow: 1px 3px 10px 1px rgba(80, 79, 79, 0.5);
+	}
+
 	.suggestions-dropdown {
 		position: absolute;
 		top: calc(100% + 0.5rem);
@@ -255,14 +305,12 @@
 		cursor: pointer;
 		transition: background 0.2s;
 		border-bottom: 1px solid #f0f0f0;
+		text-decoration: none;
+		color: inherit;
 	}
 
 	.suggestion-item:hover {
 		background: #f5f5f5;
-	}
-
-	.suggestion-item:last-child {
-		border-bottom: none;
 	}
 
 	.book-thumb {
@@ -285,6 +333,11 @@
 		color: #666;
 	}
 
+	.genre-name {
+		font-size: 0.75rem;
+		color: #999;
+	}
+
 	.loading-text,
 	.error-text,
 	.no-results {
@@ -297,6 +350,7 @@
 		color: #ff6b6b;
 	}
 
+	/* ✅ TABLETTE : Boutons en colonne à droite */
 	@media (min-width: 768px) {
 		.header-top {
 			flex-direction: row;
@@ -320,9 +374,40 @@
 			left: 50%;
 			transform: translateX(-50%);
 			text-align: center;
+			font-size: 2.5rem;
+		}
+
+		/* ✅ Boutons en colonne sur tablette */
+		.auth-buttons {
+			flex-direction: column; /* ✅ En colonne */
+			gap: 0.3rem;
+			align-items: flex-end; /* ✅ Alignés à droite */
+			width: auto;
+		}
+
+		.connection-btn {
+			padding: 0.3rem 0.7rem;
+			font-size: 0.85rem;
+		}
+
+		.search-controls {
+			flex-direction: row;
+			align-items: center;
+		}
+
+		.search-input {
+			flex: 1;
+		}
+
+		.filter-select {
+			width: auto;
+			padding: 0.5rem 0.8rem;
+			font-size: 0.9rem;
+			border-radius: 20px;
 		}
 	}
 
+	/* ✅ DESKTOP : Boutons en ligne */
 	@media (min-width: 1025px) {
 		header {
 			padding: 1rem 2rem;
@@ -336,44 +421,27 @@
 			font-size: 4rem;
 		}
 
+		/* ✅ Boutons en ligne sur desktop */
+		.auth-buttons {
+			flex-direction: row; /* ✅ En ligne */
+			gap: 0.4rem;
+			align-items: center;
+		}
+
+		.connection-btn {
+			padding: 0.4rem 0.8rem;
+			font-size: 0.9rem;
+		}
+
 		.search-input {
 			font-size: 1.1rem;
 			padding: 0.6rem 1.2rem;
 		}
 
-		.genre-name {
-			font-size: 0.75rem;
-			color: #999;
-			margin-top: 0.25rem;
-		}
-
-		.loading-text {
-			padding: 1rem;
-			text-align: center;
-			color: #999;
-			font-style: italic;
-		}
-
-		.no-results {
-			padding: 1.5rem 1rem;
-			text-align: center;
-			color: #999;
-		}
-
-		.search-controls {
-			display: flex;
-			gap: 0.5rem;
-			align-items: center;
-		}
-
 		.filter-select {
-			cursor: pointer; 
-			background: #fff;
 			padding: 0.8rem 1rem;
-			cursor: pointer;
-			border-radius: 25px;
-			border: 1px solid #ccc;
 			font-size: 1rem;
+			border-radius: 25px;
 			box-shadow: 1px 3px 10px 1px rgba(80, 79, 79, 0.5);
 		}
 	}
