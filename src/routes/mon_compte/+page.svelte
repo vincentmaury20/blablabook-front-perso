@@ -8,20 +8,10 @@
 	let errorMessage = '';
 
 	onMount(async () => {
-	const token = localStorage.getItem('token');
-	if (!token) {
-		goto('/login');
-		return;
-	}
-
-	try {
-		// Récupération des infos utilisateur
-		const userResponse = await fetch('http://localhost:3000/auth/me', {
-			headers: { Authorization: `Bearer ${token}` }
-		});
-
-		if (!userResponse.ok) {
-			throw new Error('Erreur lors de la récupération des infos utilisateur');
+		const token = localStorage.getItem('token');
+		if (!token) {
+			goto('/login');
+			return;
 		}
 
 		currentUser = await userResponse.json();

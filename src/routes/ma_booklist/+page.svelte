@@ -150,73 +150,78 @@
 </script>
 
 <section class="booklist">
-    <header class="page_title">
-        <h1>Ma booklist</h1>
-        <p>{totalBooks} Livre{totalBooks > 1 ? 's' : ''}</p>
-        <p><a href="/mon_compte">Retour</a></p>
-    </header>
+	<header class="page_title">
+		<h1>Ma booklist</h1>
+		<p>{totalBooks} Livre{totalBooks > 1 ? 's' : ''}</p>
+		<p><a href="/mon_compte">Retour</a></p>
+	</header>
 
-    {#if errorMessage}
-        <p class="error">{errorMessage}</p>
+	{#if errorMessage}
+		<p class="error">{errorMessage}</p>
+	{:else if totalBooks === 0}
+		<p>Aucun livre trouvé.</p>
+	{:else}
+		{#each booklist as book}
+			<article class="book">
+				<div class="book_data">
+					<a href="/livre/{book.book.id}">
+						<img src={book.book.cover} alt={book.book.title} />
+					</a>
+					<div class="book_info">
+						<p class="book_title"><a href="/livre/{book.book.id}">{book.book.title}</a></p>
+						<p class="book_author">
+							{#if book.book.authors?.length}
+								{book.book.authors.map((author) => `${author.firstname} ${author.name}`).join(', ')}
+							{:else}
+								Auteur inconnu
+							{/if}
+						</p>
+					</div>
+				</div>
+				<div class="buttons">
+					<button
+						class="to-read"
+						class:active={!book.toRead}
+						onclick={() => toggleReadStatus(book)}
+						aria-label={book.toRead ? 'Marquer comme lu' : 'Marquer comme à lire'}
+						title={book.toRead ? 'Marquer comme lu' : 'Marquer comme à lire'}
+					>
+						{#if book.toRead}
+							<span class="icon-wrapper">
+								<span class="material-symbols--bookmark-added-grey"></span>
+							</span>
+							<span class="button-text">À lire</span>
+						{:else}
+							<span class="icon-wrapper">
+								<span class="material-symbols--bookmark-added-blue"></span>
+							</span>
+							<span class="button-text">Lu</span>
+						{/if}
+					</button>
+					<button
+						class="delete-booklist"
+						aria-label="Supprimer de ma booklist"
+						onclick={() => removeBook(book)}
+					>
+						<span class="icon-wrapper">
+							<span class="material-symbols--delete-rounded"></span>
+						</span>
+					</button>
+				</div>
+			</article>
+		{/each}
+		<div class="pagination">
+			{#if page > 1}
+				<button onclick={() => goToPage(page - 1)}>Précédente</button>
+			{/if}
 
-    {:else if totalBooks === 0}
-        <p>Aucun livre trouvé.</p>
-    {:else}
-        {#each booklist as book}
-            <article class="book">
-                <div class="book_data">
-                    <img src={book.book.cover} alt={book.book.title} />
-                    <div class="book_info">
-                        <p class="book_title"><a href="/livre/{book.book.id}">{book.book.title}</a></p>
-                        <p class="book_author">
-                            {#if book.book.authors?.length}
-                                {book.book.authors.map(author => `${author.firstname} ${author.name}`).join(', ')}
-                            {:else}
-                                Auteur inconnu
-                            {/if}
-                        </p>
-                    </div>
-                </div>
-                <div class="buttons">
-                    <button
-                        class="to-read"
-                        class:active={!book.toRead}
-                        onclick={() => toggleReadStatus(book)}
-                        aria-label={book.toRead ? 'Marquer comme lu' : 'Marquer comme à lire'}
-                        title={book.toRead ? 'Marquer comme lu' : 'Marquer comme à lire'}
-                    >
-                        {#if book.toRead}
-                            <span class="icon-wrapper">
-                                <span class="material-symbols--bookmark-added-grey"></span>
-                            </span>
-                            <span class="button-text">À lire</span>
-                        {:else}
-                            <span class="icon-wrapper">
-                                <span class="material-symbols--bookmark-added-blue"></span>
-                            </span>
-                            <span class="button-text">Lu</span>
-                        {/if}
-                    </button>
-                    <button class="delete-booklist" aria-label="Supprimer de ma booklist" onclick={() => removeBook(book)}>
-                        <span class="icon-wrapper">
-                            <span class="material-symbols--delete-rounded"></span>
-                        </span>
-                    </button>
-                </div>
-            </article>
-        {/each}
-        <div class="pagination">
-            {#if page > 1}
-                <button onclick={() => goToPage(page - 1)}>Précédente</button>
-            {/if}
+			<span>Page {page} / {totalPages}</span>
 
-            <span>Page {page} / {totalPages}</span>
-
-            {#if page < totalPages}
-                <button onclick={() => goToPage(page + 1)}>Suivante</button>
-            {/if}
-        </div>
-    {/if}
+			{#if page < totalPages}
+				<button onclick={() => goToPage(page + 1)}>Suivante</button>
+			{/if}
+		</div>
+	{/if}
 </section>
 
 <style>
@@ -248,17 +253,24 @@
 
 	.book_data {
 		display: flex;
-		height: 10rem;
 		align-items: center;
-		padding: 0 0.8rem;
 		width: 80%;
+		flex-shrink: 0;
 	}
 
-	.book img {
+	.book_data img {
+		width: 120px;
+		height: 180px;
+		object-fit: cover;
+		display: block;
+		margin: 1px;
+	}
+
+	/* .book img {
 		height: 85%;
 		aspect-ratio: 2/3;
 		object-fit: cover;
-	}
+	} */
 
 	.book_info {
 		margin-left: 0.8rem;
@@ -337,8 +349,6 @@
 		color: var(--couleur-marron);
 	}
 
-
-
 	.delete-booklist {
 		display: flex;
 		justify-content: center;
@@ -415,6 +425,13 @@
 	}
 
 	/* Media queries */
+
+  @media (max-width: 768px) {
+  .book_data img {
+    width: 80px;
+    height: 120px;
+  }
+}
 
 	@media (min-width: 1025px) {
 		.delete-booklist {

@@ -30,12 +30,15 @@
 		if (!decodedToken) return;
 
 		try {
-			const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}/status`, {
-				headers: {
-					'Authorization': `Bearer ${token}`,
-					'Content-Type': 'application/json'
+			const response = await fetch(
+				`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}/status`,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+						'Content-Type': 'application/json'
+					}
 				}
-			});
+			);
 
 			if (response.ok) {
 				const result = await response.json();
@@ -68,13 +71,16 @@
 		try {
 			if (inBooklist) {
 				// Supprimer de la booklist
-				const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`, {
-					method: 'DELETE',
-					headers: {
-						'Authorization': `Bearer ${token}`,
-						'Content-Type': 'application/json'
+				const response = await fetch(
+					`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`,
+					{
+						method: 'DELETE',
+						headers: {
+							Authorization: `Bearer ${token}`,
+							'Content-Type': 'application/json'
+						}
 					}
-				});
+				);
 
 				if (response.ok) {
 					inBooklist = false;
@@ -86,14 +92,17 @@
 				}
 			} else {
 				// Ajouter à la booklist
-				const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`, {
-					method: 'POST',
-					headers: {
-						'Authorization': `Bearer ${token}`,
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ toRead: true })
-				});
+				const response = await fetch(
+					`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`,
+					{
+						method: 'POST',
+						headers: {
+							Authorization: `Bearer ${token}`,
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({ toRead: true })
+					}
+				);
 
 				if (response.ok) {
 					inBooklist = true;
@@ -101,7 +110,7 @@
 					// Mettre à jour le store
 					updateBookStatus(String(data.book.id), { inBooklist: true, toRead: true });
 				} else {
-					console.error('❌ Erreur lors de l\'ajout');
+					console.error("❌ Erreur lors de l'ajout");
 				}
 			}
 		} catch (error) {
@@ -132,14 +141,17 @@
 
 		isReadLoading = true;
 		try {
-			const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`, {
-				method: 'PUT',
-				headers: {
-					'Authorization': `Bearer ${token}`,
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ toRead: !toRead })
-			});
+			const response = await fetch(
+				`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`,
+				{
+					method: 'PUT',
+					headers: {
+						Authorization: `Bearer ${token}`,
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ toRead: !toRead })
+				}
+			);
 
 			if (response.ok) {
 				toRead = !toRead;
@@ -218,12 +230,12 @@
 
 <div class="buttons-container">
 	<!-- Bouton ajouter/retirer de la booklist -->
-	<button 
-		class="add-booklist" 
+	<button
+		class="add-booklist"
 		class:in-booklist={inBooklist}
-		onclick={toggleBooklist} 
+		onclick={toggleBooklist}
 		disabled={isLoading}
-		aria-label={inBooklist ? "Retirer de la Booklist" : "Ajouter à la Booklist"}
+		aria-label={inBooklist ? 'Retirer de la Booklist' : 'Ajouter à la Booklist'}
 	>
 		{#if isLoading}
 			<div class="loading-spinner"></div>
@@ -236,12 +248,12 @@
 
 	<!-- Bouton "J'ai lu" - seulement si dans la booklist -->
 	{#if inBooklist}
-		<button 
-			class="read" 
+		<button
+			class="read"
 			class:is-read={!toRead}
-			onclick={toggleRead} 
+			onclick={toggleRead}
 			disabled={isReadLoading}
-			aria-label={toRead ? "Marquer comme lu" : "Marquer comme non lu"}
+			aria-label={toRead ? 'Marquer comme lu' : 'Marquer comme non lu'}
 		>
 			{#if isReadLoading}
 				<div class="loading-spinner"></div>
@@ -337,8 +349,6 @@
 
 	/* Suppression des effets de survol pour les boutons ajouter */
 
-
-
 	.add-booklist:focus,
 	.read:focus {
 		outline: none;
@@ -377,8 +387,6 @@
 		background-color: transparent;
 	}
 
-
-
 	/* Style du texte des boutons principaux */
 	.button-text {
 		font-size: 0.8rem;
@@ -414,8 +422,6 @@
 		object-fit: contain;
 	}
 
-
-
 	.exit-container {
 		display: flex;
 		justify-content: center;
@@ -441,6 +447,12 @@
 
 	.exit {
 		-webkit-tap-highlight-color: transparent;
+	}
+
+	.add-booklist,
+	.read,
+	.exit {
+		box-shadow: none;
 	}
 
 	@media (min-width: 768px) {
