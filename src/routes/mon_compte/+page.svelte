@@ -94,7 +94,7 @@
 			<p>{errorMessage || 'Aucun livre favori trouvé.'}</p>
 		{/if}
 
-		<a href="/ma_booklist"><button class="button">Voir plus</button></a>
+		<a class="button-link" href="/ma_booklist"><button class="button">Voir plus</button></a>
 	</section>
 </main>
 
@@ -190,6 +190,11 @@
 		display: none;
 	}
 
+	.button-link {
+		display: flex;
+		justify-content: center;
+	}
+
 	.button {
 		align-self: flex-end;
 		margin: 2rem auto;
@@ -233,6 +238,10 @@
 			margin: 1.5rem;
 		}
 
+		.booklist {
+			width: 80%;
+		}
+
 		.button {
 			margin-right: 5rem;
 			margin-bottom: 3rem;
@@ -243,10 +252,6 @@
 		.my_informations {
 			width: 18%;
 			padding: 2rem 1.5rem;
-		}
-
-		.booklist {
-			width: 80%;
 		}
 
 		.books {
