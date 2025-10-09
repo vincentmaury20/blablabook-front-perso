@@ -42,11 +42,14 @@
 
 		{#if currentUser}
 			<div class="info">
-				<img class="avatar" src={currentUser.avatar || '/images/Avatar_crop.jpg'} alt="avatar" />
+				<img
+  					class="avatar"
+  					src={currentUser.avatar ? `http://localhost:3000/${currentUser.avatar}` : '/images/Avatar_crop.jpg'}
+  					alt="avatar"
+				/>
 
-				<!-- pourl'instant j'ai mis du style pour voir si l'erreur de chargement d'image vient du css -->
-				<p>{currentUser.avatar}</p>
 				<div class="id">
+					<p>{currentUser.avatar}</p>
 					<p class="name">{currentUser.name} {currentUser.firstname}</p>
 					<p class="age pink">{currentUser.age} ans</p>
 				</div>

@@ -25,7 +25,7 @@
     if (res.ok) {
       localStorage.setItem('token', data.token);
       
-      // ✅ IMPORTANT : Mettre à jour le store
+      //  IMPORTANT : Mettre à jour le store
       user.set(data.user);
       
       console.log('✅ Connexion réussie, utilisateur:', data.user);
@@ -36,46 +36,35 @@
     }
   }
 
-  async function Register(event) {
-    event.preventDefault();
-    errorMessage = '';
+async function Register(event) {
+  event.preventDefault();
+  errorMessage = '';
 
-    const formData = new FormData(event.target);
-    const password = formData.get('password');
-    const confirm = formData.get('confirm');
+  const formData = new FormData(event.target);
+  const password = formData.get('password');
+  const confirm = formData.get('confirm');
 
-    if (password !== confirm) {
-      errorMessage = 'Les mots de passe ne correspondent pas';
-      return;
-    }
-
-    const res = await fetch('http://localhost:3000/user/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: formData.get('name'),
-        firstname: formData.get('firstname'),
-        age: formData.get('age'),
-        email: formData.get('email'),
-        password
-      })
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      localStorage.setItem('token', data.token);
-      
-      // ✅ IMPORTANT : Mettre à jour le store
-      user.set(data.user);
-      
-      console.log('✅ Compte créé, utilisateur:', data.user);
-      
-      goto('/mon_compte'); // ✅ Redirection vers /mon_compte au lieu de /connexion
-    } else {
-      errorMessage = data.error || 'Erreur lors de la création de compte';
-    }
+  if (password !== confirm) {
+    errorMessage = 'Les mots de passe ne correspondent pas';
+    return;
   }
+
+  // ça envoie le FormData tel quel, sans JSON.stringify
+  const res = await fetch('http://localhost:3000/user/register', {
+    method: 'POST',
+    body: formData //  multipart/form-data automatiquement géré
+  });
+
+  const data = await res.json();
+
+  if (res.ok) {
+    localStorage.setItem('token', data.token);
+    user.set(data.user);
+    goto('/mon_compte');
+  } else {
+    errorMessage = data.error || 'Erreur lors de la création de compte';
+  }
+}
 </script>
 
 <div class="auth-container">
