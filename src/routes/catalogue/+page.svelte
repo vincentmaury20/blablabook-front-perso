@@ -167,18 +167,15 @@
 
 <style>
 	.book-container a {
-		/* display: block; */
 		width: 35%;
 		min-width: 120px;
 	}
 
 	.book-container a img {
 		display: block;
-		width: 100%;
-		height: auto;
 		object-fit: cover;
-		/* height: 85%; */
-		/* aspect-ratio: 2/3; */
+		height: 85%;
+		aspect-ratio: 2/3;
 		border-radius: 10px;
 		margin: 0.25rem;
 	}
@@ -352,6 +349,15 @@
 		}
 	}
 
+	.book-container a {
+		display: block;
+	}
+
+	.book-container a img {
+		width: 100%;
+		height: auto;
+	}
+
 	@media (min-width: 1024px) {
 		.catalogue {
 			gap: 2rem;
@@ -360,10 +366,6 @@
 		.book-container {
 			gap: 2rem;
 			align-items: center;
-		}
-
-		.book-container img {
-			width: 25%;
 		}
 
 		.book {
