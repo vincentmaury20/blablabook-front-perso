@@ -367,12 +367,14 @@
 		}
 
 		.filter-select {
-			padding: 0.4rem 0.6rem;
-			border-radius: 20px;
-			border: 1px solid #ccc;
+			cursor: pointer; 
 			background: #fff;
-			font-size: 0.9rem;
+			padding: 0.8rem 1rem;
 			cursor: pointer;
+			border-radius: 25px;
+			border: 1px solid #ccc;
+			font-size: 1rem;
+			box-shadow: 1px 3px 10px 1px rgba(80, 79, 79, 0.5);
 		}
 	}
 </style>
