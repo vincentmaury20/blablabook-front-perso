@@ -2,8 +2,8 @@
 	let { data } = $props();
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { booklistStatus, updateBookStatus, getBookStatus } from '$lib/stores/booklistStore.js';
 
-	let booklistStatus = $state(new Map()); // Map pour stocker l'état de chaque livre
 	let loadingBooks = $state(new Set()); // Set pour tracker les livres en cours de chargement
 
 	// Fonction utilitaire pour décoder le JWT
@@ -18,7 +18,7 @@
 		}
 	}
 
-	// Vérifier le statut de tous les livres du catalogue
+	// Vérifier le statut des livres qui ne sont pas encore dans le store
 	async function checkAllBooksStatus() {
 		const token = localStorage.getItem('token');
 		if (!token) return;
@@ -26,8 +26,34 @@
 		const decodedToken = decodeJWT(token);
 		if (!decodedToken) return;
 
-		// Vérifier chaque livre en parallèle
-		const promises = data.books.map(async (book) => {
+		// S'assurer que le cache est chargé avant de vérifier
+		// On fait un appel à getBookStatus qui va déclencher le chargement lazy
+		getBookStatus('dummy', new Map()); 
+
+		// Récupérer l'état actuel du store
+		let currentStoreMap = new Map();
+		const unsubscribe = booklistStatus.subscribe(map => {
+			currentStoreMap = map;
+		});
+		unsubscribe();
+
+		// DEBUG: Remettre temporairement le log
+		console.log(`🔍 DEBUG: ${data.books.length} livres sur la page, store taille: ${currentStoreMap.size}`);
+		console.log(`🔍 DEBUG: IDs en cache:`, Array.from(currentStoreMap.keys()).slice(0, 5));
+
+		// Ne vérifier que les livres qui ne sont PAS déjà dans le store
+		// Normaliser les IDs en string pour la comparaison
+		const booksToCheck = data.books.filter(book => !currentStoreMap.has(String(book.id)));
+
+		console.log(`🔍 DEBUG: ${booksToCheck.length} livres à vérifier`);
+
+		if (booksToCheck.length === 0) {
+			console.log('✅ Tous les statuts sont déjà en cache');
+			return; // Tous les statuts sont déjà en cache
+		}
+
+		// Vérifier seulement les livres manquants
+		const promises = booksToCheck.map(async (book) => {
 			try {
 				const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${book.id}/status`, {
 					headers: {
@@ -38,7 +64,8 @@
 
 				if (response.ok) {
 					const result = await response.json();
-					booklistStatus.set(book.id, {
+					// Utiliser la fonction helper du store (normaliser ID en string)
+					updateBookStatus(String(book.id), {
 						inBooklist: result.inBooklist,
 						toRead: result.toRead !== undefined ? result.toRead : true // Par défaut: À lire
 					});
@@ -49,8 +76,6 @@
 		});
 
 		await Promise.all(promises);
-		// Forcer la réactivité
-		booklistStatus = new Map(booklistStatus);
 	}
 
 	async function toggleBookInBooklist(book) {
@@ -66,7 +91,12 @@
 			return;
 		}
 
-		const currentStatus = booklistStatus.get(book.id) || { inBooklist: false, toRead: true };
+		// Récupérer le statut actuel depuis le store (normaliser ID en string)
+		let currentStatus = { inBooklist: false, toRead: true };
+		booklistStatus.subscribe(map => {
+			currentStatus = getBookStatus(String(book.id), map);
+		})();
+
 		loadingBooks.add(book.id);
 		loadingBooks = new Set(loadingBooks);
 
@@ -82,8 +112,7 @@
 				});
 
 				if (response.ok) {
-					booklistStatus.set(book.id, { inBooklist: false, toRead: true });
-					console.log('✅ Livre retiré de la booklist');
+					updateBookStatus(String(book.id), { inBooklist: false, toRead: true });
 				}
 			} else {
 				// Ajouter à la booklist
@@ -97,8 +126,7 @@
 				});
 
 				if (response.ok) {
-					booklistStatus.set(book.id, { inBooklist: true, toRead: true });
-					console.log('✅ Livre ajouté à la booklist');
+					updateBookStatus(String(book.id), { inBooklist: true, toRead: true });
 				}
 			}
 		} catch (error) {
@@ -106,7 +134,6 @@
 		} finally {
 			loadingBooks.delete(book.id);
 			loadingBooks = new Set(loadingBooks);
-			booklistStatus = new Map(booklistStatus);
 		}
 	}
 
@@ -137,14 +164,14 @@
 				</div>
 				<button 
 					class="add-button" 
-					class:in-booklist={booklistStatus.get(book.id)?.inBooklist || false}
+					class:in-booklist={$booklistStatus.get(String(book.id))?.inBooklist || false}
 					onclick={() => toggleBookInBooklist(book)}
 					disabled={loadingBooks.has(book.id)}
 				>
 					{#if loadingBooks.has(book.id)}
 						<div class="loading-spinner"></div>
 						Chargement...
-					{:else if booklistStatus.get(book.id)?.inBooklist}
+					{:else if $booklistStatus.get(String(book.id))?.inBooklist}
 						✓ Dans ma booklist
 					{:else}
 						Ajouter à ma booklist

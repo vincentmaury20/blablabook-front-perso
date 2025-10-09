@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { booklistStatus, updateBookStatus, getBookStatus } from '$lib/stores/booklistStore.js';
 
 	let inBooklist = $state(false);
 	let toRead = $state(true); // true = À lire, false = Lu (cohérent avec l'API)
@@ -29,18 +30,23 @@
 		if (!decodedToken) return;
 
 		try {
-			const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}/status`, {
-				headers: {
-					'Authorization': `Bearer ${token}`,
-					'Content-Type': 'application/json'
+			const response = await fetch(
+				`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}/status`,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+						'Content-Type': 'application/json'
+					}
 				}
-			});
+			);
 
 			if (response.ok) {
 				const result = await response.json();
 				inBooklist = result.inBooklist;
 				// Par défaut : toRead = true (À lire / non lu)
 				toRead = result.toRead !== undefined ? result.toRead : true;
+				// Mettre à jour le store
+				updateBookStatus(data.book.id, { inBooklist: inBooklist, toRead: toRead });
 				console.log(`📖 Statut récupéré: ${inBooklist ? 'Dans booklist' : 'Pas dans booklist'}, ${toRead ? 'À lire' : 'Lu'}`);
 			}
 		} catch (error) {
@@ -65,38 +71,46 @@
 		try {
 			if (inBooklist) {
 				// Supprimer de la booklist
-				const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`, {
-					method: 'DELETE',
-					headers: {
-						'Authorization': `Bearer ${token}`,
-						'Content-Type': 'application/json'
+				const response = await fetch(
+					`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`,
+					{
+						method: 'DELETE',
+						headers: {
+							Authorization: `Bearer ${token}`,
+							'Content-Type': 'application/json'
+						}
 					}
-				});
+				);
 
 				if (response.ok) {
 					inBooklist = false;
-					toRead = true; // Reset à "À lire" quand retiré de la booklist
-					console.log('✅ Livre retiré de la booklist');
+					toRead = true;
+					// Mettre à jour le store
+					updateBookStatus(String(data.book.id), { inBooklist: false, toRead: true });
 				} else {
 					console.error('❌ Erreur lors de la suppression');
 				}
 			} else {
 				// Ajouter à la booklist
-				const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`, {
-					method: 'POST',
-					headers: {
-						'Authorization': `Bearer ${token}`,
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ toRead: true })
-				});
+				const response = await fetch(
+					`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`,
+					{
+						method: 'POST',
+						headers: {
+							Authorization: `Bearer ${token}`,
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({ toRead: true })
+					}
+				);
 
 				if (response.ok) {
 					inBooklist = true;
-					toRead = true; // Par défaut, nouveau livre = "À lire"
-					console.log('✅ Livre ajouté à la booklist');
+					toRead = true;
+					// Mettre à jour le store
+					updateBookStatus(String(data.book.id), { inBooklist: true, toRead: true });
 				} else {
-					console.error('❌ Erreur lors de l\'ajout');
+					console.error("❌ Erreur lors de l'ajout");
 				}
 			}
 		} catch (error) {
@@ -127,18 +141,22 @@
 
 		isReadLoading = true;
 		try {
-			const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`, {
-				method: 'PUT',
-				headers: {
-					'Authorization': `Bearer ${token}`,
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ toRead: !toRead })
-			});
+			const response = await fetch(
+				`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`,
+				{
+					method: 'PUT',
+					headers: {
+						Authorization: `Bearer ${token}`,
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ toRead: !toRead })
+				}
+			);
 
 			if (response.ok) {
 				toRead = !toRead;
-				console.log(`✅ Statut de lecture mis à jour: ${toRead ? 'À lire' : 'Lu'}`);
+				// Mettre à jour le store
+				updateBookStatus(String(data.book.id), { inBooklist: inBooklist, toRead: toRead });
 			} else {
 				console.error('❌ Erreur lors de la mise à jour du statut de lecture');
 			}
@@ -150,7 +168,24 @@
 	}
 
 	onMount(() => {
-		checkBookStatus();
+		// S'assurer que le cache est chargé
+		getBookStatus('dummy', new Map());
+		
+		// Vérifier d'abord si le statut existe dans le store (normaliser ID en string)
+		const unsubscribe = booklistStatus.subscribe(map => {
+			const bookIdStr = String(data.book.id);
+			const status = getBookStatus(bookIdStr, map);
+			if (map.has(bookIdStr)) {
+				// Le statut existe dans le store, l'utiliser
+				inBooklist = status.inBooklist;
+				toRead = status.toRead;
+				console.log(`📖 Statut chargé depuis le store: ${inBooklist ? 'Dans booklist' : 'Pas dans booklist'}, ${toRead ? 'À lire' : 'Lu'}`);
+			} else {
+				// Le statut n'existe pas, le récupérer du serveur
+				checkBookStatus();
+			}
+		});
+		unsubscribe();
 	});
 </script>
 
@@ -195,12 +230,12 @@
 
 <div class="buttons-container">
 	<!-- Bouton ajouter/retirer de la booklist -->
-	<button 
-		class="add-booklist" 
+	<button
+		class="add-booklist"
 		class:in-booklist={inBooklist}
-		onclick={toggleBooklist} 
+		onclick={toggleBooklist}
 		disabled={isLoading}
-		aria-label={inBooklist ? "Retirer de la Booklist" : "Ajouter à la Booklist"}
+		aria-label={inBooklist ? 'Retirer de la Booklist' : 'Ajouter à la Booklist'}
 	>
 		{#if isLoading}
 			<div class="loading-spinner"></div>
@@ -213,12 +248,12 @@
 
 	<!-- Bouton "J'ai lu" - seulement si dans la booklist -->
 	{#if inBooklist}
-		<button 
-			class="read" 
+		<button
+			class="read"
 			class:is-read={!toRead}
-			onclick={toggleRead} 
+			onclick={toggleRead}
 			disabled={isReadLoading}
-			aria-label={toRead ? "Marquer comme lu" : "Marquer comme non lu"}
+			aria-label={toRead ? 'Marquer comme lu' : 'Marquer comme non lu'}
 		>
 			{#if isReadLoading}
 				<div class="loading-spinner"></div>
@@ -314,8 +349,6 @@
 
 	/* Suppression des effets de survol pour les boutons ajouter */
 
-
-
 	.add-booklist:focus,
 	.read:focus {
 		outline: none;
@@ -354,8 +387,6 @@
 		background-color: transparent;
 	}
 
-
-
 	/* Style du texte des boutons principaux */
 	.button-text {
 		font-size: 0.8rem;
@@ -391,8 +422,6 @@
 		object-fit: contain;
 	}
 
-
-
 	.exit-container {
 		display: flex;
 		justify-content: center;
@@ -418,6 +447,12 @@
 
 	.exit {
 		-webkit-tap-highlight-color: transparent;
+	}
+
+	.add-booklist,
+	.read,
+	.exit {
+		box-shadow: none;
 	}
 
 	@media (min-width: 768px) {
