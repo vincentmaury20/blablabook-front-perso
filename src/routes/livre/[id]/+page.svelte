@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { booklistStatus, updateBookStatus, getBookStatus } from '$lib/stores/booklistStore.js';
 
@@ -167,25 +167,35 @@
 		}
 	}
 
+	let unsubscribe;
+	let hasInitialized = false;
+
 	onMount(() => {
 		// S'assurer que le cache est chargé
 		getBookStatus('dummy', new Map());
 		
-		// Vérifier d'abord si le statut existe dans le store (normaliser ID en string)
-		const unsubscribe = booklistStatus.subscribe(map => {
+		// Maintenir l'abonnement au store pour la synchronisation en temps réel
+		unsubscribe = booklistStatus.subscribe(map => {
 			const bookIdStr = String(data.book.id);
 			const status = getBookStatus(bookIdStr, map);
+			
 			if (map.has(bookIdStr)) {
 				// Le statut existe dans le store, l'utiliser
 				inBooklist = status.inBooklist;
 				toRead = status.toRead;
-				console.log(`📖 Statut chargé depuis le store: ${inBooklist ? 'Dans booklist' : 'Pas dans booklist'}, ${toRead ? 'À lire' : 'Lu'}`);
-			} else {
-				// Le statut n'existe pas, le récupérer du serveur
+			} else if (!hasInitialized) {
+				// Premier chargement : récupérer du serveur si pas dans le store
 				checkBookStatus();
 			}
+			
+			hasInitialized = true;
 		});
-		unsubscribe();
+	});
+
+	onDestroy(() => {
+		if (unsubscribe) {
+			unsubscribe();
+		}
 	});
 </script>
 
