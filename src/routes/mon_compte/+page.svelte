@@ -14,26 +14,35 @@
 			return;
 		}
 
-		currentUser = await userResponse.json();
-		
+		try {
+			// Récupération des infos utilisateur
+			const userResponse = await fetch('http://localhost:3000/auth/me', {
+				headers: { Authorization: `Bearer ${token}` }
+			});
 
-		// Récupération des livres favoris
-		const booksResponse = await fetch(`http://localhost:3000/userbooks?limit=4`, {
-			headers: { Authorization: `Bearer ${token}` }
-		});
+			if (!userResponse.ok) {
+				throw new Error('Erreur lors de la récupération des infos utilisateur');
+			}
 
-		if (!booksResponse.ok) {
-			throw new Error('Erreur lors de la récupération des livres favoris');
-		};
+			currentUser = await userResponse.json();
 
-		const booksData = await booksResponse.json();
-		totalBooks = booksData.totalBooks;
-		currentBooks = booksData.userbooks || [];
-	} catch (error) {
-		console.error(error);
-		errorMessage = error.message || 'Une erreur est survenue.';
-	}
-});
+			// Récupération des livres favoris
+			const booksResponse = await fetch(`http://localhost:3000/userbooks?limit=4`, {
+				headers: { Authorization: `Bearer ${token}` }
+			});
+
+			if (!booksResponse.ok) {
+				throw new Error('Erreur lors de la récupération des livres favoris');
+			}
+
+			const booksData = await booksResponse.json();
+			totalBooks = booksData.totalBooks;
+			currentBooks = booksData.userbooks || [];
+		} catch (error) {
+			console.error(error);
+			errorMessage = error.message || 'Une erreur est survenue.';
+		}
+	});
 </script>
 
 <main>
@@ -42,14 +51,11 @@
 
 		{#if currentUser}
 			<div class="info">
-				<img
-  					class="avatar"
-  					src={currentUser.avatar ? `http://localhost:3000/${currentUser.avatar}` : '/images/Avatar_crop.jpg'}
-  					alt="avatar"
-				/>
+				<img class="avatar" src={currentUser.avatar || '/images/Avatar_crop.jpg'} alt="avatar" />
 
+				<!-- pourl'instant j'ai mis du style pour voir si l'erreur de chargement d'image vient du css -->
+				<p>{currentUser.avatar}</p>
 				<div class="id">
-					<p>{currentUser.avatar}</p>
 					<p class="name">{currentUser.name} {currentUser.firstname}</p>
 					<p class="age pink">{currentUser.age} ans</p>
 				</div>
