@@ -131,7 +131,7 @@
 							<p class="book-author">{author.firstname} {author.name}</p>
 						{/each}
 					{/if}
-					<p>
+					<p class="book-synopsis">
 						{book.synopsis}
 					</p>
 				</div>
@@ -167,16 +167,15 @@
 
 <style>
 	.book-container a {
-		display: block;
 		width: 35%;
 		min-width: 120px;
 	}
 
 	.book-container a img {
 		display: block;
-		width: 100%;
-		height: auto;
 		object-fit: cover;
+		height: 85%;
+		aspect-ratio: 2/3;
 		border-radius: 10px;
 		margin: 0.25rem;
 	}
@@ -223,6 +222,15 @@
 
 	.book-author {
 		font-style: italic;
+	}
+
+	.book-synopsis {
+		display: -webkit-box;
+		line-clamp: 2;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.book-container:nth-child(odd) {
@@ -326,6 +334,12 @@
 		.book-container img {
 			width: 30%;
 		}
+
+		.book-synopsis {
+			line-clamp: 7;
+			-webkit-line-clamp: 7;
+		}
+
 		.book {
 			padding: 1.5rem;
 		}
@@ -333,6 +347,15 @@
 			font-size: 1rem;
 			padding: 0.5rem 1.2rem;
 		}
+	}
+
+	.book-container a {
+		display: block;
+	}
+
+	.book-container a img {
+		width: 100%;
+		height: auto;
 	}
 
 	@media (min-width: 1024px) {
@@ -343,10 +366,6 @@
 		.book-container {
 			gap: 2rem;
 			align-items: center;
-		}
-
-		.book-container img {
-			width: 25%;
 		}
 
 		.book {
