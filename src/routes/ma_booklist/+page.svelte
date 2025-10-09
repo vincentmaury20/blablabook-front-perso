@@ -246,22 +246,22 @@
 		display: flex;
 		align-items: center;
 		width: 80%;
+		flex-shrink: 0;
 	}
 
 	.book_data img {
-  width: 120px;      
-  height: 180px;      
-  object-fit: cover;  
-  display: block;
-  margin: 1px;
-}
+		width: 120px;
+		height: 180px;
+		object-fit: cover;
+		display: block;
+		margin: 1px;
+	}
 
-
-	.book img {
+	/* .book img {
 		height: 85%;
 		aspect-ratio: 2/3;
 		object-fit: cover;
-	}
+	} */
 
 	.book_info {
 		margin-left: 0.8rem;
@@ -416,6 +416,13 @@
 	}
 
 	/* Media queries */
+
+  @media (max-width: 768px) {
+  .book_data img {
+    width: 80px;
+    height: 120px;
+  }
+}
 
 	@media (min-width: 1025px) {
 		.delete-booklist {
