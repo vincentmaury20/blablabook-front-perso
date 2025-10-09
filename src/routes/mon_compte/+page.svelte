@@ -24,8 +24,9 @@
 			throw new Error('Erreur lors de la récupération des infos utilisateur');
 		}
 
-		const data = await userResponse.json();
-		currentUser = data.user; // ✅ on extrait l'objet user
+		currentUser = await userResponse.json();
+		console.log("currrent user :");
+		console.log(currentUser.age);
 
 		// Récupération des livres favoris
 		const booksResponse = await fetch(`http://localhost:3000/userbooks?limit=4`, {
@@ -34,7 +35,7 @@
 
 		if (!booksResponse.ok) {
 			throw new Error('Erreur lors de la récupération des livres favoris');
-		}
+		};
 
 		const booksData = await booksResponse.json();
 		totalBooks = booksData.totalBooks;
@@ -78,14 +79,14 @@
 		{#if currentBooks.length > 0}
 			<div class="books">
 				{#each currentBooks as userbook}
-					<a href="/livre/{userbook.book.id}">
-						<article class="book">
+					<article class="book">
+						<a href="/livre/{userbook.book.id}">
 							<img src={userbook.book.cover} alt={userbook.book.title} />
-							<div class="caption">
-								<p class="book_title">{userbook.book.title}</p>
-							</div>
-						</article>
-					</a>
+						</a>
+						<div class="caption">
+							<p class="book_title">{userbook.book.title}</p>
+						</div>
+					</article>
 				{/each}
 			</div>
 		{:else}
