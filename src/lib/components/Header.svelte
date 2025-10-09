@@ -2,14 +2,14 @@
 	import { debounce } from '$lib/utils/debounce.js';
 	import { getSearchSuggestions } from '$lib/remoteFunction.js';
 	import { goto } from '$app/navigation';
+	import { user, logout } from '$lib/stores/auth.js'; // ✅ Import du store user et logout
 
 	let query = $state('');
 	let suggestions = $state([]);
 	let loading = $state(false);
 	let error = $state('');
 	let showSuggestions = $state(false);
-
-	let searchType = $state(''); // "", "title", "author", "genre"
+	let searchType = $state('');
 
 	let abortController = null;
 	let currentSearchQuery = '';
@@ -84,7 +84,18 @@
 			<a href="/"><img src="/LogoBBB.png" alt="Logo BlaBlaBook" class="logo-icon" /></a>
 			<p class="title"><a href="/">BlaBlaBook</a></p>
 		</div>
-		<button class="connection-btn"><a href="/connexion">Connexion</a></button>
+		
+		<!-- ✅ Condition pour afficher les bons boutons selon l'état de connexion -->
+		<div class="auth-buttons">
+			{#if $user}
+				<!-- Utilisateur connecté -->
+				<a href="/mon_compte"><button class="account-btn">Mon compte</button></a>
+				<button class="logout-btn" onclick={() => logout()}>Déconnexion</button>
+			{:else}
+				<!-- Utilisateur non connecté -->
+				<button class="connection-btn"><a href="/connexion">Connexion</a></button>
+			{/if}
+		</div>
 	</div>
 
 	<div class="search-container">
@@ -148,6 +159,7 @@
 		{/if}
 	</div>
 </header>
+
 
 <style>
 	header {
