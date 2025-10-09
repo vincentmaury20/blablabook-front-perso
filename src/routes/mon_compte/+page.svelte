@@ -8,42 +8,41 @@
 	let errorMessage = '';
 
 	onMount(async () => {
-	const token = localStorage.getItem('token');
-	if (!token) {
-		goto('/login');
-		return;
-	}
-
-	try {
-		// Récupération des infos utilisateur
-		const userResponse = await fetch('http://localhost:3000/auth/me', {
-			headers: { Authorization: `Bearer ${token}` }
-		});
-
-		if (!userResponse.ok) {
-			throw new Error('Erreur lors de la récupération des infos utilisateur');
+		const token = localStorage.getItem('token');
+		if (!token) {
+			goto('/login');
+			return;
 		}
 
-		const data = await userResponse.json();
-		currentUser = data.user; // ✅ on extrait l'objet user
+		try {
+			// Récupération des infos utilisateur
+			const userResponse = await fetch('http://localhost:3000/auth/me', {
+				headers: { Authorization: `Bearer ${token}` }
+			});
 
-		// Récupération des livres favoris
-		const booksResponse = await fetch(`http://localhost:3000/userbooks?limit=4`, {
-			headers: { Authorization: `Bearer ${token}` }
-		});
+			if (!userResponse.ok) {
+				throw new Error('Erreur lors de la récupération des infos utilisateur');
+			}
 
-		if (!booksResponse.ok) {
-			throw new Error('Erreur lors de la récupération des livres favoris');
+			currentUser = await userResponse.json();
+
+			// Récupération des livres favoris
+			const booksResponse = await fetch(`http://localhost:3000/userbooks?limit=4`, {
+				headers: { Authorization: `Bearer ${token}` }
+			});
+
+			if (!booksResponse.ok) {
+				throw new Error('Erreur lors de la récupération des livres favoris');
+			}
+
+			const booksData = await booksResponse.json();
+			totalBooks = booksData.totalBooks;
+			currentBooks = booksData.userbooks || [];
+		} catch (error) {
+			console.error(error);
+			errorMessage = error.message || 'Une erreur est survenue.';
 		}
-
-		const booksData = await booksResponse.json();
-		totalBooks = booksData.totalBooks;
-		currentBooks = booksData.userbooks || [];
-	} catch (error) {
-		console.error(error);
-		errorMessage = error.message || 'Une erreur est survenue.';
-	}
-});
+	});
 </script>
 
 <main>
