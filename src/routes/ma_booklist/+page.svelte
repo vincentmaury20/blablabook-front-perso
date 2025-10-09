@@ -1,6 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
+    import { updateBookStatus } from '$lib/stores/booklistStore.js';
 
     let booklist = [];     
     let totalBooks = 0;    
@@ -36,8 +37,6 @@
         }
 
         try {
-            console.log(`🔄 Changement statut livre ${book.book.title}: ${book.toRead ? 'Lu' : 'À lire'} -> ${book.toRead ? 'À lire' : 'Lu'}`);
-            
             const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${book.book.id}`, {
                 method: 'PUT',
                 headers: {
@@ -53,8 +52,13 @@
                 if (bookIndex !== -1) {
                     booklist[bookIndex].toRead = !booklist[bookIndex].toRead;
                     booklist = [...booklist]; // Forcer la réactivité
+                    
+                    // Mettre à jour le store global
+                    updateBookStatus(book.book.id, {
+                        inBooklist: true,
+                        toRead: booklist[bookIndex].toRead
+                    });
                 }
-                console.log(`✅ Statut sauvegardé: ${!book.toRead ? 'Lu' : 'À lire'}`);
             } else {
                 console.error('❌ Erreur lors de la sauvegarde du statut');
             }
@@ -84,6 +88,14 @@
             page = data.page;
             totalPages = data.totalPages;
 
+            // Alimenter le store global avec les données de la booklist
+            booklist.forEach(bookItem => {
+                updateBookStatus(bookItem.book.id, {
+                    inBooklist: true,
+                    toRead: bookItem.toRead
+                });
+            });
+
         } catch (err) {
             console.error(err);
             errorMessage = err.message || 'Une erreur est survenue';
@@ -112,6 +124,10 @@
                 // Supprimer le livre de la liste locale
                 booklist = booklist.filter(b => b.book.id !== book.book.id);
                 totalBooks = Math.max(0, totalBooks - 1);
+                
+                // Mettre à jour le store global
+                updateBookStatus(String(book.book.id), { inBooklist: false, toRead: true });
+                
                 console.log('✅ Livre supprimé');
             } else {
                 console.error('❌ Erreur lors de la suppression');

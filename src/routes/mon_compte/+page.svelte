@@ -24,8 +24,8 @@
 			throw new Error('Erreur lors de la récupération des infos utilisateur');
 		}
 
-		const data = await userResponse.json();
-		currentUser = data.user; // ✅ on extrait l'objet user
+		currentUser = await userResponse.json();
+		
 
 		// Récupération des livres favoris
 		const booksResponse = await fetch(`http://localhost:3000/userbooks?limit=4`, {
