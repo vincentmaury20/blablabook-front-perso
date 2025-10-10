@@ -217,16 +217,22 @@
 				</div>
 			</article>
 		{/each}
-		<div class="pagination">
-			{#if page > 1}
-				<button onclick={() => goToPage(page - 1)}>Précédente</button>
-			{/if}
+		<div class="bottom-buttons">
+			<div class="page-pagination">
+				{#if page > 1}
+					<button onclick={() => goToPage(page - 1)}>Précédente</button>
+				{/if}
 
-			<span>Page {page} / {totalPages}</span>
+				<span>Page {page} / {totalPages}</span>
 
-			{#if page < totalPages}
-				<button onclick={() => goToPage(page + 1)}>Suivante</button>
-			{/if}
+				{#if page < totalPages}
+					<button onclick={() => goToPage(page + 1)}>Suivante</button>
+				{/if}
+			</div>
+
+			<a href="/catalogue" class="catalogue-link">
+				<button class="catalogue-button">Catalogue</button>
+			</a>
 		</div>
 	{/if}
 </section>
@@ -273,49 +279,37 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		flex-wrap: nowrap;
+		gap: 0.5rem;
+		overflow: hidden;
 	}
 
 	.book_data {
 		display: flex;
 		align-items: center;
-		flex: 1 1 auto;
+		gap: 0.8rem;
 		min-width: 0;
-		/* 		flex-shrink: 0;
- */
+		flex-shrink: 1;
 	}
 
 	.book_data img {
-		width: 120px;
-		height: 180px;
-		object-fit: cover;
+		width: 100%;
+		max-width: 120px;
 		aspect-ratio: 2/3;
-
-		/* 	display: block; 
-		margin: 1px; */
+		object-fit: cover;
+		flex-shrink: 0;
+		margin: 0.1rem;
 	}
-
-	/* .book img {
-		height: 85%;
-		aspect-ratio: 2/3;
-		object-fit: cover;
-	} */
 
 	.book_info {
-		margin-left: 0.8rem;
 		min-width: 0;
-	}
-
-	.book_title {
-		display: -webkit-box;
-		line-clamp: 2;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-		text-overflow: ellipsis;
 	}
 
 	.book_title {
 		font-weight: 700;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.book_author {
@@ -326,7 +320,6 @@
 
 	.buttons {
 		display: flex;
-		/* 		flex-wrap: nowrap; */
 		flex-shrink: 0;
 		gap: 0.5rem;
 	}
@@ -349,14 +342,10 @@
 		gap: 0.2rem;
 	}
 
-	/* Suppression de l'effet de survol */
-
 	.to-read.active {
 		background-color: transparent;
 		font-weight: 600;
 	}
-
-	/* Suppression de l'effet hover pour l'état actif */
 
 	.to-read:disabled {
 		opacity: 0.6;
@@ -393,8 +382,6 @@
 		cursor: pointer;
 		border-radius: 8px;
 	}
-
-	/* Effets de survol supprimés pour cohérence */
 
 	.delete-booklist:disabled {
 		opacity: 0.6;
@@ -443,7 +430,6 @@
 		background-color: var(--couleur-beige-clair);
 	}
 
-	/* Style pour les messages d'erreur */
 	.error {
 		color: #d32f2f;
 		background-color: #ffebee;
@@ -454,17 +440,83 @@
 		font-weight: 500;
 	}
 
-	.pagination {
-		margin: 0.5rem;
+	/* BOUTONS DU BAS */
+	.bottom-buttons {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		padding: 1rem;
+		gap: 1rem;
 	}
 
-	/* Media queries */
+	.page-pagination {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		font-weight: bold;
+	}
 
+	.catalogue-link {
+		display: flex;
+	}
+
+	.catalogue-button {
+		cursor: pointer;
+	}
+
+	/* MEDIA QUERIES */
 	@media (max-width: 768px) {
+		.book {
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			gap: 0.5rem;
+			overflow: hidden;
+		}
+
+		.book_data {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			flex-shrink: 1;
+			min-width: 0;
+		}
+
 		.book_data img {
 			width: 80px;
 			height: 120px;
+			flex-shrink: 0;
+			object-fit: cover;
 			aspect-ratio: 2/3;
+		}
+
+		.book_info {
+			min-width: 0;
+		}
+
+		.book_title,
+		.book_author {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.buttons {
+			flex-shrink: 0;
+			display: flex;
+			gap: 0.3rem;
+		}
+
+		.bottom-buttons {
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+		}
+
+		.page-pagination {
+			flex-direction: column;
+			align-items: center;
+			gap: 0.5rem;
 		}
 	}
 
