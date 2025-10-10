@@ -1,0 +1,46 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
+
+:root {
+    --couleur-bleu-vert: #63A6A6;
+    --couleur-marron: #594432;
+    --couleur-vieux-rose: #BF8484;
+    --couleur-beige-rose: #D9B29C;
+    --couleur-beige-clair: #F2E0D5;
+
+    --font-bbb: "Pacifico";
+    --font-global: "Montserrat"; 
+}
+
+body {
+  font-family: var(--font-global);
+  color: var(--couleur-marron);
+  
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: lighter;
+  text-align: center;
+}
+
+button {
+  border-radius: 20rem;
+  border: none;
+  padding: 1rem 2rem 1rem 2rem;
+  background-color: var(--couleur-vieux-rose);
+  color: var(--couleur-beige-clair);
+  box-shadow: 1px 3px 10px 1px rgba(80, 79, 79, 0.5);
+  margin: 2rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+a {
+  border: none;
+  text-decoration: none;
+  color: inherit;
+  padding: 0;
+  margin: 0;
+}  

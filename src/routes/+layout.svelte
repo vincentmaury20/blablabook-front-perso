@@ -1,21 +1,42 @@
 <script>
-	import favicon from '$lib/assets/favicon.svg';
+  import { onMount } from 'svelte';
+  import { loadUserFromToken } from '$lib/stores/auth.js';
+  import favicon from '$lib/assets/favicon.png';
+  import Header from '$lib/components/Header.svelte';
+  import Footer from '$lib/components/Footer.svelte';
+  import '../reset.css';
+  import '../app.css';
 
-	let { children } = $props();
+  let { children } = $props();
+
+  // Charger l'utilisateur au démarrage si un token existe
+  onMount(() => {
+    loadUserFromToken();
+  });
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+  <link rel="icon" href={favicon} />
 </svelte:head>
 
-<header>
-	<a href="/mentions">Mentions légales</a>
-	<a href="/catalogue">Catalogue</a>
-</header>
+<div class="layout">
+  <Header />
+  <main class="main-content">
+    {@render children?.()}
+  </main>
+  <Footer />
+</div>
 
+<style>
+  .layout {
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+  }
 
-<footer>
-	
-</footer>
-
-{@render children?.()}
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+</style>
