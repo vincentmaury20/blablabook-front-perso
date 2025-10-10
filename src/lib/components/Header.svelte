@@ -314,7 +314,7 @@
 		top: calc(100% + 0.5rem);
 		left: 0;
 		right: 0;
-    width: 100%;
+		width: 100%;
 		background: white;
 		border-radius: 12px;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -335,19 +335,22 @@
 		align-items: center;
 		gap: 1rem;
 		padding: 0.75rem 1rem;
+		width: 100%;
 		cursor: pointer;
-		transition: background 0.2s;
-		text-decoration: none;
-		color: inherit;
-		background: none;
-		border: none;
 		text-align: left;
 		font-family: inherit;
 		font-size: inherit;
+		background: none;
+		border: none;
+		color: inherit;
+		transition: background 0.2s;
+		box-sizing: border-box;
 	}
 
-	.suggestion-item:hover {
+	.suggestion-item:hover,
+	.suggestion-item:focus {
 		background: #f5f5f5;
+		outline: none;
 	}
 
 	.book-thumb {
