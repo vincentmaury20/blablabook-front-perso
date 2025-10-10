@@ -71,7 +71,7 @@
 	<section class="booklist">
 		<header class="title">
 			<h1>Ma booklist</h1>
-			<p class="books_number pink">
+			<p class="pink">
 				{totalBooks}
 				{totalBooks === 1 ? ' livre' : ' livres'}
 			</p>
@@ -91,10 +91,10 @@
 				{/each}
 			</div>
 		{:else}
-			<p>{errorMessage || 'Aucun livre favori trouvé.'}</p>
+			<p>{errorMessage || 'Votre booklist est vide.'}</p>
 		{/if}
 
-		<a href="/ma_booklist"><button class="button">Voir plus</button></a>
+		<button class="button" onclick={() => window.location.href = "/ma_booklist"}>Voir plus</button>
 	</section>
 </main>
 
@@ -160,6 +160,7 @@
 		align-items: center;
 		flex-direction: column;
 		gap: 0 5rem;
+		min-height: 70vh;
 	}
 
 	.books {
@@ -193,6 +194,7 @@
 	.button {
 		align-self: flex-end;
 		margin: 2rem auto;
+
 	}
 
 	/* Media queries */
@@ -233,6 +235,10 @@
 			margin: 1.5rem;
 		}
 
+		.booklist {
+			width: 80%;
+		}
+
 		.button {
 			margin-right: 5rem;
 			margin-bottom: 3rem;
@@ -241,12 +247,8 @@
 
 	@media (min-width: 1025px) {
 		.my_informations {
-			width: 18%;
+			width: 25%;
 			padding: 2rem 1.5rem;
-		}
-
-		.booklist {
-			width: 80%;
 		}
 
 		.books {

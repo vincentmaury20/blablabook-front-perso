@@ -1,10 +1,11 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { user } from '$lib/stores/auth.js'; // ✅ Import du store user
 	import { booklistStatus, updateBookStatus, getBookStatus } from '$lib/stores/booklistStore.js';
 
 	let inBooklist = $state(false);
-	let toRead = $state(true); // true = À lire, false = Lu (cohérent avec l'API)
+	let toRead = $state(true);
 	let isLoading = $state(false);
 	let isReadLoading = $state(false);
 	let { data } = $props();
@@ -43,9 +44,7 @@
 			if (response.ok) {
 				const result = await response.json();
 				inBooklist = result.inBooklist;
-				// Par défaut : toRead = true (À lire / non lu)
 				toRead = result.toRead !== undefined ? result.toRead : true;
-				// Mettre à jour le store
 				updateBookStatus(data.book.id, { inBooklist: inBooklist, toRead: toRead });
 				console.log(`📖 Statut récupéré: ${inBooklist ? 'Dans booklist' : 'Pas dans booklist'}, ${toRead ? 'À lire' : 'Lu'}`);
 			}
@@ -55,22 +54,27 @@
 	}
 
 	async function toggleBooklist() {
+		// ✅ Redirection si non connecté
+		if (!$user) {
+			goto('/connexion');
+			return;
+		}
+
 		const token = localStorage.getItem('token');
 		if (!token) {
-			goto('/authentification/connexion');
+			goto('/connexion');
 			return;
 		}
 
 		const decodedToken = decodeJWT(token);
 		if (!decodedToken) {
-			goto('/authentification/connexion');
+			goto('/connexion');
 			return;
 		}
 
 		isLoading = true;
 		try {
 			if (inBooklist) {
-				// Supprimer de la booklist
 				const response = await fetch(
 					`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`,
 					{
@@ -85,13 +89,11 @@
 				if (response.ok) {
 					inBooklist = false;
 					toRead = true;
-					// Mettre à jour le store
 					updateBookStatus(String(data.book.id), { inBooklist: false, toRead: true });
 				} else {
 					console.error('❌ Erreur lors de la suppression');
 				}
 			} else {
-				// Ajouter à la booklist
 				const response = await fetch(
 					`http://localhost:3000/user/${decodedToken.id}/book/${data.book.id}`,
 					{
@@ -107,7 +109,6 @@
 				if (response.ok) {
 					inBooklist = true;
 					toRead = true;
-					// Mettre à jour le store
 					updateBookStatus(String(data.book.id), { inBooklist: true, toRead: true });
 				} else {
 					console.error("❌ Erreur lors de l'ajout");
@@ -121,13 +122,18 @@
 	}
 
 	async function toggleRead() {
-		const token = localStorage.getItem('token');
-		if (!token) {
-			goto('/authentification/connexion');
+		// ✅ Redirection si non connecté
+		if (!$user) {
+			goto('/connexion');
 			return;
 		}
 
-		// Vérifier que le livre est dans la booklist avant de modifier le statut de lecture
+		const token = localStorage.getItem('token');
+		if (!token) {
+			goto('/connexion');
+			return;
+		}
+
 		if (!inBooklist) {
 			console.warn('⚠️ Le livre doit être dans la booklist pour modifier le statut de lecture');
 			return;
@@ -135,7 +141,7 @@
 
 		const decodedToken = decodeJWT(token);
 		if (!decodedToken) {
-			goto('/authentification/connexion');
+			goto('/connexion');
 			return;
 		}
 
@@ -155,7 +161,6 @@
 
 			if (response.ok) {
 				toRead = !toRead;
-				// Mettre à jour le store
 				updateBookStatus(String(data.book.id), { inBooklist: inBooklist, toRead: toRead });
 			} else {
 				console.error('❌ Erreur lors de la mise à jour du statut de lecture');
@@ -171,20 +176,16 @@
 	let hasInitialized = false;
 
 	onMount(() => {
-		// S'assurer que le cache est chargé
 		getBookStatus('dummy', new Map());
 		
-		// Maintenir l'abonnement au store pour la synchronisation en temps réel
 		unsubscribe = booklistStatus.subscribe(map => {
 			const bookIdStr = String(data.book.id);
 			const status = getBookStatus(bookIdStr, map);
 			
 			if (map.has(bookIdStr)) {
-				// Le statut existe dans le store, l'utiliser
 				inBooklist = status.inBooklist;
 				toRead = status.toRead;
 			} else if (!hasInitialized) {
-				// Premier chargement : récupérer du serveur si pas dans le store
 				checkBookStatus();
 			}
 			

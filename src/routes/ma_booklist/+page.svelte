@@ -151,15 +151,17 @@
 
 <section class="booklist">
 	<header class="page_title">
-		<h1>Ma booklist</h1>
-		<p>{totalBooks} Livre{totalBooks > 1 ? 's' : ''}</p>
-		<p><a href="/mon_compte">Retour</a></p>
+		<div class="booklist-title">
+			<h1>Ma booklist</h1>
+			<p class="books-number">{totalBooks} Livre{totalBooks > 1 ? 's' : ''}</p>
+		</div>
+		<p class="go-back"><a href="/mon_compte">Retour</a></p>
 	</header>
 
 	{#if errorMessage}
 		<p class="error">{errorMessage}</p>
 	{:else if totalBooks === 0}
-		<p>Aucun livre trouvé.</p>
+		<p class="no-book">Aucun livre trouvé.</p>
 	{:else}
 		{#each booklist as book}
 			<article class="book">
@@ -225,9 +227,10 @@
 </section>
 
 <style>
-	.booklist {
+.booklist {
 		display: flex;
 		flex-direction: column;
+		min-height: 80vh;
 	}
 
 	.page_title {
@@ -237,12 +240,28 @@
 		padding: 1.8rem;
 	}
 
+	.booklist-title {
+		display: flex;
+		gap: 0.7rem;
+		align-items: baseline;
+	}
+
 	.page_title h1 {
 		font-size: 28px;
 	}
 
-	.page_title p {
+	.go-back {
 		text-shadow: 0 4px 4px rgba(122, 122, 122, 0.5);
+	}
+
+	.books-number {
+		color: var(--couleur-vieux-rose);
+		font-weight: 700;
+		font-size: 1rem;
+	}
+
+	.no-book {
+		margin-left: 1rem;
 	}
 
 	.book {
@@ -422,6 +441,10 @@
 		border-left: 4px solid #d32f2f;
 		margin: 1rem;
 		font-weight: 500;
+	}
+
+	.pagination {
+		margin: 0.5rem;
 	}
 
 	/* Media queries */
