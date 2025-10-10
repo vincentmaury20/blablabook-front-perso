@@ -2,11 +2,11 @@
 	let { data } = $props();
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { user } from '$lib/stores/auth.js'; // ✅ Import du store user
 	import { booklistStatus, updateBookStatus, getBookStatus } from '$lib/stores/booklistStore.js';
 
-	let loadingBooks = $state(new Set()); // Set pour tracker les livres en cours de chargement
+	let loadingBooks = $state(new Set());
 
-	// Fonction utilitaire pour décoder le JWT
 	function decodeJWT(token) {
 		try {
 			const payload = token.split('.')[1];
@@ -18,7 +18,6 @@
 		}
 	}
 
-	// Vérifier le statut des livres qui ne sont pas encore dans le store
 	async function checkAllBooksStatus() {
 		const token = localStorage.getItem('token');
 		if (!token) return;
@@ -26,33 +25,26 @@
 		const decodedToken = decodeJWT(token);
 		if (!decodedToken) return;
 
-		// S'assurer que le cache est chargé avant de vérifier
-		// On fait un appel à getBookStatus qui va déclencher le chargement lazy
 		getBookStatus('dummy', new Map()); 
 
-		// Récupérer l'état actuel du store
 		let currentStoreMap = new Map();
 		const unsubscribe = booklistStatus.subscribe(map => {
 			currentStoreMap = map;
 		});
 		unsubscribe();
 
-		// DEBUG: Remettre temporairement le log
 		console.log(`🔍 DEBUG: ${data.books.length} livres sur la page, store taille: ${currentStoreMap.size}`);
 		console.log(`🔍 DEBUG: IDs en cache:`, Array.from(currentStoreMap.keys()).slice(0, 5));
 
-		// Ne vérifier que les livres qui ne sont PAS déjà dans le store
-		// Normaliser les IDs en string pour la comparaison
 		const booksToCheck = data.books.filter(book => !currentStoreMap.has(String(book.id)));
 
 		console.log(`🔍 DEBUG: ${booksToCheck.length} livres à vérifier`);
 
 		if (booksToCheck.length === 0) {
 			console.log('✅ Tous les statuts sont déjà en cache');
-			return; // Tous les statuts sont déjà en cache
+			return;
 		}
 
-		// Vérifier seulement les livres manquants
 		const promises = booksToCheck.map(async (book) => {
 			try {
 				const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${book.id}/status`, {
@@ -64,10 +56,9 @@
 
 				if (response.ok) {
 					const result = await response.json();
-					// Utiliser la fonction helper du store (normaliser ID en string)
 					updateBookStatus(String(book.id), {
 						inBooklist: result.inBooklist,
-						toRead: result.toRead !== undefined ? result.toRead : true // Par défaut: À lire
+						toRead: result.toRead !== undefined ? result.toRead : true
 					});
 				}
 			} catch (error) {
@@ -79,19 +70,24 @@
 	}
 
 	async function toggleBookInBooklist(book) {
+		// ✅ Redirection si non connecté
+		if (!$user) {
+			goto('/connexion');
+			return;
+		}
+
 		const token = localStorage.getItem('token');
 		if (!token) {
-			goto('/authentification/connexion');
+			goto('/connexion');
 			return;
 		}
 
 		const decodedToken = decodeJWT(token);
 		if (!decodedToken) {
-			goto('/authentification/connexion');
+			goto('/connexion');
 			return;
 		}
 
-		// Récupérer le statut actuel depuis le store (normaliser ID en string)
 		let currentStatus = { inBooklist: false, toRead: true };
 		booklistStatus.subscribe(map => {
 			currentStatus = getBookStatus(String(book.id), map);
@@ -102,7 +98,6 @@
 
 		try {
 			if (currentStatus.inBooklist) {
-				// Supprimer de la booklist
 				const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${book.id}`, {
 					method: 'DELETE',
 					headers: {
@@ -115,7 +110,6 @@
 					updateBookStatus(String(book.id), { inBooklist: false, toRead: true });
 				}
 			} else {
-				// Ajouter à la booklist
 				const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${book.id}`, {
 					method: 'POST',
 					headers: {
@@ -138,7 +132,10 @@
 	}
 
 	onMount(() => {
-		checkAllBooksStatus();
+		// ✅ Vérifier les statuts seulement si connecté
+		if ($user) {
+			checkAllBooksStatus();
+		}
 	});
 </script>
 
@@ -162,6 +159,8 @@
 						{book.synopsis}
 					</p>
 				</div>
+				
+				<!-- ✅ Bouton qui redirige vers /connexion si non connecté -->
 				<button 
 					class="add-button" 
 					class:in-booklist={$booklistStatus.get(String(book.id))?.inBooklist || false}
