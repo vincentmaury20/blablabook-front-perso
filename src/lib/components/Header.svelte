@@ -76,14 +76,14 @@
 	function handleKeydown(e) {
 		if (e.key === 'Enter') {
 			e.preventDefault();
-			
+
 			const trimmedQuery = query.trim();
-			
+
 			// Si la recherche est vide, ne rien faire
 			if (!trimmedQuery) {
 				return;
 			}
-			
+
 			// Si on a des suggestions et qu'on voit la dropdown, aller au premier résultat
 			if (showSuggestions && suggestions.length > 0) {
 				openBook(suggestions[0].id);
@@ -329,19 +329,17 @@
 	}
 
 	.suggestion-item {
+		all: unset;
 		display: flex;
 		align-items: center;
 		gap: 1rem;
 		padding: 0.75rem 1rem;
 		cursor: pointer;
 		transition: background 0.2s;
-		border-bottom: 1px solid #f0f0f0;
 		text-decoration: none;
 		color: inherit;
 		background: none;
 		border: none;
-		border-bottom: 1px solid #f0f0f0;
-		width: 100%;
 		text-align: left;
 		font-family: inherit;
 		font-size: inherit;
