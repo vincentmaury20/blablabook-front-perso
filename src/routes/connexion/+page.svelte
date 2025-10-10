@@ -67,61 +67,79 @@ async function Register(event) {
 }
 </script>
 
-<!-- <div class="auth-container">
-  <div class="tabs">
-    <div class:active={isLogin} onclick={() => (isLogin = true)}>Connexion</div>
-    <div class:active={!isLogin} onclick={() => (isLogin = false)}>Création de compte</div>
-  </div> -->
+<div class="auth-container">
+  <div class="tabs" role="tablist" aria-label="Choix du mode d’authentification">
+    <button
+      role="tab"
+      id="tab-login"
+      class:active={isLogin}
+      aria-selected={isLogin}
+      aria-controls="panel-login"
+      aria-label="Onglet de connexion"
+      tabindex="0"
+      onclick={() => (isLogin = true)}
+    >
+      Connexion
+    </button>
 
-  <div class="auth-container">
-    <div class="tabs">
-      <button class:active={isLogin} onclick={() => (isLogin = true)}>Connexion</button>
-      <button class:active={!isLogin} onclick={() => (isLogin = false)}>Création de compte</button>
-    </div>
-
-    {#if errorMessage}
-      <p style="color: red; text-align: center; margin-bottom: 1rem;">{errorMessage}</p>
-    {/if}
-
-    {#if isLogin}
-      <form onsubmit={Login}>
-        <label for="email">Email :</label>
-        <input type="email" name="email" id="email" required />
-
-        <label for="password">Mot de passe :</label>
-        <input type="password" name="password" id="password" required />
-
-        <button type="submit">Se connecter</button>
-      </form>
-		
-	  {:else} 
-      <form onsubmit={Register} enctype="multipart/form-data">
-        <label for="name">Nom :</label>
-        <input type="text" name="name" id="name" required />
-        
-
-        <label for="firstname">Prénom :</label>
-        <input type="text" name="firstname" id="firstname" required />
-
-        <label for="age">Âge :</label>
-        <input type="number" name="age" id="age" min="0" required />
-
-        <label for="emailSignup">Email :</label>
-        <input type="email" name="email" id="emailSignup" required />
-
-        <label for="passwordSignup">Mot de passe :</label>
-        <input type="password" name="password" id="passwordSignup" required minlength="6" />
-
-        <label for="confirm">Confirmation du mot de passe :</label>
-        <input type="password" name="confirm" id="confirm" required minlength="6" />
-
-        <label for="avatar">Avatar :</label> 
-        <input type="file" name="avatar" id="avatar" accept="image/*"> 
-        <!-- j'ai ajouté ce champs-ci pour ajouter l'avatar ou du moins "tenter" -->
-        <button type="submit">Créer mon compte</button>
-      </form>
-	  {/if}
+    <button
+      role="tab"
+      id="tab-register"
+      class:active={!isLogin}
+      aria-selected={!isLogin}
+      aria-controls="panel-register"
+      aria-label="Onglet de création de compte"
+      tabindex="0"
+      onclick={() => (isLogin = false)}
+    >
+      Création de compte
+    </button>
   </div>
+
+  {#if errorMessage}
+    <p style="color: red; text-align: center; margin-bottom: 1rem;">{errorMessage}</p>
+  {/if}
+
+  <div id="panel-login" role="tabpanel" aria-labelledby="tab-login" tabindex={isLogin ? 0 : -1} hidden={!isLogin}>
+    <form onsubmit={Login}>
+      <label for="email">Email :</label>
+      <input type="email" name="email" id="email" required />
+
+      <label for="password">Mot de passe :</label>
+      <input type="password" name="password" id="password" required />
+
+      <button type="submit">Se connecter</button>
+    </form>
+  </div>
+
+  <div id="panel-register" role="tabpanel" aria-labelledby="tab-register" tabindex={!isLogin ? 0 : -1} hidden={isLogin}>
+    <form onsubmit={Register} enctype="multipart/form-data">
+      <label for="name">Nom :</label>
+      <input type="text" name="name" id="name" required />
+
+      <label for="firstname">Prénom :</label>
+      <input type="text" name="firstname" id="firstname" required />
+
+      <label for="age">Âge :</label>
+      <input type="number" name="age" id="age" min="0" required />
+
+      <label for="emailSignup">Email :</label>
+      <input type="email" name="email" id="emailSignup" required />
+
+      <label for="passwordSignup">Mot de passe :</label>
+      <input type="password" name="password" id="passwordSignup" required minlength="6" />
+
+      <label for="confirm">Confirmation du mot de passe :</label>
+      <input type="password" name="confirm" id="confirm" required minlength="6" />
+
+      <label for="avatar">Avatar :</label>
+      <input type="file" name="avatar" id="avatar" accept="image/*" />
+
+      <button type="submit">Créer mon compte</button>
+    </form>
+  </div>
+</div>
+
 
 <style>
 	.auth-container {
@@ -138,14 +156,14 @@ async function Register(event) {
 	}
 
 	.tabs button {
+    all: unset;        
 		flex: 1;
 		text-align: center;
-		padding: 0.5rem;
+    padding: 0.5rem;
 		cursor: pointer;
 		font-weight: bold;
 		color: #666;
-    all: unset;        
-    padding: 0.5rem;
+    box-sizing: border-box;
 	}
 
 	.tabs button.active {
