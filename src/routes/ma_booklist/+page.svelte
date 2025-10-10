@@ -1,152 +1,157 @@
 <script>
-    import { onMount } from 'svelte';
-    import { goto } from '$app/navigation';
-    import { updateBookStatus } from '$lib/stores/booklistStore.js';
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+	import { updateBookStatus } from '$lib/stores/booklistStore.js';
 
-    let booklist = [];     
-    let totalBooks = 0;    
-    let page = 1;            
-    let totalPages = 1;     
-    let errorMessage = "";   
+	let booklist = [];
+	let totalBooks = 0;
+	let page = 1;
+	let totalPages = 1;
+	let errorMessage = '';
 
-    const limit = 10;
+	const limit = 10;
 
-    // Fonction utilitaire pour décoder le JWT
-    function decodeJWT(token) {
-        try {
-            const payload = token.split('.')[1];
-            const decoded = JSON.parse(atob(payload));
-            return decoded;
-        } catch (error) {
-            console.error('❌ Erreur décodage JWT:', error);
-            return null;
-        }
-    }
+	// Fonction utilitaire pour décoder le JWT
+	function decodeJWT(token) {
+		try {
+			const payload = token.split('.')[1];
+			const decoded = JSON.parse(atob(payload));
+			return decoded;
+		} catch (error) {
+			console.error('❌ Erreur décodage JWT:', error);
+			return null;
+		}
+	}
 
-    async function toggleReadStatus(book) {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            goto('/authentification/connexion');
-            return;
-        }
+	async function toggleReadStatus(book) {
+		const token = localStorage.getItem('token');
+		if (!token) {
+			goto('/authentification/connexion');
+			return;
+		}
 
-        const decodedToken = decodeJWT(token);
-        if (!decodedToken) {
-            goto('/authentification/connexion');
-            return;
-        }
+		const decodedToken = decodeJWT(token);
+		if (!decodedToken) {
+			goto('/authentification/connexion');
+			return;
+		}
 
-        try {
-            const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${book.book.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ toRead: !book.toRead })
-            });
+		try {
+			const response = await fetch(
+				`http://localhost:3000/user/${decodedToken.id}/book/${book.book.id}`,
+				{
+					method: 'PUT',
+					headers: {
+						Authorization: `Bearer ${token}`,
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ toRead: !book.toRead })
+				}
+			);
 
-            if (response.ok) {
-                // Mettre à jour localement le statut du livre
-                const bookIndex = booklist.findIndex(b => b.book.id === book.book.id);
-                if (bookIndex !== -1) {
-                    booklist[bookIndex].toRead = !booklist[bookIndex].toRead;
-                    booklist = [...booklist]; // Forcer la réactivité
-                    
-                    // Mettre à jour le store global
-                    updateBookStatus(String(book.book.id), {
-                        inBooklist: true,
-                        toRead: booklist[bookIndex].toRead
-                    });
-                }
-            } else {
-                console.error('❌ Erreur lors de la sauvegarde du statut');
-            }
-        } catch (error) {
-            console.error('❌ Erreur:', error);
-        }
-    }
+			if (response.ok) {
+				// Mettre à jour localement le statut du livre
+				const bookIndex = booklist.findIndex((b) => b.book.id === book.book.id);
+				if (bookIndex !== -1) {
+					booklist[bookIndex].toRead = !booklist[bookIndex].toRead;
+					booklist = [...booklist]; // Forcer la réactivité
 
-    async function loadBooks(pageNumber = 1) {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            goto('/authentification/connexion');
-            return;
-        }
+					// Mettre à jour le store global
+					updateBookStatus(String(book.book.id), {
+						inBooklist: true,
+						toRead: booklist[bookIndex].toRead
+					});
+				}
+			} else {
+				console.error('❌ Erreur lors de la sauvegarde du statut');
+			}
+		} catch (error) {
+			console.error('❌ Erreur:', error);
+		}
+	}
 
-        try {
-            const res = await fetch(`http://localhost:3000/userbooks?page=${pageNumber}&limit=${limit}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+	async function loadBooks(pageNumber = 1) {
+		const token = localStorage.getItem('token');
+		if (!token) {
+			goto('/authentification/connexion');
+			return;
+		}
 
-            if (!res.ok) throw new Error('Erreur lors de la récupération des livres');
+		try {
+			const res = await fetch(`http://localhost:3000/userbooks?page=${pageNumber}&limit=${limit}`, {
+				headers: { Authorization: `Bearer ${token}` }
+			});
 
-            const data = await res.json();
+			if (!res.ok) throw new Error('Erreur lors de la récupération des livres');
 
-            booklist = data.userbooks || [];
-            totalBooks = data.totalBooks || booklist.length;
-            page = data.page;
-            totalPages = data.totalPages;
+			const data = await res.json();
 
-            // Alimenter le store global avec les données de la booklist
-            booklist.forEach(bookItem => {
-                updateBookStatus(bookItem.book.id, {
-                    inBooklist: true,
-                    toRead: bookItem.toRead
-                });
-            });
+			booklist = data.userbooks || [];
+			totalBooks = data.totalBooks || booklist.length;
+			page = data.page;
+			totalPages = data.totalPages;
 
-        } catch (err) {
-            console.error(err);
-            errorMessage = err.message || 'Une erreur est survenue';
-        }
-    }
+			// Alimenter le store global avec les données de la booklist
+			booklist.forEach((bookItem) => {
+				updateBookStatus(bookItem.book.id, {
+					inBooklist: true,
+					toRead: bookItem.toRead
+				});
+			});
+		} catch (err) {
+			console.error(err);
+			errorMessage = err.message || 'Une erreur est survenue';
+		}
+	}
 
-    async function removeBook(book) {
-        const token = localStorage.getItem('token');
-        if (!token) return;
+	async function removeBook(book) {
+		const token = localStorage.getItem('token');
+		if (!token) return;
 
-        const decodedToken = decodeJWT(token);
-        if (!decodedToken) return;
+		const decodedToken = decodeJWT(token);
+		if (!decodedToken) return;
 
-        try {
-            console.log(`🗑️ Suppression du livre: ${book.book.title}`);
-            
-            const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${book.book.id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+		try {
+			console.log(`🗑️ Suppression du livre: ${book.book.title}`);
 
-            if (response.ok) {
-                // Supprimer le livre de la liste locale
-                booklist = booklist.filter(b => b.book.id !== book.book.id);
-                totalBooks = Math.max(0, totalBooks - 1);
-                
-                // Mettre à jour le store global
-                updateBookStatus(String(book.book.id), { inBooklist: false, toRead: true });
-                
-                console.log('✅ Livre supprimé');
-            } else {
-                console.error('❌ Erreur lors de la suppression');
-            }
-        } catch (error) {
-            console.error('❌ Erreur:', error);
-        }
-    }
+			const response = await fetch(
+				`http://localhost:3000/user/${decodedToken.id}/book/${book.book.id}`,
+				{
+					method: 'DELETE',
+					headers: {
+						Authorization: `Bearer ${token}`,
+						'Content-Type': 'application/json'
+					}
+				}
+			);
 
-    onMount(() => {
-        const searchParams = new URLSearchParams(window.location.search);
-        const currentPage = Number(searchParams.get('page')) || 1;
-        loadBooks(currentPage); 
-    });
+			if (response.ok) {
+				// Supprimer le livre de la liste locale
+				booklist = booklist.filter((b) => b.book.id !== book.book.id);
+				totalBooks = Math.max(0, totalBooks - 1);
 
-    function goToPage(newPage) {
-        loadBooks(newPage);
-        goto(`?page=${newPage}`, { replaceState: true });
-    }
+				// Mettre à jour le store global
+				updateBookStatus(String(book.book.id), { inBooklist: false, toRead: true });
+
+				console.log('✅ Livre supprimé');
+			} else {
+				console.error('❌ Erreur lors de la suppression');
+			}
+		} catch (error) {
+			console.error('❌ Erreur:', error);
+		}
+	}
+
+	onMount(() => {
+		const searchParams = new URLSearchParams(window.location.search);
+		const currentPage = Number(searchParams.get('page')) || 1;
+		loadBooks(currentPage);
+	});
+
+	function goToPage(newPage) {
+		loadBooks(newPage);
+		goto(`?page=${newPage}`, { replaceState: true });
+	}
 </script>
 
 <section class="booklist">
@@ -227,7 +232,7 @@
 </section>
 
 <style>
-.booklist {
+	.booklist {
 		display: flex;
 		flex-direction: column;
 		min-height: 80vh;
@@ -273,16 +278,20 @@
 	.book_data {
 		display: flex;
 		align-items: center;
-		width: 80%;
-		flex-shrink: 0;
+		flex: 1 1 auto;
+		min-width: 0;
+		/* 		flex-shrink: 0;
+ */
 	}
 
 	.book_data img {
 		width: 120px;
 		height: 180px;
 		object-fit: cover;
-		display: block;
-		margin: 1px;
+		aspect-ratio: 2/3;
+
+		/* 	display: block; 
+		margin: 1px; */
 	}
 
 	/* .book img {
@@ -317,7 +326,9 @@
 
 	.buttons {
 		display: flex;
-		flex-wrap: nowrap;
+		/* 		flex-wrap: nowrap; */
+		flex-shrink: 0;
+		gap: 0.5rem;
 	}
 
 	.to-read {
@@ -449,12 +460,13 @@
 
 	/* Media queries */
 
-  @media (max-width: 768px) {
-  .book_data img {
-    width: 80px;
-    height: 120px;
-  }
-}
+	@media (max-width: 768px) {
+		.book_data img {
+			width: 80px;
+			height: 120px;
+			aspect-ratio: 2/3;
+		}
+	}
 
 	@media (min-width: 1025px) {
 		.delete-booklist {
