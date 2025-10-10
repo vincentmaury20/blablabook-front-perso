@@ -4,12 +4,15 @@
 
 <div class="home-content">
 	<h1>Notre sélection</h1>
-	<div class="carousel">
-		{#each data.book as book}
-			<a href="/livre/{book.id}">
-				<div class="img-container"><img src={book.cover} alt={book.title} /></div>
-			</a>
-		{/each}
+
+	<div class="carousel-container">
+		<div class="carousel-track">
+			{#each data.book.concat(data.book) as book}
+				<a href={`/livre/${book.id}`} class="slide">
+					<img src={book.cover} alt={book.title} />
+				</a>
+			{/each}
+		</div>
 	</div>
 
 	<a href="/catalogue"><button class="catalog">Voir le catalogue</button></a>
@@ -30,33 +33,82 @@
 		flex-direction: column;
 		align-items: center;
 		gap: 1rem;
+		padding: 1rem;
 	}
 
-	.carousel {
-		width: 100%;
-		display: grid;
-		grid-auto-flow: column;
-		grid-auto-columns: 48%;
-		gap: 1rem;
-		overflow-x: auto;
-		scroll-snap-type: x mandatory;
+	/* Conteneur avec fond fixe */
+	.carousel-container {
 		width: 100vw;
-		padding: 1rem 0;
+		overflow: hidden;
 		background-color: var(--couleur-bleu-vert);
-		justify-content: center;
-		align-items: center;
+		padding: 1rem;
 	}
 
-	.img-container img {
-		flex: 0 0 48%;
+	/* Piste animée toujours active */
+	.carousel-track {
+		display: flex;
+		width: 100%;
+		gap: 1rem;
+		animation: scroll 110s linear infinite;
+	}
+
+	@keyframes scroll {
+		from {
+			transform: translateX(0);
+		}
+		to {
+			transform: translateX(-50%);
+		}
+	}
+
+	.slide {
+		flex: 0 0 auto;
+		width: 220px;
+	}
+
+	.slide img {
+		width: 100%;
+		height: 350px;
 		object-fit: cover;
-		flex-shrink: 0;
-		scroll-snap-align: start;
+		border-radius: 8px;
 		transition: transform 0.3s ease;
 	}
 
-	.carousel img:hover {
+	.slide img:hover {
 		transform: scale(1.05);
+	}
+
+	/* 📱 Mobile */
+	@media (max-width: 767px) {
+		.slide {
+			width: 160px;
+		}
+
+		.slide img {
+			height: 240px;
+		}
+	}
+
+	/* 💻 Tablette */
+	@media (min-width: 768px) and (max-width: 1023px) {
+		.slide {
+			width: 180px;
+		}
+
+		.slide img {
+			height: 300px;
+		}
+	}
+
+	/* 🖥️ Desktop */
+	@media (min-width: 1024px) {
+		.slide {
+			width: 220px;
+		}
+
+		.slide img {
+			height: 350px;
+		}
 	}
 
 	.catalog {
@@ -68,9 +120,7 @@
 		box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 		padding: 0.75rem 2rem;
 		cursor: pointer;
-		transition:
-			transform 0.2s ease,
-			box-shadow 0.2s ease;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
 		margin: 0.5rem 0;
 	}
 
@@ -90,44 +140,5 @@
 		line-height: 1.6;
 		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 		margin-bottom: 3rem;
-	}
-
-	/* Media queries */
-
-	@media (max-width: 768px) {
-		.carousel {
-			grid-auto-columns: 200px;
-			gap: 1.5rem;
-		}
-
-		.carousel img {
-			height: 320px;
-		}
-	}
-
-	@media (min-width: 768px) {
-		.carousel {
-			grid-auto-columns: 200px;
-			gap: 1.5rem;
-		}
-
-		.carousel img {
-			height: 320px;
-		}
-	}
-
-	@media (min-width: 1024px) {
-		.carousel {
-			grid-auto-columns: 220px;
-			gap: 1.5rem;
-		}
-
-		.carousel img {
-			height: 350px;
-		}
-
-		.home-content {
-			padding: 2rem;
-		}
 	}
 </style>
