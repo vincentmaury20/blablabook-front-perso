@@ -58,11 +58,7 @@
 
 	function openBook(id) {
 		goto(`/livre/${id}`);
-		query = '';
-		suggestions = [];
-		showSuggestions = false;
-		currentSearchQuery = '';
-		if (abortController) abortController.abort();
+		clearSearch();
 	}
 
 	function handleFocus() {
@@ -75,6 +71,40 @@
 		setTimeout(() => {
 			showSuggestions = false;
 		}, 200);
+	}
+
+	function handleKeydown(e) {
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			
+			const trimmedQuery = query.trim();
+			
+			// Si la recherche est vide, ne rien faire
+			if (!trimmedQuery) {
+				return;
+			}
+			
+			// Si on a des suggestions et qu'on voit la dropdown, aller au premier résultat
+			if (showSuggestions && suggestions.length > 0) {
+				openBook(suggestions[0].id);
+			} else if (trimmedQuery.length >= 2) {
+				// Sinon, rediriger vers le catalogue avec la recherche
+				goto(`/catalogue?search=${encodeURIComponent(trimmedQuery)}`);
+				// Vider la barre de recherche et nettoyer l'état
+				clearSearch();
+			}
+		} else if (e.key === 'Escape') {
+			// Échapper ferme les suggestions
+			clearSearch();
+		}
+	}
+
+	function clearSearch() {
+		query = '';
+		suggestions = [];
+		showSuggestions = false;
+		currentSearchQuery = '';
+		if (abortController) abortController.abort();
 	}
 </script>
 
@@ -117,6 +147,7 @@
 				oninput={onInput}
 				onfocus={handleFocus}
 				onblur={handleBlur}
+				onkeydown={handleKeydown}
 			/>
 
 			<select bind:value={searchType} class="filter-select">
@@ -137,7 +168,7 @@
 					<ul class="suggestions">
 						{#each suggestions as book}
 							<li>
-								<a href={`/livre/${book.id}`} class="suggestion-item">
+								<button onclick={() => openBook(book.id)} class="suggestion-item">
 									{#if book.cover}
 										<img src={book.cover} alt={book.title} class="book-thumb" />
 									{/if}
@@ -157,7 +188,7 @@
 											</span>
 										{/if}
 									</div>
-								</a>
+								</button>
 							</li>
 						{/each}
 					</ul>
@@ -307,6 +338,13 @@
 		border-bottom: 1px solid #f0f0f0;
 		text-decoration: none;
 		color: inherit;
+		background: none;
+		border: none;
+		border-bottom: 1px solid #f0f0f0;
+		width: 100%;
+		text-align: left;
+		font-family: inherit;
+		font-size: inherit;
 	}
 
 	.suggestion-item:hover {
