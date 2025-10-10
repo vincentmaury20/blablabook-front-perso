@@ -67,55 +67,61 @@ async function Register(event) {
 }
 </script>
 
-<div class="auth-container">
+<!-- <div class="auth-container">
   <div class="tabs">
     <div class:active={isLogin} onclick={() => (isLogin = true)}>Connexion</div>
     <div class:active={!isLogin} onclick={() => (isLogin = false)}>Création de compte</div>
-  </div>
+  </div> -->
 
-  {#if errorMessage}
-    <p style="color: red; text-align: center; margin-bottom: 1rem;">{errorMessage}</p>
-  {/if}
+  <div class="auth-container">
+    <div class="tabs">
+      <button class:active={isLogin} onclick={() => (isLogin = true)}>Connexion</button>
+      <button class:active={!isLogin} onclick={() => (isLogin = false)}>Création de compte</button>
+    </div>
 
-  {#if isLogin}
-    <form onsubmit={Login}>
-      <label for="email">Email :</label>
-      <input type="email" name="email" id="email" required />
+    {#if errorMessage}
+      <p style="color: red; text-align: center; margin-bottom: 1rem;">{errorMessage}</p>
+    {/if}
 
-      <label for="password">Mot de passe :</label>
-      <input type="password" name="password" id="password" required />
+    {#if isLogin}
+      <form onsubmit={Login}>
+        <label for="email">Email :</label>
+        <input type="email" name="email" id="email" required />
 
-			<button type="submit">Se connecter</button>
-		</form>
+        <label for="password">Mot de passe :</label>
+        <input type="password" name="password" id="password" required />
+
+        <button type="submit">Se connecter</button>
+      </form>
 		
-	{:else}
-		<form onsubmit={Register} enctype="multipart/form-data">
-			<label for="name">Nom :</label>
-			<input type="text" name="name" id="name" required />
-			
+	  {:else} 
+      <form onsubmit={Register} enctype="multipart/form-data">
+        <label for="name">Nom :</label>
+        <input type="text" name="name" id="name" required />
+        
 
-      <label for="firstname">Prénom :</label>
-      <input type="text" name="firstname" id="firstname" required />
+        <label for="firstname">Prénom :</label>
+        <input type="text" name="firstname" id="firstname" required />
 
-      <label for="age">Âge :</label>
-      <input type="number" name="age" id="age" min="0" required />
+        <label for="age">Âge :</label>
+        <input type="number" name="age" id="age" min="0" required />
 
-      <label for="emailSignup">Email :</label>
-      <input type="email" name="email" id="emailSignup" required />
+        <label for="emailSignup">Email :</label>
+        <input type="email" name="email" id="emailSignup" required />
 
-      <label for="passwordSignup">Mot de passe :</label>
-      <input type="password" name="password" id="passwordSignup" required minlength="6" />
+        <label for="passwordSignup">Mot de passe :</label>
+        <input type="password" name="password" id="passwordSignup" required minlength="6" />
 
-      <label for="confirm">Confirmation du mot de passe :</label>
-      <input type="password" name="confirm" id="confirm" required minlength="6" />
+        <label for="confirm">Confirmation du mot de passe :</label>
+        <input type="password" name="confirm" id="confirm" required minlength="6" />
 
-			<label for="avatar">Avatar :</label> 
-			<input type="file" name="avatar" id="avatar" accept="image/*"> 
-			<!-- j'ai ajouté ce champs-ci pour ajouter l'avatar ou du moins "tenter" -->
-			<button type="submit">Créer mon compte</button>
-		</form>
-	{/if}
-</div>
+        <label for="avatar">Avatar :</label> 
+        <input type="file" name="avatar" id="avatar" accept="image/*"> 
+        <!-- j'ai ajouté ce champs-ci pour ajouter l'avatar ou du moins "tenter" -->
+        <button type="submit">Créer mon compte</button>
+      </form>
+	  {/if}
+  </div>
 
 <style>
 	.auth-container {
@@ -131,18 +137,21 @@ async function Register(event) {
 		margin-bottom: 1rem;
 	}
 
-	.tabs div {
+	.tabs button {
 		flex: 1;
 		text-align: center;
 		padding: 0.5rem;
 		cursor: pointer;
 		font-weight: bold;
 		color: #666;
+    all: unset;        
+    padding: 0.5rem;
 	}
 
-	.tabs div.active {
+	.tabs button.active {
 		color: var(--couleur-marron);
 		border-bottom: 3px solid var(--couleur-marron);
+    font-weight: bold;
 	}
 
 	form {
