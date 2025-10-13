@@ -2,7 +2,7 @@
 	import { debounce } from '$lib/utils/debounce.js';
 	import { getSearchSuggestions } from '$lib/remoteFunction.js';
 	import { goto } from '$app/navigation';
-	import { user, logout } from '$lib/stores/auth.js'; // ✅ Import du store user et logout
+	import { user, logout } from '$lib/stores/auth.js'; 
 
 	let query = $state('');
 	let suggestions = $state([]);
@@ -39,7 +39,7 @@
 			}
 		} catch (err) {
 			if (err.name === 'AbortError') return;
-			console.error('❌ Erreur recherche:', err);
+			console.error('Erreur recherche:', err);
 			if (searchQuery === currentSearchQuery) {
 				error = 'Erreur de recherche';
 				suggestions = [];
@@ -115,11 +115,11 @@
 			<p class="title"><a href="/">BlaBlaBook</a></p>
 		</div>
 
-		<!-- ✅ Condition pour afficher les bons boutons selon l'état de connexion -->
+		<!-- Condition pour afficher les bons boutons selon l'état de connexion -->
 		<div class="auth-buttons">
 			{#if $user}
 				<div class="btn-container btn-container-end">
-					<a href="/mon_compte">
+					<a href="/mon-compte">
 						<button class="connection-btn account-btn">Mon compte</button>
 					</a>
 				</div>
@@ -390,7 +390,6 @@
 		color: #ff6b6b;
 	}
 
-	/* ✅ TABLETTE : Boutons en colonne à droite */
 	@media (min-width: 768px) {
 		.header-top {
 			flex-direction: row;
@@ -417,11 +416,10 @@
 			font-size: 2.5rem;
 		}
 
-		/* ✅ Boutons en colonne sur tablette */
 		.auth-buttons {
-			flex-direction: column; /* ✅ En colonne */
+			flex-direction: column;
 			gap: 0.3rem;
-			align-items: flex-end; /* ✅ Alignés à droite */
+			align-items: flex-end;
 			width: auto;
 		}
 
@@ -447,7 +445,6 @@
 		}
 	}
 
-	/* ✅ DESKTOP : Boutons en ligne */
 	@media (min-width: 1025px) {
 		header {
 			padding: 1rem 2rem;
@@ -461,9 +458,8 @@
 			font-size: 4rem;
 		}
 
-		/* ✅ Boutons en ligne sur desktop */
 		.auth-buttons {
-			flex-direction: row; /* ✅ En ligne */
+			flex-direction: row;
 			gap: 0.4rem;
 			align-items: center;
 		}

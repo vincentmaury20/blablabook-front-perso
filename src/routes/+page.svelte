@@ -36,7 +36,6 @@
 		padding: 1rem;
 	}
 
-	/* Conteneur avec fond fixe */
 	.carousel-container {
 		width: 100vw;
 		overflow: hidden;
@@ -44,7 +43,6 @@
 		padding: 1rem;
 	}
 
-	/* Piste animée toujours active */
 	.carousel-track {
 		display: flex;
 		width: 100%;
@@ -78,7 +76,7 @@
 		transform: scale(1.05);
 	}
 
-	/* 📱 Mobile */
+	/* Mobile */
 	@media (max-width: 767px) {
 		.slide {
 			width: 160px;
@@ -89,7 +87,7 @@
 		}
 	}
 
-	/* 💻 Tablette */
+	/* Tablette */
 	@media (min-width: 768px) and (max-width: 1023px) {
 		.slide {
 			width: 180px;
@@ -100,7 +98,7 @@
 		}
 	}
 
-	/* 🖥️ Desktop */
+	/* Desktop */
 	@media (min-width: 1024px) {
 		.slide {
 			width: 220px;
@@ -120,7 +118,9 @@
 		box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 		padding: 0.75rem 2rem;
 		cursor: pointer;
-		transition: transform 0.2s ease, box-shadow 0.2s ease;
+		transition:
+			transform 0.2s ease,
+			box-shadow 0.2s ease;
 		margin: 0.5rem 0;
 	}
 

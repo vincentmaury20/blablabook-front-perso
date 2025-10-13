@@ -11,14 +11,13 @@
 
 	const limit = 10;
 
-	// Fonction utilitaire pour décoder le JWT
 	function decodeJWT(token) {
 		try {
 			const payload = token.split('.')[1];
 			const decoded = JSON.parse(atob(payload));
 			return decoded;
 		} catch (error) {
-			console.error('❌ Erreur décodage JWT:', error);
+			console.error('Erreur décodage JWT:', error);
 			return null;
 		}
 	}
@@ -63,10 +62,10 @@
 					});
 				}
 			} else {
-				console.error('❌ Erreur lors de la sauvegarde du statut');
+				console.error('Erreur lors de la sauvegarde du statut');
 			}
 		} catch (error) {
-			console.error('❌ Erreur:', error);
+			console.error('Erreur:', error);
 		}
 	}
 
@@ -112,7 +111,7 @@
 		if (!decodedToken) return;
 
 		try {
-			console.log(`🗑️ Suppression du livre: ${book.book.title}`);
+			console.log(`Suppression du livre: ${book.book.title}`);
 
 			const response = await fetch(
 				`http://localhost:3000/user/${decodedToken.id}/book/${book.book.id}`,
@@ -133,12 +132,12 @@
 				// Mettre à jour le store global
 				updateBookStatus(String(book.book.id), { inBooklist: false, toRead: true });
 
-				console.log('✅ Livre supprimé');
+				console.log('Livre supprimé');
 			} else {
-				console.error('❌ Erreur lors de la suppression');
+				console.error('Erreur lors de la suppression');
 			}
 		} catch (error) {
-			console.error('❌ Erreur:', error);
+			console.error('Erreur:', error);
 		}
 	}
 
@@ -160,7 +159,7 @@
 			<h1>Ma booklist</h1>
 			<p class="books-number">{totalBooks} Livre{totalBooks > 1 ? 's' : ''}</p>
 		</div>
-		<p class="go-back"><a href="/mon_compte">Retour</a></p>
+		<p class="go-back"><a href="/mon-compte">Retour</a></p>
 	</header>
 
 	{#if errorMessage}

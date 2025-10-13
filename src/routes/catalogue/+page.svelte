@@ -2,7 +2,7 @@
 	let { data } = $props();
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { user } from '$lib/stores/auth.js'; // ✅ Import du store user
+	import { user } from '$lib/stores/auth.js';
 	import { booklistStatus, updateBookStatus, getBookStatus } from '$lib/stores/booklistStore.js';
 
 	let loadingBooks = $state(new Set());
@@ -13,7 +13,7 @@
 			const decoded = JSON.parse(atob(payload));
 			return decoded;
 		} catch (error) {
-			console.error('❌ Erreur décodage JWT:', error);
+			console.error('Erreur décodage JWT:', error);
 			return null;
 		}
 	}
@@ -25,34 +25,39 @@
 		const decodedToken = decodeJWT(token);
 		if (!decodedToken) return;
 
-		getBookStatus('dummy', new Map()); 
+		getBookStatus('dummy', new Map());
 
 		let currentStoreMap = new Map();
-		const unsubscribe = booklistStatus.subscribe(map => {
+		const unsubscribe = booklistStatus.subscribe((map) => {
 			currentStoreMap = map;
 		});
 		unsubscribe();
 
-		console.log(`🔍 DEBUG: ${data.books.length} livres sur la page, store taille: ${currentStoreMap.size}`);
-		console.log(`🔍 DEBUG: IDs en cache:`, Array.from(currentStoreMap.keys()).slice(0, 5));
+		console.log(
+			`DEBUG: ${data.books.length} livres sur la page, store taille: ${currentStoreMap.size}`
+		);
+		console.log(`DEBUG: IDs en cache:`, Array.from(currentStoreMap.keys()).slice(0, 5));
 
-		const booksToCheck = data.books.filter(book => !currentStoreMap.has(String(book.id)));
+		const booksToCheck = data.books.filter((book) => !currentStoreMap.has(String(book.id)));
 
-		console.log(`🔍 DEBUG: ${booksToCheck.length} livres à vérifier`);
+		console.log(`DEBUG: ${booksToCheck.length} livres à vérifier`);
 
 		if (booksToCheck.length === 0) {
-			console.log('✅ Tous les statuts sont déjà en cache');
+			console.log('Tous les statuts sont déjà en cache');
 			return;
 		}
 
 		const promises = booksToCheck.map(async (book) => {
 			try {
-				const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${book.id}/status`, {
-					headers: {
-						'Authorization': `Bearer ${token}`,
-						'Content-Type': 'application/json'
+				const response = await fetch(
+					`http://localhost:3000/user/${decodedToken.id}/book/${book.id}/status`,
+					{
+						headers: {
+							Authorization: `Bearer ${token}`,
+							'Content-Type': 'application/json'
+						}
 					}
-				});
+				);
 
 				if (response.ok) {
 					const result = await response.json();
@@ -70,7 +75,6 @@
 	}
 
 	async function toggleBookInBooklist(book) {
-		// ✅ Redirection si non connecté
 		if (!$user) {
 			goto('/connexion');
 			return;
@@ -89,7 +93,7 @@
 		}
 
 		let currentStatus = { inBooklist: false, toRead: true };
-		booklistStatus.subscribe(map => {
+		booklistStatus.subscribe((map) => {
 			currentStatus = getBookStatus(String(book.id), map);
 		})();
 
@@ -98,26 +102,32 @@
 
 		try {
 			if (currentStatus.inBooklist) {
-				const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${book.id}`, {
-					method: 'DELETE',
-					headers: {
-						'Authorization': `Bearer ${token}`,
-						'Content-Type': 'application/json'
+				const response = await fetch(
+					`http://localhost:3000/user/${decodedToken.id}/book/${book.id}`,
+					{
+						method: 'DELETE',
+						headers: {
+							Authorization: `Bearer ${token}`,
+							'Content-Type': 'application/json'
+						}
 					}
-				});
+				);
 
 				if (response.ok) {
 					updateBookStatus(String(book.id), { inBooklist: false, toRead: true });
 				}
 			} else {
-				const response = await fetch(`http://localhost:3000/user/${decodedToken.id}/book/${book.id}`, {
-					method: 'POST',
-					headers: {
-						'Authorization': `Bearer ${token}`,
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ toRead: true })
-				});
+				const response = await fetch(
+					`http://localhost:3000/user/${decodedToken.id}/book/${book.id}`,
+					{
+						method: 'POST',
+						headers: {
+							Authorization: `Bearer ${token}`,
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({ toRead: true })
+					}
+				);
 
 				if (response.ok) {
 					updateBookStatus(String(book.id), { inBooklist: true, toRead: true });
@@ -132,7 +142,7 @@
 	}
 
 	onMount(() => {
-		// ✅ Vérifier les statuts seulement si connecté
+		// Vérifier les statuts seulement si connecté
 		if ($user) {
 			checkAllBooksStatus();
 		}
@@ -159,10 +169,10 @@
 						{book.synopsis}
 					</p>
 				</div>
-				
-				<!-- ✅ Bouton qui redirige vers /connexion si non connecté -->
-				<button 
-					class="add-button" 
+
+				<!-- Bouton qui redirige vers /connexion si non connecté -->
+				<button
+					class="add-button"
 					class:in-booklist={$booklistStatus.get(String(book.id))?.inBooklist || false}
 					onclick={() => toggleBookInBooklist(book)}
 					disabled={loadingBooks.has(book.id)}
@@ -305,8 +315,6 @@
 		width: auto;
 	}
 
-	/* Effets de survol supprimés pour cohérence */
-
 	/* Styles pour le bouton quand le livre est dans la booklist */
 	.add-button.in-booklist {
 		background-color: var(--couleur-beige-clair);
@@ -314,8 +322,6 @@
 		border: 2px solid var(--couleur-marron);
 		font-weight: bold;
 	}
-
-	/* Effets de survol supprimés pour cohérence */
 
 	/* Style pour les boutons désactivés */
 	.add-button:disabled {
@@ -342,8 +348,12 @@
 	}
 
 	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
 	}
 
 	.pagination {
