@@ -1,7 +1,7 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { user } from '$lib/stores/auth.js'; // ✅ Import du store user
+	import { user } from '$lib/stores/auth.js';
 	import { booklistStatus, updateBookStatus, getBookStatus } from '$lib/stores/booklistStore.js';
 
 	let inBooklist = $state(false);
@@ -10,19 +10,17 @@
 	let isReadLoading = $state(false);
 	let { data } = $props();
 
-	// Fonction utilitaire pour décoder le JWT
 	function decodeJWT(token) {
 		try {
 			const payload = token.split('.')[1];
 			const decoded = JSON.parse(atob(payload));
 			return decoded;
 		} catch (error) {
-			console.error('❌ Erreur décodage JWT:', error);
+			console.error('Erreur décodage JWT:', error);
 			return null;
 		}
 	}
 
-	// Vérifier si le livre est dans la booklist au chargement
 	async function checkBookStatus() {
 		const token = localStorage.getItem('token');
 		if (!token) return;
@@ -46,7 +44,9 @@
 				inBooklist = result.inBooklist;
 				toRead = result.toRead !== undefined ? result.toRead : true;
 				updateBookStatus(data.book.id, { inBooklist: inBooklist, toRead: toRead });
-				console.log(`📖 Statut récupéré: ${inBooklist ? 'Dans booklist' : 'Pas dans booklist'}, ${toRead ? 'À lire' : 'Lu'}`);
+				console.log(
+					`Statut récupéré: ${inBooklist ? 'Dans booklist' : 'Pas dans booklist'}, ${toRead ? 'À lire' : 'Lu'}`
+				);
 			}
 		} catch (error) {
 			console.error('Erreur lors de la vérification du statut:', error);
@@ -54,7 +54,7 @@
 	}
 
 	async function toggleBooklist() {
-		// ✅ Redirection si non connecté
+		// Redirection si non connecté
 		if (!$user) {
 			goto('/connexion');
 			return;
@@ -91,7 +91,7 @@
 					toRead = true;
 					updateBookStatus(String(data.book.id), { inBooklist: false, toRead: true });
 				} else {
-					console.error('❌ Erreur lors de la suppression');
+					console.error('Erreur lors de la suppression');
 				}
 			} else {
 				const response = await fetch(
@@ -111,7 +111,7 @@
 					toRead = true;
 					updateBookStatus(String(data.book.id), { inBooklist: true, toRead: true });
 				} else {
-					console.error("❌ Erreur lors de l'ajout");
+					console.error("Erreur lors de l'ajout");
 				}
 			}
 		} catch (error) {
@@ -122,7 +122,7 @@
 	}
 
 	async function toggleRead() {
-		// ✅ Redirection si non connecté
+		// Redirection si non connecté
 		if (!$user) {
 			goto('/connexion');
 			return;
@@ -135,7 +135,7 @@
 		}
 
 		if (!inBooklist) {
-			console.warn('⚠️ Le livre doit être dans la booklist pour modifier le statut de lecture');
+			console.warn('Le livre doit être dans la booklist pour modifier le statut de lecture');
 			return;
 		}
 
@@ -163,7 +163,7 @@
 				toRead = !toRead;
 				updateBookStatus(String(data.book.id), { inBooklist: inBooklist, toRead: toRead });
 			} else {
-				console.error('❌ Erreur lors de la mise à jour du statut de lecture');
+				console.error('Erreur lors de la mise à jour du statut de lecture');
 			}
 		} catch (error) {
 			console.error('Erreur lors de la mise à jour du statut:', error);
@@ -177,18 +177,18 @@
 
 	onMount(() => {
 		getBookStatus('dummy', new Map());
-		
-		unsubscribe = booklistStatus.subscribe(map => {
+
+		unsubscribe = booklistStatus.subscribe((map) => {
 			const bookIdStr = String(data.book.id);
 			const status = getBookStatus(bookIdStr, map);
-			
+
 			if (map.has(bookIdStr)) {
 				inBooklist = status.inBooklist;
 				toRead = status.toRead;
 			} else if (!hasInitialized) {
 				checkBookStatus();
 			}
-			
+
 			hasInitialized = true;
 		});
 	});
@@ -358,8 +358,6 @@
 		text-align: center;
 	}
 
-	/* Suppression des effets de survol pour les boutons ajouter */
-
 	.add-booklist:focus,
 	.read:focus {
 		outline: none;
@@ -371,7 +369,6 @@
 		-webkit-tap-highlight-color: transparent;
 	}
 
-	/* Styles pour les boutons actifs - identiques à la booklist */
 	.add-booklist.in-booklist {
 		background-color: transparent;
 		font-weight: 600;
@@ -382,9 +379,6 @@
 		font-weight: 600;
 	}
 
-	/* Suppression des effets hover */
-
-	/* Style pour les boutons désactivés - identiques à la booklist */
 	.add-booklist:disabled,
 	.read:disabled {
 		opacity: 0.6;
@@ -398,7 +392,6 @@
 		background-color: transparent;
 	}
 
-	/* Style du texte des boutons principaux */
 	.button-text {
 		font-size: 0.8rem;
 		font-weight: 600;

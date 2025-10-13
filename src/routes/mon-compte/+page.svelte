@@ -94,7 +94,8 @@
 			<p>{errorMessage || 'Votre booklist est vide.'}</p>
 		{/if}
 
-		<button class="button" onclick={() => window.location.href = "/ma_booklist"}>Voir plus</button>
+		<button class="button" onclick={() => (window.location.href = '/ma-booklist')}>Voir plus</button
+		>
 	</section>
 </main>
 
@@ -194,7 +195,6 @@
 	.button {
 		align-self: flex-end;
 		margin: 2rem auto;
-
 	}
 
 	/* Media queries */
@@ -282,12 +282,6 @@
 			background-color: var(--couleur-beige-clair);
 			padding: 0.5rem;
 		}
-
-		/* .book_author {
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		} */
 
 		.book_title {
 			font-weight: 700;

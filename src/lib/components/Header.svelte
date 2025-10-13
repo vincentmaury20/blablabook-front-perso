@@ -2,7 +2,7 @@
 	import { debounce } from '$lib/utils/debounce.js';
 	import { getSearchSuggestions } from '$lib/remoteFunction.js';
 	import { goto } from '$app/navigation';
-	import { user, logout } from '$lib/stores/auth.js'; // ✅ Import du store user et logout
+	import { user, logout } from '$lib/stores/auth.js'; 
 
 	let query = $state('');
 	let suggestions = $state([]);
@@ -39,7 +39,7 @@
 			}
 		} catch (err) {
 			if (err.name === 'AbortError') return;
-			console.error('❌ Erreur recherche:', err);
+			console.error('Erreur recherche:', err);
 			if (searchQuery === currentSearchQuery) {
 				error = 'Erreur de recherche';
 				suggestions = [];
@@ -58,11 +58,7 @@
 
 	function openBook(id) {
 		goto(`/livre/${id}`);
-		query = '';
-		suggestions = [];
-		showSuggestions = false;
-		currentSearchQuery = '';
-		if (abortController) abortController.abort();
+		clearSearch();
 	}
 
 	function handleFocus() {
@@ -76,6 +72,40 @@
 			showSuggestions = false;
 		}, 200);
 	}
+
+	function handleKeydown(e) {
+		if (e.key === 'Enter') {
+			e.preventDefault();
+
+			const trimmedQuery = query.trim();
+
+			// Si la recherche est vide, ne rien faire
+			if (!trimmedQuery) {
+				return;
+			}
+
+			// Si on a des suggestions et qu'on voit la dropdown, aller au premier résultat
+			if (showSuggestions && suggestions.length > 0) {
+				openBook(suggestions[0].id);
+			} else if (trimmedQuery.length >= 2) {
+				// Sinon, rediriger vers le catalogue avec la recherche
+				goto(`/catalogue?search=${encodeURIComponent(trimmedQuery)}`);
+				// Vider la barre de recherche et nettoyer l'état
+				clearSearch();
+			}
+		} else if (e.key === 'Escape') {
+			// Échapper ferme les suggestions
+			clearSearch();
+		}
+	}
+
+	function clearSearch() {
+		query = '';
+		suggestions = [];
+		showSuggestions = false;
+		currentSearchQuery = '';
+		if (abortController) abortController.abort();
+	}
 </script>
 
 <header class="header">
@@ -85,11 +115,11 @@
 			<p class="title"><a href="/">BlaBlaBook</a></p>
 		</div>
 
-		<!-- ✅ Condition pour afficher les bons boutons selon l'état de connexion -->
+		<!-- Condition pour afficher les bons boutons selon l'état de connexion -->
 		<div class="auth-buttons">
 			{#if $user}
 				<div class="btn-container btn-container-end">
-					<a href="/mon_compte">
+					<a href="/mon-compte">
 						<button class="connection-btn account-btn">Mon compte</button>
 					</a>
 				</div>
@@ -117,6 +147,7 @@
 				oninput={onInput}
 				onfocus={handleFocus}
 				onblur={handleBlur}
+				onkeydown={handleKeydown}
 			/>
 
 			<select bind:value={searchType} class="filter-select">
@@ -137,7 +168,7 @@
 					<ul class="suggestions">
 						{#each suggestions as book}
 							<li>
-								<a href={`/livre/${book.id}`} class="suggestion-item">
+								<button onclick={() => openBook(book.id)} class="suggestion-item">
 									{#if book.cover}
 										<img src={book.cover} alt={book.title} class="book-thumb" />
 									{/if}
@@ -157,7 +188,7 @@
 											</span>
 										{/if}
 									</div>
-								</a>
+								</button>
 							</li>
 						{/each}
 					</ul>
@@ -283,6 +314,7 @@
 		top: calc(100% + 0.5rem);
 		left: 0;
 		right: 0;
+		width: 100%;
 		background: white;
 		border-radius: 12px;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -298,19 +330,27 @@
 	}
 
 	.suggestion-item {
+		all: unset;
 		display: flex;
 		align-items: center;
 		gap: 1rem;
 		padding: 0.75rem 1rem;
+		width: 100%;
 		cursor: pointer;
-		transition: background 0.2s;
-		border-bottom: 1px solid #f0f0f0;
-		text-decoration: none;
+		text-align: left;
+		font-family: inherit;
+		font-size: inherit;
+		background: none;
+		border: none;
 		color: inherit;
+		transition: background 0.2s;
+		box-sizing: border-box;
 	}
 
-	.suggestion-item:hover {
+	.suggestion-item:hover,
+	.suggestion-item:focus {
 		background: #f5f5f5;
+		outline: none;
 	}
 
 	.book-thumb {
@@ -350,7 +390,6 @@
 		color: #ff6b6b;
 	}
 
-	/* ✅ TABLETTE : Boutons en colonne à droite */
 	@media (min-width: 768px) {
 		.header-top {
 			flex-direction: row;
@@ -377,11 +416,10 @@
 			font-size: 2.5rem;
 		}
 
-		/* ✅ Boutons en colonne sur tablette */
 		.auth-buttons {
-			flex-direction: column; /* ✅ En colonne */
+			flex-direction: column;
 			gap: 0.3rem;
-			align-items: flex-end; /* ✅ Alignés à droite */
+			align-items: flex-end;
 			width: auto;
 		}
 
@@ -407,7 +445,6 @@
 		}
 	}
 
-	/* ✅ DESKTOP : Boutons en ligne */
 	@media (min-width: 1025px) {
 		header {
 			padding: 1rem 2rem;
@@ -421,9 +458,8 @@
 			font-size: 4rem;
 		}
 
-		/* ✅ Boutons en ligne sur desktop */
 		.auth-buttons {
-			flex-direction: row; /* ✅ En ligne */
+			flex-direction: row;
 			gap: 0.4rem;
 			align-items: center;
 		}
