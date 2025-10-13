@@ -1,6 +1,5 @@
 <script>
 	import { page } from '$app/stores';
-	// infos venant du fichier layout
 	export let error;
 	export let status;
 
@@ -16,7 +15,6 @@
 			Cette page est cachée dans les rayons secrets de la bibliothèque. Seuls les archivistes y ont
 			accès…
 		{:else}
-			<!-- toutes les autres erreurs -->
 			Oups! Erreur serveur !
 		{/if}
 	</h2>
@@ -56,6 +54,6 @@
 	p {
 		font-size: 1rem;
 		font-style: italic;
-    margin-top: 1rem;
+		margin-top: 1rem;
 	}
 </style>
