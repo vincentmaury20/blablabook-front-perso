@@ -1,2 +1,8 @@
-/// <reference types="@vitest/browser/matchers" />
-/// <reference types="@vitest/browser/providers/playwright" />
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    environment: 'node',
+    globals: true
+  }
+});
