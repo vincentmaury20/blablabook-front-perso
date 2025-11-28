@@ -2,7 +2,7 @@
 	import { debounce } from '$lib/utils/debounce.js';
 	import { getSearchSuggestions } from '$lib/remoteFunction.js';
 	import { goto } from '$app/navigation';
-	import { user, logout } from '$lib/stores/auth.js'; 
+	import { user, logout } from '$lib/stores/auth.js';
 
 	let query = $state('');
 	let suggestions = $state([]);

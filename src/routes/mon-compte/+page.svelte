@@ -94,8 +94,13 @@
 			<p>{errorMessage || 'Votre booklist est vide.'}</p>
 		{/if}
 
-		<button class="button" onclick={() => (window.location.href = '/ma-booklist')}>Voir plus</button
-		>
+		<div class="handle-buttons">
+			<button class="button" onclick={() => (window.location.href = '/ma-booklist')}
+				>Voir plus</button
+			>
+			<button class="button" onclick={() => (window.location.href = '/catalogue')}>Catalogue</button
+			>
+		</div>
 	</section>
 </main>
 
@@ -192,8 +197,14 @@
 		display: none;
 	}
 
+	.handle-buttons {
+		display: flex;
+		flex-direction: row;
+		gap: 1rem;
+		margin-bottom: 2rem;
+	}
 	.button {
-		align-self: flex-end;
+		align-self: center;
 		margin: 2rem auto;
 	}
 
