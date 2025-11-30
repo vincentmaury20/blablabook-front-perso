@@ -43,16 +43,6 @@
 			errorMessage = error.message || 'Une erreur est survenue.';
 		}
 	});
-
-	// ✅ Redirection vers le Dashboard EJS
-	function goToDashboard() {
-		const token = localStorage.getItem('token');
-		if (token) {
-			window.location.href = `http://localhost:3000/admin?token=${token}`;
-		} else {
-			goto('/login');
-		}
-	}
 </script>
 
 <main>
@@ -73,13 +63,6 @@
 					<p class="age pink">{currentUser.age} ans</p>
 				</div>
 			</div>
-
-			<!-- ✅ Bouton Dashboard visible uniquement si admin -->
-			{#if currentUser.role === 'admin'}
-				<div class="dashboard">
-					<button class="button" onclick={goToDashboard}>Accéder au Dashboard</button>
-				</div>
-			{/if}
 		{:else}
 			<p>{errorMessage || 'Impossible de récupérer les informations utilisateur.'}</p>
 		{/if}
@@ -220,7 +203,6 @@
 		gap: 1rem;
 		margin-bottom: 2rem;
 	}
-
 	.button {
 		align-self: center;
 		margin: 2rem auto;

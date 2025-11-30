@@ -8,6 +8,9 @@
 		</div>
 
 		<a href="/"><img src="/LogoBBB.png" alt="Logo BlaBlaBook" class="logo-icon" /></a>
+
+		<!-- Lien discret vers l'admin -->
+		<a href="http://localhost:3000/admin/login" class="admin-link">⚙️</a>
 	</div>
 </footer>
 
@@ -23,10 +26,30 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		position: relative;
 	}
 
 	.logo-icon {
 		height: 80px;
 		width: auto;
+	}
+
+	/* Style discret pour le lien admin */
+	.admin-link {
+		position: absolute;
+		bottom: 5px;
+		right: 10px;
+		font-size: 14px;
+		color: #ccc;
+		opacity: 0.2;
+		text-decoration: none;
+		transition:
+			opacity 0.3s,
+			color 0.3s;
+	}
+
+	.admin-link:hover {
+		opacity: 0.75;
+		color: #000;
 	}
 </style>
