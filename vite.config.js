@@ -1,7 +1,16 @@
-import { defineConfig } from 'vitest/config';
+// vitest.config.js
 import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+	server: {
+		proxy: {
+			'/uploads': {
+				target: 'http://localhost:3000',
+				changeOrigin: true
+			}
+		}
+	},
 	plugins: [sveltekit()],
 	test: {
 		expect: { requireAssertions: true },
