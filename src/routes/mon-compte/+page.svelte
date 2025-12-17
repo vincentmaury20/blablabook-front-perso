@@ -2,10 +2,15 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 
+	import { API_URL } from '$lib/config.js';
+
 	let currentUser = null;
 	let currentBooks = [];
 	let totalBooks = 0;
 	let errorMessage = '';
+	let fileInput;
+	let previewUrl = null;
+	let uploading = false;
 
 	onMount(async () => {
 		const token = localStorage.getItem('token');
@@ -16,7 +21,7 @@
 
 		try {
 			// Récupération des infos utilisateur
-			const userResponse = await fetch('http://localhost:3000/auth/me', {
+			const userResponse = await fetch(`${API_URL}/auth/me`, {
 				headers: { Authorization: `Bearer ${token}` }
 			});
 
@@ -27,7 +32,7 @@
 			currentUser = await userResponse.json();
 
 			// Récupération des livres favoris
-			const booksResponse = await fetch(`http://localhost:3000/userbooks?limit=4`, {
+			const booksResponse = await fetch(`${API_URL}/userbooks?limit=4`, {
 				headers: { Authorization: `Bearer ${token}` }
 			});
 
@@ -43,6 +48,70 @@
 			errorMessage = error.message || 'Une erreur est survenue.';
 		}
 	});
+
+	function openFilePicker() {
+		fileInput.click();
+	}
+
+	async function onFileChange(event) {
+		const file = event.target.files?.[0];
+		if (!file) return;
+
+		const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+		if (!allowed.includes(file.type)) {
+			errorMessage = 'Type de fichier non autorisé';
+			return;
+		}
+		if (file.size > 2 * 1024 * 1024) {
+			errorMessage = 'Fichier trop volumineux (max 2MB)';
+			return;
+		}
+
+		if (previewUrl) URL.revokeObjectURL(previewUrl);
+		previewUrl = URL.createObjectURL(file);
+		errorMessage = '';
+
+		await uploadAvatar(file);
+	}
+
+	async function uploadAvatar(file) {
+		const token = localStorage.getItem('token');
+		if (!token) {
+			errorMessage = 'Utilisateur non authentifié';
+			return;
+		}
+
+		uploading = true;
+		const form = new FormData();
+		form.append('avatar', file);
+
+		try {
+			const res = await fetch(`${API_URL}/user/avatar`, {
+				method: 'POST',
+				headers: { Authorization: `Bearer ${token}` },
+				body: form
+			});
+
+			if (!res.ok) {
+				const err = await res.json().catch(() => ({}));
+				throw new Error(err.error || err.message || "Erreur lors de l'upload");
+			}
+
+			const data = await res.json();
+
+			currentUser = { ...currentUser, avatar: data.avatar };
+
+			if (previewUrl) {
+				URL.revokeObjectURL(previewUrl);
+				previewUrl = null;
+			}
+		} catch (err) {
+			console.error(err);
+			errorMessage = err.message || 'Erreur upload avatar';
+		} finally {
+			uploading = false;
+		}
+	}
 </script>
 
 <main>
@@ -51,18 +120,34 @@
 
 		{#if currentUser}
 			<div class="info">
+				<!-- clic ouvre le file picker -->
 				<img
 					class="avatar"
-					src={currentUser.avatar
-						? `http://localhost:3000/${currentUser.avatar}`
-						: '/images/Avatar_crop.jpg'}
+					src={previewUrl
+						? previewUrl
+						: currentUser.avatar
+							? `${API_URL}/${currentUser.avatar}`
+							: '/images/Avatar_crop.jpg'}
 					alt="avatar"
+					onclick={openFilePicker}
+					style="cursor: pointer;"
+				/>
+				<input
+					bind:this={fileInput}
+					type="file"
+					accept="image/*"
+					onchange={onFileChange}
+					style="display:none"
 				/>
 				<div class="id">
 					<p class="name">{currentUser.name} {currentUser.firstname}</p>
 					<p class="age pink">{currentUser.age} ans</p>
 				</div>
 			</div>
+
+			{#if uploading}
+				<p>Upload en cours…</p>
+			{/if}
 		{:else}
 			<p>{errorMessage || 'Impossible de récupérer les informations utilisateur.'}</p>
 		{/if}

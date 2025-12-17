@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { updateBookStatus } from '$lib/stores/booklistStore.js';
+	import { API_URL } from '$lib/config.js';
 
 	let booklist = [];
 	let totalBooks = 0;
@@ -36,17 +37,14 @@
 		}
 
 		try {
-			const response = await fetch(
-				`http://localhost:3000/user/${decodedToken.id}/book/${book.book.id}`,
-				{
-					method: 'PUT',
-					headers: {
-						Authorization: `Bearer ${token}`,
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ toRead: !book.toRead })
-				}
-			);
+			const response = await fetch(`${API_URL}/user/${decodedToken.id}/book/${book.book.id}`, {
+				method: 'PUT',
+				headers: {
+					Authorization: `Bearer ${token}`,
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ toRead: !book.toRead })
+			});
 
 			if (response.ok) {
 				// Mettre à jour localement le statut du livre
@@ -77,7 +75,7 @@
 		}
 
 		try {
-			const res = await fetch(`http://localhost:3000/userbooks?page=${pageNumber}&limit=${limit}`, {
+			const res = await fetch(`${API_URL}/userbooks?page=${pageNumber}&limit=${limit}`, {
 				headers: { Authorization: `Bearer ${token}` }
 			});
 
@@ -113,16 +111,13 @@
 		try {
 			console.log(`Suppression du livre: ${book.book.title}`);
 
-			const response = await fetch(
-				`http://localhost:3000/user/${decodedToken.id}/book/${book.book.id}`,
-				{
-					method: 'DELETE',
-					headers: {
-						Authorization: `Bearer ${token}`,
-						'Content-Type': 'application/json'
-					}
+			const response = await fetch(`${API_URL}/user/${decodedToken.id}/book/${book.book.id}`, {
+				method: 'DELETE',
+				headers: {
+					Authorization: `Bearer ${token}`,
+					'Content-Type': 'application/json'
 				}
-			);
+			});
 
 			if (response.ok) {
 				// Supprimer le livre de la liste locale

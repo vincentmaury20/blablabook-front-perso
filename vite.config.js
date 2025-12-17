@@ -6,7 +6,7 @@ export default defineConfig({
 	server: {
 		proxy: {
 			'/uploads': {
-				target: 'http://localhost:3000',
+				target: process.env.PUBLIC_API_URL || 'http://localhost:3000',
 				changeOrigin: true
 			}
 		}

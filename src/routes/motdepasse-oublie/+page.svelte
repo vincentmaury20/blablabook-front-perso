@@ -1,4 +1,5 @@
 <script>
+	// import { API_URL } from '$lib/config.js';
 	let loginEmail = '';
 
 	function handleReset(event) {

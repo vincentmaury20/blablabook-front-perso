@@ -1,6 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { user } from '$lib/stores/auth.js';
+	import { API_URL } from '$lib/config.js';
 
 	let isLogin = $state(true);
 	let errorMessage = $state('');
@@ -11,7 +12,7 @@
 
 		const formData = new FormData(event.target);
 
-		const res = await fetch('http://localhost:3000/user/login', {
+		const res = await fetch(`${API_URL}/user/login`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
@@ -24,12 +25,7 @@
 
 		if (res.ok) {
 			localStorage.setItem('token', data.token);
-
-			//  IMPORTANT : Mettre à jour le store
 			user.set(data.user);
-
-			console.log('Connexion réussie, utilisateur:', data.user);
-
 			goto('/mon-compte');
 		} else {
 			errorMessage = data.error || 'Erreur lors de la connexion';
@@ -49,10 +45,9 @@
 			return;
 		}
 
-		// Envoie le FormData tel quel, sans JSON.stringify
-		const res = await fetch('http://localhost:3000/user/register', {
+		const res = await fetch(`${API_URL}/user/register`, {
 			method: 'POST',
-			body: formData //  multipart/form-data automatiquement géré
+			body: formData
 		});
 
 		const data = await res.json();
@@ -66,6 +61,8 @@
 		}
 	}
 </script>
+
+<!-- le reste du template inchangé -->
 
 <div class="auth-container">
 	<div class="tabs" role="tablist" aria-label="Choix du mode d’authentification">
