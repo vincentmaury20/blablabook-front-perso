@@ -230,7 +230,28 @@
 		<br />{data.book.synopsis}
 	</p>
 </div>
+<!-- SECTION REVIEWS -->
+<div class="reviews-container">
+	<h2>Avis des lecteurs ({data.reviewCount})</h2>
 
+	{#if data.averageRating !== null}
+		<p class="average">
+			Note moyenne : {data.averageRating.toFixed(1)} / 10
+		</p>
+
+		{#each data.reviews as review}
+			<div class="review">
+				<div class="review-header">
+					<strong>{review.User.firstname} {review.User.name}</strong>
+					<span class="rating">{review.rating}/10</span>
+				</div>
+				<p class="comment">{review.comment}</p>
+			</div>
+		{/each}
+	{:else}
+		<p class="no-review">Aucun avis pour ce livre.</p>
+	{/if}
+</div>
 <div class="buttons-container">
 	<!-- Bouton ajouter/retirer de la booklist -->
 	<button
@@ -278,12 +299,33 @@
 </div>
 
 <style>
+	/* --------------------------------------------- */
+	/* 1. LAYOUT GLOBAL                              */
+	/* --------------------------------------------- */
+
 	.container {
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
 		align-items: center;
 		width: 100%;
+	}
+
+	/* --------------------------------------------- */
+	/* 2. BOOK HEADER : GENRES + AUTEURS             */
+	/* --------------------------------------------- */
+
+	.genre-container {
+		display: block;
+		margin-left: auto;
+		background-color: var(--couleur-beige-clair);
+		border-radius: 10px;
+		border: solid 2px var(--couleur-marron);
+	}
+
+	.genre {
+		margin: 0.6rem;
+		font-size: 15px;
 	}
 
 	.author {
@@ -293,19 +335,9 @@
 		text-align: justify;
 	}
 
-	.genre-container {
-		display: block;
-		border: var(--couleur-marron);
-		margin-left: auto;
-		border: var(--couleur-marron);
-		background-color: var(--couleur-beige-clair);
-		border-radius: 10px;
-		border: solid 2px var(--couleur-marron);
-	}
-
-	.genre {
-		margin: 0.6rem;
-	}
+	/* --------------------------------------------- */
+	/* 3. COVER / IMAGE                              */
+	/* --------------------------------------------- */
 
 	.cover {
 		border-radius: 0px 20px 0px 20px;
@@ -313,6 +345,10 @@
 		padding: 0.3rem;
 		padding-bottom: 1rem;
 	}
+
+	/* --------------------------------------------- */
+	/* 4. SYNOPSIS                                   */
+	/* --------------------------------------------- */
 
 	.synopsis-container {
 		background-color: var(--couleur-beige-clair);
@@ -323,6 +359,62 @@
 	.synopsis {
 		margin: 1rem;
 	}
+
+	/* --------------------------------------------- */
+	/* 5. REVIEWS                                    */
+	/* --------------------------------------------- */
+
+	.reviews-container {
+		background-color: var(--couleur-beige-clair);
+		border-radius: 15px;
+		padding: 1rem;
+		margin: 1rem;
+		border: 2px solid var(--couleur-marron);
+	}
+
+	.reviews-container h2 {
+		margin-bottom: 0.5rem;
+		color: var(--couleur-marron);
+	}
+
+	.average {
+		font-weight: 600;
+		margin-bottom: 1rem;
+	}
+
+	.review {
+		background: white;
+		border-radius: 10px;
+		padding: 0.8rem;
+		margin-bottom: 0.8rem;
+		border: 1px solid var(--couleur-marron);
+	}
+
+	.review-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 0.3rem;
+	}
+
+	.rating {
+		font-weight: bold;
+		color: var(--couleur-marron);
+	}
+
+	.comment {
+		font-size: 0.9rem;
+		line-height: 1.3;
+	}
+
+	.no-review {
+		font-style: italic;
+		color: #555;
+	}
+
+	/* --------------------------------------------- */
+	/* 6. BOUTONS BOOKLIST / LU                      */
+	/* --------------------------------------------- */
 
 	.buttons-container {
 		width: 100%;
@@ -348,6 +440,7 @@
 		justify-content: center;
 		gap: 0.4rem;
 		text-align: center;
+		-webkit-tap-highlight-color: transparent;
 	}
 
 	.add-booklist:focus,
@@ -356,16 +449,7 @@
 		box-shadow: none;
 	}
 
-	.add-booklist,
-	.read {
-		-webkit-tap-highlight-color: transparent;
-	}
-
-	.add-booklist.in-booklist {
-		background-color: transparent;
-		font-weight: 600;
-	}
-
+	.add-booklist.in-booklist,
 	.read.is-read {
 		background-color: transparent;
 		font-weight: 600;
@@ -378,12 +462,6 @@
 		transform: none;
 	}
 
-	.add-booklist:disabled:hover,
-	.read:disabled:hover {
-		transform: none;
-		background-color: transparent;
-	}
-
 	.button-text {
 		font-size: 0.8rem;
 		font-weight: 600;
@@ -392,7 +470,6 @@
 		color: var(--couleur-marron);
 	}
 
-	/* Icônes de bookmark - identiques à celles de la booklist */
 	.material-symbols--bookmark-added-grey {
 		display: inline-block;
 		width: 2rem;
@@ -411,12 +488,15 @@
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2363A6A6' d='M17.825 9L15 6.175l1.4-1.425l1.425 1.425l3.525-3.55l1.425 1.425zM5 21V5q0-.825.588-1.412T7 3h7q-.5.75-.75 1.438T13 6q0 1.8 1.138 3.175T17 10.9q.575.075 1 .075t1-.075V21l-7-3z'/%3E%3C/svg%3E");
 	}
 
-	/* Icônes PNG - même taille que les bookmarks */
 	.icon {
 		width: 2rem;
 		height: 2rem;
 		object-fit: contain;
 	}
+
+	/* --------------------------------------------- */
+	/* 7. BOUTON RETOUR                              */
+	/* --------------------------------------------- */
 
 	.exit-container {
 		display: flex;
@@ -430,6 +510,7 @@
 		font-weight: 600;
 		cursor: pointer;
 		transition: transform 0.1s ease;
+		-webkit-tap-highlight-color: transparent;
 	}
 
 	.exit:active {
@@ -441,15 +522,9 @@
 		box-shadow: none;
 	}
 
-	.exit {
-		-webkit-tap-highlight-color: transparent;
-	}
-
-	.add-booklist,
-	.read,
-	.exit {
-		box-shadow: none;
-	}
+	/* --------------------------------------------- */
+	/* 8. MEDIA QUERIES                              */
+	/* --------------------------------------------- */
 
 	@media (min-width: 768px) {
 		.cover {
@@ -457,21 +532,16 @@
 		}
 	}
 
-	.genre {
-		font-size: 15px;
-	}
-
 	@media (min-width: 1025px) {
 		.author-container {
 			display: flex;
 			flex-direction: column;
-			border: var(--couleur-marron);
 			margin-left: 1rem;
 			margin-top: 1rem;
 			margin-right: auto;
-			border: var(--couleur-marron);
 			background-color: var(--couleur-beige-clair);
 			border-radius: 10px;
+			border: var(--couleur-marron);
 		}
 
 		.author {
@@ -488,14 +558,6 @@
 			margin: 0 1rem;
 			gap: 1rem;
 			padding-bottom: 1rem;
-		}
-
-		.cover {
-			width: 250px;
-		}
-
-		.genre {
-			font-size: 15px;
 		}
 
 		.genre-container {
