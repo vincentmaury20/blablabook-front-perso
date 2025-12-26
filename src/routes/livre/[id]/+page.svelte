@@ -9,6 +9,9 @@
 	let toRead = $state(true);
 	let isLoading = $state(false);
 	let isReadLoading = $state(false);
+	let showForm = $state(false);
+	let rating = $state(10);
+	let comment = $state('');
 	let { data } = $props();
 
 	function decodeJWT(token) {
@@ -163,6 +166,36 @@
 			isReadLoading = false;
 		}
 	}
+	async function submitReview() {
+		const token = localStorage.getItem('token');
+		if (!token) {
+			goto('/connexion');
+			return;
+		}
+
+		const decoded = decodeJWT(token);
+
+		const res = await fetch(`${API_URL}/reviews`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`
+			},
+			body: JSON.stringify({
+				rating,
+				comment,
+				book_id: data.book.id,
+				user_id: decoded.id
+			})
+		});
+
+		if (res.ok) {
+			showForm = false;
+			location.reload(); // recharge la page pour afficher le nouvel avis
+		} else {
+			console.error("Erreur lors de l'envoi de l'avis");
+		}
+	}
 
 	let unsubscribe;
 	let hasInitialized = false;
@@ -250,6 +283,29 @@
 		{/each}
 	{:else}
 		<p class="no-review">Aucun avis pour ce livre.</p>
+	{/if}
+	{#if $user}
+		<button class="leave-review" onclick={() => (showForm = true)}> Laisser un avis </button>
+	{/if}
+	{#if showForm}
+		<div class="review-form">
+			<div class="review-form-row">
+				<div class="review-form-note">
+					<label>Note (sur 10)</label>
+					<input type="number" min="1" max="10" bind:value={rating} />
+				</div>
+
+				<div class="review-form-comment">
+					<label>Commentaire</label>
+					<textarea bind:value={comment}></textarea>
+				</div>
+			</div>
+
+			<div class="review-form-buttons">
+				<button onclick={submitReview}>Envoyer</button>
+				<button onclick={() => (showForm = false)}>Annuler</button>
+			</div>
+		</div>
 	{/if}
 </div>
 <div class="buttons-container">
@@ -412,6 +468,111 @@
 		color: #555;
 	}
 
+	/* Bouton "Laisser un avis" */
+	.leave-review {
+		display: block;
+		margin: 1rem auto;
+		padding: 0.6rem 1rem;
+		background-color: #63a6a6; /* bleu charte */
+		border: 2px solid var(--couleur-marron);
+		border-radius: 10px;
+		font-weight: 600;
+		color: white;
+		cursor: pointer;
+		transition:
+			transform 0.1s ease,
+			background-color 0.2s ease;
+	}
+
+	.leave-review:hover {
+		background-color: #4f8f8f;
+	}
+
+	.leave-review:active {
+		transform: scale(0.95);
+	}
+
+	/* Formulaire d'avis */
+	.review-form {
+		margin-top: 1rem;
+		padding: 1rem;
+		background-color: white;
+		border: 2px solid var(--couleur-marron);
+		border-radius: 12px;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	/* Ligne note + commentaire */
+	.review-form-row {
+		display: flex;
+		gap: 1rem;
+	}
+
+	/* Bloc note (20%) */
+	.review-form-note {
+		width: 20%;
+		display: flex;
+		flex-direction: column;
+	}
+
+	/* Bloc commentaire (80%) */
+	.review-form-comment {
+		width: 80%;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.review-form label {
+		font-weight: 600;
+		color: var(--couleur-marron);
+		margin-bottom: 0.3rem;
+	}
+
+	.review-form input,
+	.review-form textarea {
+		padding: 0.6rem;
+		border-radius: 8px;
+		border: 1px solid #63a6a6; /* bleu charte */
+		font-size: 1rem;
+		background-color: var(--couleur-beige-clair);
+	}
+
+	.review-form textarea {
+		min-height: 100px;
+		resize: vertical;
+	}
+
+	/* Boutons */
+	.review-form-buttons {
+		display: flex;
+		gap: 1rem;
+		justify-content: flex-end;
+	}
+
+	.review-form button {
+		padding: 0.6rem 1rem;
+		border-radius: 8px;
+		border: none;
+		font-weight: 600;
+		cursor: pointer;
+		transition: transform 0.1s ease;
+	}
+
+	.review-form button:first-of-type {
+		background-color: #63a6a6; /* bleu charte */
+		color: white;
+	}
+
+	.review-form button:last-of-type {
+		background-color: #ccc;
+		color: #333;
+	}
+
+	.review-form button:active {
+		transform: scale(0.95);
+	}
 	/* --------------------------------------------- */
 	/* 6. BOUTONS BOOKLIST / LU                      */
 	/* --------------------------------------------- */
