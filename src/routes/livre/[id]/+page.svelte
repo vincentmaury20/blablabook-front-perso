@@ -266,8 +266,10 @@
 <!-- SECTION REVIEWS -->
 <div class="reviews-container">
 	<h2>Avis des lecteurs ({data.reviewCount})</h2>
-
-	{#if data.averageRating !== null}
+	<!-- il faudrait aussi gérer quand l'admin ne veut afficher aucun avis pour le moment en utilisant un if (!data.reviews || data.reviews.length === 0) -->
+	{#if !data.reviews || data.reviews.length === 0}
+		<p class="no-review">Aucun avis pour ce livre.</p>
+	{:else if data.averageRating !== null}
 		<p class="average">
 			Note moyenne : {data.averageRating.toFixed(1)} / 10
 		</p>
