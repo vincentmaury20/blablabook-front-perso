@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import { user } from '$lib/stores/auth.js';
 	import { booklistStatus, updateBookStatus, getBookStatus } from '$lib/stores/booklistStore.js';
+	import { API_URL } from '$lib/config.js';
 
 	let loadingBooks = $state(new Set());
 
@@ -49,15 +50,12 @@
 
 		const promises = booksToCheck.map(async (book) => {
 			try {
-				const response = await fetch(
-					`http://localhost:3000/user/${decodedToken.id}/book/${book.id}/status`,
-					{
-						headers: {
-							Authorization: `Bearer ${token}`,
-							'Content-Type': 'application/json'
-						}
+				const response = await fetch(`${API_URL}/user/${decodedToken.id}/book/${book.id}/status`, {
+					headers: {
+						Authorization: `Bearer ${token}`,
+						'Content-Type': 'application/json'
 					}
-				);
+				});
 
 				if (response.ok) {
 					const result = await response.json();
@@ -102,32 +100,26 @@
 
 		try {
 			if (currentStatus.inBooklist) {
-				const response = await fetch(
-					`http://localhost:3000/user/${decodedToken.id}/book/${book.id}`,
-					{
-						method: 'DELETE',
-						headers: {
-							Authorization: `Bearer ${token}`,
-							'Content-Type': 'application/json'
-						}
+				const response = await fetch(`${API_URL}/user/${decodedToken.id}/book/${book.id}`, {
+					method: 'DELETE',
+					headers: {
+						Authorization: `Bearer ${token}`,
+						'Content-Type': 'application/json'
 					}
-				);
+				});
 
 				if (response.ok) {
 					updateBookStatus(String(book.id), { inBooklist: false, toRead: true });
 				}
 			} else {
-				const response = await fetch(
-					`http://localhost:3000/user/${decodedToken.id}/book/${book.id}`,
-					{
-						method: 'POST',
-						headers: {
-							Authorization: `Bearer ${token}`,
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify({ toRead: true })
-					}
-				);
+				const response = await fetch(`${API_URL}/user/${decodedToken.id}/book/${book.id}`, {
+					method: 'POST',
+					headers: {
+						Authorization: `Bearer ${token}`,
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ toRead: true })
+				});
 
 				if (response.ok) {
 					updateBookStatus(String(book.id), { inBooklist: true, toRead: true });
