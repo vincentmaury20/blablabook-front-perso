@@ -1,15 +1,19 @@
+<script>
+	const currentYear = new Date().getFullYear();
+</script>
+
 <footer>
 	<div class="footer-content">
 		<div class="footer-text">
 			<a href="/mentions">
 				<p>Mentions légales</p>
-				<p>© 2025 - Blablabook. Tous droits réservés</p>
+				<p>© {currentYear} - Blablabook. Tous droits réservés</p>
 			</a>
 		</div>
 
 		<a href="/"><img src="/LogoBBB.png" alt="Logo BlaBlaBook" class="logo-icon" /></a>
 
-		<!-- Lien discret vers l'admin -->
+		<!-- Discrete link to dashboard -->
 		<a href="http://localhost:3000/admin/login" class="admin-link">⚙️</a>
 	</div>
 </footer>
@@ -34,7 +38,6 @@
 		width: auto;
 	}
 
-	/* Style discret pour le lien admin */
 	.admin-link {
 		position: absolute;
 		bottom: 5px;

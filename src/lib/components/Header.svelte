@@ -78,23 +78,18 @@
 			e.preventDefault();
 
 			const trimmedQuery = query.trim();
-
-			// Si la recherche est vide, ne rien faire
 			if (!trimmedQuery) {
 				return;
 			}
 
-			// Si on a des suggestions et qu'on voit la dropdown, aller au premier résultat
 			if (showSuggestions && suggestions.length > 0) {
 				openBook(suggestions[0].id);
 			} else if (trimmedQuery.length >= 2) {
-				// Sinon, rediriger vers le catalogue avec la recherche
 				goto(`/catalogue?search=${encodeURIComponent(trimmedQuery)}`);
-				// Vider la barre de recherche et nettoyer l'état
+
 				clearSearch();
 			}
 		} else if (e.key === 'Escape') {
-			// Échapper ferme les suggestions
 			clearSearch();
 		}
 	}
@@ -115,7 +110,6 @@
 			<p class="title"><a href="/">BlaBlaBook</a></p>
 		</div>
 
-		<!-- Condition pour afficher les bons boutons selon l'état de connexion -->
 		<div class="auth-buttons">
 			{#if $user}
 				<div class="btn-container btn-container-end">
@@ -127,7 +121,6 @@
 					<button class="connection-btn logout-btn" onclick={() => logout()}>Déconnexion</button>
 				</div>
 			{:else}
-				<!-- Utilisateur non connecté -->
 				<div class="btn-container">
 					<a href="/connexion">
 						<button class="connection-btn">Connexion</button>
