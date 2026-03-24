@@ -2,8 +2,6 @@
 	import { page } from '$app/stores';
 	export let error;
 	export let status;
-
-	// pour forcer l'envoi du vrai code status
 	$: displayStatus = status || $page.status;
 </script>
 

@@ -76,7 +76,6 @@
 		transform: scale(1.05);
 	}
 
-	/* Mobile */
 	@media (max-width: 767px) {
 		.slide {
 			width: 160px;
@@ -87,7 +86,6 @@
 		}
 	}
 
-	/* Tablette */
 	@media (min-width: 768px) and (max-width: 1023px) {
 		.slide {
 			width: 180px;
@@ -98,7 +96,6 @@
 		}
 	}
 
-	/* Desktop */
 	@media (min-width: 1024px) {
 		.slide {
 			width: 220px;

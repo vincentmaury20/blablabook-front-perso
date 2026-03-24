@@ -28,7 +28,6 @@
 </div>
 
 <style>
-	/* Media queries */
 	.ask-password {
 		max-width: 90%;
 		margin: 2rem auto;

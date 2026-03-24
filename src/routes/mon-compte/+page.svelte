@@ -20,7 +20,6 @@
 		}
 
 		try {
-			// Récupération des infos utilisateur
 			const userResponse = await fetch(`${API_URL}/auth/me`, {
 				headers: { Authorization: `Bearer ${token}` }
 			});
@@ -31,7 +30,6 @@
 
 			currentUser = await userResponse.json();
 
-			// Récupération des livres favoris
 			const booksResponse = await fetch(`${API_URL}/userbooks?limit=4`, {
 				headers: { Authorization: `Bearer ${token}` }
 			});
@@ -120,7 +118,6 @@
 
 		{#if currentUser}
 			<div class="info">
-				<!-- clic ouvre le file picker -->
 				<img
 					class="avatar"
 					src={previewUrl
@@ -293,7 +290,6 @@
 		margin: 2rem auto;
 	}
 
-	/* Media queries */
 	@media (min-width: 768px) {
 		main {
 			flex-direction: row;

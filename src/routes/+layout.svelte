@@ -10,7 +10,6 @@
 
 	let { children } = $props();
 
-	// Charger l'utilisateur au démarrage si un token existe
 	onMount(() => {
 		loadUserFromToken();
 	});

@@ -47,13 +47,11 @@
 			});
 
 			if (response.ok) {
-				// Mettre à jour localement le statut du livre
 				const bookIndex = booklist.findIndex((b) => b.book.id === book.book.id);
 				if (bookIndex !== -1) {
 					booklist[bookIndex].toRead = !booklist[bookIndex].toRead;
-					booklist = [...booklist]; // Forcer la réactivité
+					booklist = [...booklist];
 
-					// Mettre à jour le store global
 					updateBookStatus(String(book.book.id), {
 						inBooklist: true,
 						toRead: booklist[bookIndex].toRead
@@ -88,7 +86,6 @@
 			page = data.page;
 			totalPages = data.totalPages;
 
-			// Alimenter le store global avec les données de la booklist
 			booklist.forEach((bookItem) => {
 				updateBookStatus(bookItem.book.id, {
 					inBooklist: true,
@@ -109,8 +106,6 @@
 		if (!decodedToken) return;
 
 		try {
-			console.log(`Suppression du livre: ${book.book.title}`);
-
 			const response = await fetch(`${API_URL}/user/${decodedToken.id}/book/${book.book.id}`, {
 				method: 'DELETE',
 				headers: {
@@ -120,14 +115,9 @@
 			});
 
 			if (response.ok) {
-				// Supprimer le livre de la liste locale
 				booklist = booklist.filter((b) => b.book.id !== book.book.id);
 				totalBooks = Math.max(0, totalBooks - 1);
-
-				// Mettre à jour le store global
 				updateBookStatus(String(book.book.id), { inBooklist: false, toRead: true });
-
-				console.log('Livre supprimé');
 			} else {
 				console.error('Erreur lors de la suppression');
 			}
@@ -434,7 +424,6 @@
 		font-weight: 500;
 	}
 
-	/* BOUTONS DU BAS */
 	.bottom-buttons {
 		display: flex;
 		justify-content: space-between;
@@ -458,7 +447,6 @@
 		cursor: pointer;
 	}
 
-	/* MEDIA QUERIES */
 	@media (max-width: 768px) {
 		.book {
 			flex-direction: row;
