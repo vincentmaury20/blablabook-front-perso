@@ -4,38 +4,37 @@
 // test d'intégration de l'appel BDD pour le carousel - Attention côté back doit tourner même pour fetch factices
 // vitest fonctionne comme jest
 
-
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 // Import de la fonction load() de la page d'accueil
 import { load } from '../../../routes/+page';
 
 // Définition du bloc de test
 describe('load function page d’accueil', () => {
-  // Données factices à retourner via fetch
-  const fakeBooks = [{ title: 'Livre 1' }, { title: 'Livre 2' }];
+	// Données factices à retourner via fetch
+	const fakeBooks = [{ title: 'Livre 1' }, { title: 'Livre 2' }];
 
-  // Réinitialise le mock entre chaque test / mock = remplacement, dupe
-  beforeEach(() => {
-    vi.restoreAllMocks();
-  });
+	// Réinitialise le mock entre chaque test / mock = remplacement, dupe
+	beforeEach(() => {
+		vi.restoreAllMocks();
+	});
 
-  // Définition d’un test
-  it('récupère les livres depuis la BDD', async () => {
-    // Mock pour le fetch / vi.fn = fonction mockée, équivalent de jest.fn
-    global.fetch = vi.fn(() =>
-      // Retourne promesse comme vrai fetch
-      Promise.resolve({
-        json: () => Promise.resolve(fakeBooks)
-      })
-    );
+	// Définition d’un test
+	it('récupère les livres depuis la BDD', async () => {
+		// Mock pour le fetch / vi.fn = fonction mockée, équivalent de jest.fn
+		global.fetch = vi.fn(() =>
+			// Retourne promesse comme vrai fetch
+			Promise.resolve({
+				json: () => Promise.resolve(fakeBooks)
+			})
+		);
 
-    // Appel de la fonction load()
-    const result = await load();
+		// Appel de la fonction load()
+		const result = await load();
 
-    // Vérifier que fetch a bien été appelé avec l’URL attendue
-    expect(global.fetch).toHaveBeenCalledWith('http://localhost:3000/');
+		// Vérifier que fetch a bien été appelé avec l’URL attendue
+		expect(global.fetch).toHaveBeenCalledWith('http://localhost:3000');
 
-    // Vérifier que le résultat contient les livres fake
-    expect(result).toEqual({ book: fakeBooks });
-  });
+		// Vérifier que le résultat contient les livres fake
+		expect(result).toEqual({ book: fakeBooks });
+	});
 });

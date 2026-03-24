@@ -62,8 +62,6 @@
 	}
 </script>
 
-<!-- le reste du template inchangé -->
-
 <div class="auth-container">
 	<div class="tabs" role="tablist" aria-label="Choix du mode d’authentification">
 		<button
