@@ -1,15 +1,23 @@
+import { API_URL } from '$lib/config.js';
+
 export const getSearchSuggestions = async (q, type, signal) => {
-  if (!q) return [];
+	// Validate input: return empty list if query is empty
+	if (!q) return [];
 
-  const url = new URL('http://localhost:3000/search');
-  url.searchParams.set('q', q);
-  if (type) url.searchParams.set('type', type);
+	// Build the API URL with query parameters
+	const url = new URL('/search', API_URL);
+	url.searchParams.set('q', q);
+	if (type) url.searchParams.set('type', type);
 
-  const res = await fetch(url, { signal });
+	// Perform the API request
+	const res = await fetch(url, { signal });
 
-  if (!res.ok) throw new Error('Recherche échouée');
+	// Throw an error if the request failed
+	if (!res.ok) throw new Error('Search failed');
 
-  const data = await res.json();
-  console.log("Résultats reçus:", data);
-  return data;
+	// Parse and return the JSON response
+	const data = await res.json();
+	console.log('Results received:', data);
+
+	return data;
 };

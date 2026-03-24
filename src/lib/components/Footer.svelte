@@ -1,9 +1,13 @@
+<script>
+	const currentYear = new Date().getFullYear(); // a constant to get the current year
+</script>
+
 <footer>
 	<div class="footer-content">
 		<div class="footer-text">
 			<a href="/mentions">
 				<p>Mentions légales</p>
-				<p>© 2025 - Blablabook. Tous droits réservés</p>
+				<p>© {currentYear} - Blablabook. Tous droits réservés</p>
 			</a>
 		</div>
 

@@ -134,7 +134,6 @@
 	}
 
 	onMount(() => {
-		// Vérifier les statuts seulement si connecté
 		if ($user) {
 			checkAllBooksStatus();
 		}
@@ -162,7 +161,6 @@
 					</p>
 				</div>
 
-				<!-- Bouton qui redirige vers /connexion si non connecté -->
 				<button
 					class="add-button"
 					class:in-booklist={$booklistStatus.get(String(book.id))?.inBooklist || false}
@@ -307,7 +305,6 @@
 		width: auto;
 	}
 
-	/* Styles pour le bouton quand le livre est dans la booklist */
 	.add-button.in-booklist {
 		background-color: var(--couleur-beige-clair);
 		color: var(--couleur-marron);
@@ -315,7 +312,6 @@
 		font-weight: bold;
 	}
 
-	/* Style pour les boutons désactivés */
 	.add-button:disabled {
 		opacity: 0.6;
 		cursor: not-allowed;
@@ -327,7 +323,6 @@
 		box-shadow: none;
 	}
 
-	/* Spinner de chargement */
 	.loading-spinner {
 		display: inline-block;
 		width: 16px;
@@ -355,8 +350,6 @@
 	.pagination button {
 		margin: 1rem 1rem 2.8rem 1rem;
 	}
-
-	/* Media Queries */
 
 	@media (min-width: 768px) {
 		.book-container img {

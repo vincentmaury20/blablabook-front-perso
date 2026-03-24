@@ -1,9 +1,15 @@
 <script>
+	// ============================================================
+	// IMPORTS
+	// ============================================================
 	import { debounce } from '$lib/utils/debounce.js';
 	import { getSearchSuggestions } from '$lib/remoteFunction.js';
 	import { goto } from '$app/navigation';
 	import { user, logout } from '$lib/stores/auth.js';
 
+	// ============================================================
+	// STATE VARIABLES
+	// ============================================================
 	let query = $state('');
 	let suggestions = $state([]);
 	let loading = $state(false);
@@ -14,6 +20,13 @@
 	let abortController = null;
 	let currentSearchQuery = '';
 
+	// ============================================================
+	// SEARCH FUNCTIONALITY
+	// ============================================================
+	/**
+	 * Performs the actual search request to the API
+	 * Handles abort signals and tracks the current search query
+	 */
 	async function performSearch(searchQuery) {
 		if (abortController) abortController.abort();
 
@@ -49,30 +62,52 @@
 		}
 	}
 
+	// Debounce wrapper to limit search API calls
 	const debouncedSearch = debounce(performSearch, 300);
 
+	// ============================================================
+	// INPUT & FOCUS HANDLERS
+	// ============================================================
+	/**
+	 * Handles input changes and triggers debounced search
+	 */
 	function onInput(e) {
 		query = e.target.value;
 		debouncedSearch(query);
 	}
 
+	/**
+	 * Navigates to the book detail page and clears the search state
+	 */
 	function openBook(id) {
 		goto(`/livre/${id}`);
 		clearSearch();
 	}
 
+	/**
+	 * Shows suggestions dropdown when input is focused and conditions are met
+	 */
 	function handleFocus() {
 		if (query.length >= 2 && suggestions.length > 0) {
 			showSuggestions = true;
 		}
 	}
 
+	/**
+	 * Hides suggestions dropdown when input loses focus
+	 * Uses setTimeout to allow click handling on suggestions before closing
+	 */
 	function handleBlur() {
 		setTimeout(() => {
 			showSuggestions = false;
 		}, 200);
 	}
 
+	/**
+	 * Handles keyboard interactions:
+	 * - Enter: Search or navigate to first suggestion
+	 * - Escape: Close suggestions dropdown
+	 */
 	function handleKeydown(e) {
 		if (e.key === 'Enter') {
 			e.preventDefault();
@@ -99,6 +134,12 @@
 		}
 	}
 
+	// ============================================================
+	// UTILITY FUNCTIONS
+	// ============================================================
+	/**
+	 * Clears search state, suggestions, and aborts any ongoing requests
+	 */
 	function clearSearch() {
 		query = '';
 		suggestions = [];

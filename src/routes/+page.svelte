@@ -87,7 +87,7 @@
 		}
 	}
 
-	/* Tablette */
+	/* Tablet */
 	@media (min-width: 768px) and (max-width: 1023px) {
 		.slide {
 			width: 180px;

@@ -1,73 +1,92 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
-// Fonction pour charger le cache depuis localStorage
+// ============================================================
+// STORAGE UTILITIES
+// ============================================================
+/**
+ * Load booklist cache from localStorage
+ */
 function loadFromStorage() {
-    if (!browser) return new Map();
-    
-    try {
-        const stored = localStorage.getItem('booklistStatus');
-        if (stored) {
-            const parsed = JSON.parse(stored);
-            return new Map(Object.entries(parsed));
-        }
-    } catch (error) {
-        console.error('Erreur chargement cache:', error);
-    }
-    return new Map();
+	if (!browser) return new Map();
+
+	try {
+		const stored = localStorage.getItem('booklistStatus');
+		if (stored) {
+			const parsed = JSON.parse(stored);
+			return new Map(Object.entries(parsed));
+		}
+	} catch (error) {
+		console.error('Cache load error:', error);
+	}
+	return new Map();
 }
 
-// Fonction pour sauvegarder dans localStorage
+/**
+ * Save booklist cache to localStorage
+ */
 function saveToStorage(map) {
-    if (!browser) return;
-    
-    try {
-        const obj = Object.fromEntries(map);
-        localStorage.setItem('booklistStatus', JSON.stringify(obj));
-    } catch (error) {
-        console.error('Erreur sauvegarde cache:', error);
-    }
+	if (!browser) return;
+
+	try {
+		const obj = Object.fromEntries(map);
+		localStorage.setItem('booklistStatus', JSON.stringify(obj));
+	} catch (error) {
+		console.error('Cache save error:', error);
+	}
 }
 
-// Variable pour s'assurer qu'on charge qu'une seule fois
+// ============================================================
+// STORE INITIALIZATION
+// ============================================================
+// Prevent multiple cache loads
 let isLoaded = false;
 
-// Store pour les statuts des livres (Map: bookId -> {inBooklist, toRead})
+// Store for book statuses (Map: bookId -> {inBooklist, toRead})
 export const booklistStatus = writable(new Map());
 
-// Fonction pour charger le cache de façon lazy
+/**
+ * Lazy-load cache from storage on first use
+ */
 function ensureCacheLoaded() {
-    if (!browser || isLoaded) return;
-    
-    const storedData = loadFromStorage();
-    if (storedData.size > 0) {
-        booklistStatus.set(storedData);
-    }
-    isLoaded = true;
+	if (!browser || isLoaded) return;
+
+	const storedData = loadFromStorage();
+	if (storedData.size > 0) {
+		booklistStatus.set(storedData);
+	}
+	isLoaded = true;
 }
 
-// Fonction helper pour mettre à jour un livre
+// ============================================================
+// STORE ACTIONS
+// ============================================================
+/**
+ * Update book status and save to localStorage
+ */
 export function updateBookStatus(bookId, status) {
-    booklistStatus.update(map => {
-        map.set(bookId, status);
-        
-        // Sauvegarder automatiquement dans localStorage
-        saveToStorage(map);
-        
-        return new Map(map);
-    });
+	booklistStatus.update((map) => {
+		map.set(bookId, status);
+		// Auto-save to storage
+		saveToStorage(map);
+		return new Map(map);
+	});
 }
 
-// Fonction helper pour récupérer le statut d'un livre
+/**
+ * Get book status from store with defaults
+ */
 export function getBookStatus(bookId, currentMap) {
-    ensureCacheLoaded(); // S'assurer que le cache est chargé
-    return currentMap.get(bookId) || { inBooklist: false, toRead: true };
+	ensureCacheLoaded();
+	return currentMap.get(bookId) || { inBooklist: false, toRead: true };
 }
 
-// Fonction pour vider le store (utile pour la déconnexion)
+/**
+ * Clear all booklist data (used on logout)
+ */
 export function clearBooklistStatus() {
-    booklistStatus.set(new Map());
-    if (browser) {
-        localStorage.removeItem('booklistStatus');
-    }
+	booklistStatus.set(new Map());
+	if (browser) {
+		localStorage.removeItem('booklistStatus');
+	}
 }
