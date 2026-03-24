@@ -48,9 +48,6 @@
 				inBooklist = result.inBooklist;
 				toRead = result.toRead !== undefined ? result.toRead : true;
 				updateBookStatus(data.book.id, { inBooklist: inBooklist, toRead: toRead });
-				console.log(
-					`Statut récupéré: ${inBooklist ? 'Dans booklist' : 'Pas dans booklist'}, ${toRead ? 'À lire' : 'Lu'}`
-				);
 			}
 		} catch (error) {
 			console.error('Erreur lors de la vérification du statut:', error);
@@ -58,7 +55,6 @@
 	}
 
 	async function toggleBooklist() {
-		// Redirection si non connecté
 		if (!$user) {
 			goto('/connexion');
 			return;
@@ -120,7 +116,6 @@
 	}
 
 	async function toggleRead() {
-		// Redirection si non connecté
 		if (!$user) {
 			goto('/connexion');
 			return;
@@ -191,7 +186,7 @@
 
 		if (res.ok) {
 			showForm = false;
-			location.reload(); // recharge la page pour afficher le nouvel avis
+			location.reload();
 		} else {
 			console.error("Erreur lors de l'envoi de l'avis");
 		}
@@ -263,10 +258,9 @@
 		<br />{data.book.synopsis}
 	</p>
 </div>
-<!-- SECTION REVIEWS -->
+
 <div class="reviews-container">
 	<h2>Avis des lecteurs ({data.reviewCount})</h2>
-	<!-- il faudrait aussi gérer quand l'admin ne veut afficher aucun avis pour le moment en utilisant un if (!data.reviews || data.reviews.length === 0) -->
 	{#if !data.reviews || data.reviews.length === 0}
 		<p class="no-review">Aucun avis pour ce livre.</p>
 	{:else if data.averageRating !== null}
@@ -311,7 +305,6 @@
 	{/if}
 </div>
 <div class="buttons-container">
-	<!-- Bouton ajouter/retirer de la booklist -->
 	<button
 		class="add-booklist"
 		class:in-booklist={inBooklist}
@@ -328,7 +321,6 @@
 		{/if}
 	</button>
 
-	<!-- Bouton "J'ai lu" - seulement si dans la booklist -->
 	{#if inBooklist}
 		<button
 			class="read"
@@ -357,10 +349,6 @@
 </div>
 
 <style>
-	/* --------------------------------------------- */
-	/* 1. LAYOUT GLOBAL                              */
-	/* --------------------------------------------- */
-
 	.container {
 		display: flex;
 		flex-direction: column;
@@ -368,10 +356,6 @@
 		align-items: center;
 		width: 100%;
 	}
-
-	/* --------------------------------------------- */
-	/* 2. BOOK HEADER : GENRES + AUTEURS             */
-	/* --------------------------------------------- */
 
 	.genre-container {
 		display: block;
@@ -393,20 +377,12 @@
 		text-align: justify;
 	}
 
-	/* --------------------------------------------- */
-	/* 3. COVER / IMAGE                              */
-	/* --------------------------------------------- */
-
 	.cover {
 		border-radius: 0px 20px 0px 20px;
 		width: 150px;
 		padding: 0.3rem;
 		padding-bottom: 1rem;
 	}
-
-	/* --------------------------------------------- */
-	/* 4. SYNOPSIS                                   */
-	/* --------------------------------------------- */
 
 	.synopsis-container {
 		background-color: var(--couleur-beige-clair);
@@ -417,10 +393,6 @@
 	.synopsis {
 		margin: 1rem;
 	}
-
-	/* --------------------------------------------- */
-	/* 5. REVIEWS                                    */
-	/* --------------------------------------------- */
 
 	.reviews-container {
 		background-color: var(--couleur-beige-clair);
@@ -470,12 +442,11 @@
 		color: #555;
 	}
 
-	/* Bouton "Laisser un avis" */
 	.leave-review {
 		display: block;
 		margin: 1rem auto;
 		padding: 0.6rem 1rem;
-		background-color: #63a6a6; /* bleu charte */
+		background-color: #63a6a6;
 		border: 2px solid var(--couleur-marron);
 		border-radius: 10px;
 		font-weight: 600;
@@ -494,7 +465,6 @@
 		transform: scale(0.95);
 	}
 
-	/* Formulaire d'avis */
 	.review-form {
 		margin-top: 1rem;
 		padding: 1rem;
@@ -506,20 +476,17 @@
 		gap: 1rem;
 	}
 
-	/* Ligne note + commentaire */
 	.review-form-row {
 		display: flex;
 		gap: 1rem;
 	}
 
-	/* Bloc note (20%) */
 	.review-form-note {
 		width: 20%;
 		display: flex;
 		flex-direction: column;
 	}
 
-	/* Bloc commentaire (80%) */
 	.review-form-comment {
 		width: 80%;
 		display: flex;
@@ -536,7 +503,7 @@
 	.review-form textarea {
 		padding: 0.6rem;
 		border-radius: 8px;
-		border: 1px solid #63a6a6; /* bleu charte */
+		border: 1px solid #63a6a6;
 		font-size: 1rem;
 		background-color: var(--couleur-beige-clair);
 	}
@@ -546,7 +513,6 @@
 		resize: vertical;
 	}
 
-	/* Boutons */
 	.review-form-buttons {
 		display: flex;
 		gap: 1rem;
@@ -563,7 +529,7 @@
 	}
 
 	.review-form button:first-of-type {
-		background-color: #63a6a6; /* bleu charte */
+		background-color: #63a6a6;
 		color: white;
 	}
 
@@ -575,9 +541,6 @@
 	.review-form button:active {
 		transform: scale(0.95);
 	}
-	/* --------------------------------------------- */
-	/* 6. BOUTONS BOOKLIST / LU                      */
-	/* --------------------------------------------- */
 
 	.buttons-container {
 		width: 100%;
@@ -657,10 +620,6 @@
 		object-fit: contain;
 	}
 
-	/* --------------------------------------------- */
-	/* 7. BOUTON RETOUR                              */
-	/* --------------------------------------------- */
-
 	.exit-container {
 		display: flex;
 		justify-content: center;
@@ -684,10 +643,6 @@
 		outline: none;
 		box-shadow: none;
 	}
-
-	/* --------------------------------------------- */
-	/* 8. MEDIA QUERIES                              */
-	/* --------------------------------------------- */
 
 	@media (min-width: 768px) {
 		.cover {

@@ -18,7 +18,6 @@
 </div>
 
 <style>
-	/*  Mobile (< 768px)*/
 	.optin {
 		display: flex;
 		flex-direction: column;
@@ -54,7 +53,6 @@
 		cursor: pointer;
 	}
 
-	/* TABLETTE (768px – 1024px)*/
 	@media (min-width: 768px) and (max-width: 1024px) {
 		.optin {
 			display: grid;
@@ -79,7 +77,6 @@
 		}
 	}
 
-	/* DESKTOP (> 1024px) */
 	@media (min-width: 1025px) {
 		.optin {
 			display: grid;

@@ -1,7 +1,6 @@
 import { API_URL } from '$lib/config.js';
 
 export async function load({ params, fetch }) {
-	console.log('ID reçu par SvelteKit :', params.id);
 	const res = await fetch(`${API_URL}/book/${params.id}`);
 	const book = await res.json();
 
@@ -9,8 +8,6 @@ export async function load({ params, fetch }) {
 	const reviews = await resReviews.json();
 	const average =
 		reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : null;
-
-	console.log(book);
 
 	return {
 		book,
