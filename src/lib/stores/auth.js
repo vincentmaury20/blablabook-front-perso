@@ -7,7 +7,6 @@ export const user = writable(null);
 export async function loadUserFromToken() {
 	if (!browser) return;
 
-	// Charger la variable ici, au runtime, pas au build
 	const PUBLIC_API_URL = env.PUBLIC_API_URL;
 
 	const token = localStorage.getItem('token');
