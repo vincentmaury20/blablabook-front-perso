@@ -1,11 +1,14 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
-import { PUBLIC_API_URL } from '$env/dynamic/public';
+import { env } from '$env/dynamic/public';
 
 export const user = writable(null);
 
 export async function loadUserFromToken() {
 	if (!browser) return;
+
+	// Charger la variable ici, au runtime, pas au build
+	const PUBLIC_API_URL = env.PUBLIC_API_URL;
 
 	const token = localStorage.getItem('token');
 
