@@ -14,7 +14,7 @@
 		<a href="/"><img src="/LogoBBB.png" alt="Logo BlaBlaBook" class="logo-icon" /></a>
 
 		<!-- Discrete link to dashboard -->
-		<a href="http://localhost:3000/admin/login" class="admin-link">⚙️</a>
+		<a href="{API_URL}admin/login" class="admin-link">⚙️</a>
 	</div>
 </footer>
 
