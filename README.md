@@ -158,11 +158,11 @@ L'authentification est gérée via un **JWT token** stocké dans le localStorage
 	logout(); // Déconnecte l'utilisateur
 ```
 
-### Communication avec l'API
+### SearchBar avec l'API
 
-Toutes les requêtes vers le backend passent par les fonctions dans `lib/remoteFunction.js` :
+Concernant la barre de recherche, une remote function dédiée : les requêtes vers le backend passent par les fonctions dans `lib/remoteFunction.js` ↓
 
-- `getSearchSuggestions(q, type, signal)` : Recherche de livres
+- `getSearchSuggestions(q, type, signal)`
 
 ### État global
 

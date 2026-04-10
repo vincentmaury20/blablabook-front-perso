@@ -3,7 +3,6 @@ import { env } from '$env/dynamic/public';
 export const getSearchSuggestions = async (q, type, signal) => {
 	if (!q) return [];
 
-	// Charger la variable au runtime, pas au build
 	const PUBLIC_API_URL = env.PUBLIC_API_URL;
 
 	const url = new URL(`${PUBLIC_API_URL}/search`);
