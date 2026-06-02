@@ -8,7 +8,9 @@ RUN npm install
 
 COPY . .
 
+COPY uploads ./uploads
+
 RUN npm run build
 
-EXPOSE 3000
-CMD ["node", "build"]
+EXPOSE 8080
+CMD ["node", "src/server.js"]
